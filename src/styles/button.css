@@ -1,0 +1,119 @@
+.btn {
+    --color-text: var(--color-fg);
+    --color-bg: var(--color-surface);
+    --color-border: var(--color-surface);
+    --color-bg-hover: var(--color-fg);
+    --color-border-hover: var(--color-fg);
+    --color-text-hover: var(--color-fg-contrast);
+    padding: var(--spacing-control-y) var(--spacing-control-x);
+    border-radius: var(--radius-control);
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    background: var(--color-bg);
+    color: var(--color-text);
+    transition: all 0.2s ease-in-out;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background: var(--color-bg-hover);
+    border-color: var(--color-border-hover);
+    color: var(--color-text-hover);
+}
+
+.btn.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.btn-sm {
+    padding: var(--spacing-control-compact-y) var(--spacing-control-compact-x);
+}
+
+.btn-lg {
+    padding: var(--spacing-control-relaxed-y) var(--spacing-control-relaxed-x);
+}
+
+.btn-primary {
+    --color-text: var(--color-primary-contrast);
+    --color-bg: var(--color-primary);
+    --color-border: var(--color-primary);
+}
+
+.btn-secondary {
+    --color-text: var(--color-secondary-contrast);
+    --color-bg: var(--color-secondary);
+    --color-border: var(--color-secondary);
+}
+
+.btn-danger {
+    --color-text: var(--color-danger-contrast);
+    --color-bg: var(--color-danger);
+    --color-border: var(--color-danger);
+}
+
+.btn-outline-default {
+    --color-text: var(--color-fg);
+    --color-bg: transparent;
+    --color-border: var(--color-line);
+}
+
+.btn-outline-primary {
+    --color-text: var(--color-primary);
+    --color-border: var(--color-primary);
+    --color-text-hover: var(--color-primary-contrast);
+    --color-bg-hover: var(--color-primary);
+    --color-border-hover: var(--color-primary);
+}
+
+.btn-outline-secondary {
+    --color-text: var(--color-secondary);
+    --color-border: var(--color-secondary);
+    --color-text-hover: var(--color-secondary-contrast);
+    --color-bg-hover: var(--color-secondary);
+    --color-border-hover: var(--color-secondary);
+}
+
+.btn-outline-danger {
+    --color-text: var(--color-danger);
+    --color-border: var(--color-danger);
+    --color-text-hover: var(--color-danger-contrast);
+    --color-bg-hover: var(--color-danger);
+    --color-border-hover: var(--color-danger);
+}
+
+.btn-ghost-default {
+    --color-text: var(--color-fg);
+    --color-bg: transparent;
+    --color-border: transparent;
+    --color-text-hover: var(--color-fg);
+    --color-bg-hover: var(--color-surface);
+    --color-border-hover: var(--color-surface);
+}
+
+.btn-ghost-primary {
+    --color-text: var(--color-primary);
+    --color-bg: transparent;
+    --color-border: transparent;
+    --color-text-hover: var(--color-fg);
+    --color-bg-hover: var(--color-surface);
+    --color-border-hover: var(--color-surface);
+}
+
+.btn-ghost-secondary {
+    --color-text: var(--color-secondary);
+    --color-bg: transparent;
+    --color-border: transparent;
+    --color-text-hover: var(--color-fg);
+    --color-bg-hover: var(--color-surface);
+    --color-border-hover: var(--color-surface);
+}
+
+.btn-ghost-danger {
+    --color-text: var(--color-danger);
+    --color-bg: transparent;
+    --color-border: transparent;
+}
