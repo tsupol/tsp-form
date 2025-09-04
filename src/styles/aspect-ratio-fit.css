@@ -1,0 +1,5 @@
+.aspect-ratio-fit{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

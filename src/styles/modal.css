@@ -1,0 +1,54 @@
+/* modal.css */
+.has-modal-open {
+    overflow: hidden;
+}
+
+.modal-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+}
+
+.modal-layer .modal-backdrop,
+.modal-layer .modal-panel {
+    transition: opacity 150ms ease;
+    opacity: 0;
+}
+
+.modal-layer[data-open="true"] {
+    pointer-events: auto;
+}
+
+.modal-layer .modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    visibility: hidden;
+}
+
+.modal-layer[data-open="true"][data-top="true"] .modal-backdrop {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-layer .modal-panel {
+    position: absolute;
+    /* default sizing; component props can override via inline style */
+    width: 100%;
+    max-width: 100vw;
+    max-height: 100vh;
+    overflow: auto;
+
+    /* simple look: background + border only */
+    background: var(--color-surface, #222);
+    border: 1px solid var(--color-line, rgba(222,220,209,0.15));
+
+    /* centered */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.modal-layer[data-open="true"] .modal-panel {
+    opacity: 1;
+}

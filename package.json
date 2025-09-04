@@ -1,0 +1,53 @@
+{
+  "name": "tsp-form",
+  "version": "0.1.0",
+  "description": "A unified Tailwind 4 variables compatible UI component library for my own projects.",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "webpack serve --mode development --env APP_MODE=example",
+    "build": "webpack --mode production --env APP_MODE=library",
+    "clean": "rm -rf dist",
+    "build:lib": "npm run clean && tsc && webpack --env --mode production APP_MODE=library",
+    "build:example": "webpack",
+    "start:example": "webpack serve",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "react",
+    "component",
+    "ui",
+    "tailwind"
+  ],
+  "author": "Tsupol",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.28.3",
+    "@babel/preset-env": "^7.28.3",
+    "@babel/preset-react": "^7.27.1",
+    "@babel/preset-typescript": "^7.27.1",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "babel-loader": "^10.0.0",
+    "clsx": "^2.1.1",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.62.0",
+    "style-loader": "^4.0.0",
+    "typescript": "^5.9.2",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  },
+  "peerDependencies": {
+    "clsx": "^2.1.1",
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "dependencies": {
+    "react-json-view-lite": "^2.4.2"
+  }
+}

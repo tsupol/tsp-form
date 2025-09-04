@@ -1,11 +1,12 @@
 .btn {
     --color-text: var(--color-fg);
-    --color-bg: var(--color-surface);
-    --color-border: var(--color-surface);
+    --color-bg: var(--color-surface-elevated);
+    --color-border: var(--color-surface-elevated);
     --color-bg-hover: var(--color-fg);
     --color-border-hover: var(--color-fg);
     --color-text-hover: var(--color-fg-contrast);
     padding: var(--spacing-control-y) var(--spacing-control-x);
+    min-height: calc(var(--text-control) * var(--text-control--line-height) + 2 * var(--spacing-control-y));
     border-radius: var(--radius-control);
     border: 1px solid var(--color-border);
     cursor: pointer;
@@ -55,6 +56,12 @@
     --color-border: var(--color-danger);
 }
 
+.btn-success {
+    --color-text: var(--color-success-contrast);
+    --color-bg: var(--color-success);
+    --color-border: var(--color-success);
+}
+
 .btn-outline-default {
     --color-text: var(--color-fg);
     --color-bg: transparent;
@@ -64,6 +71,7 @@
 .btn-outline-primary {
     --color-text: var(--color-primary);
     --color-border: var(--color-primary);
+    --color-bg: transparent;
     --color-text-hover: var(--color-primary-contrast);
     --color-bg-hover: var(--color-primary);
     --color-border-hover: var(--color-primary);
@@ -72,6 +80,7 @@
 .btn-outline-secondary {
     --color-text: var(--color-secondary);
     --color-border: var(--color-secondary);
+    --color-bg: transparent;
     --color-text-hover: var(--color-secondary-contrast);
     --color-bg-hover: var(--color-secondary);
     --color-border-hover: var(--color-secondary);
@@ -80,9 +89,19 @@
 .btn-outline-danger {
     --color-text: var(--color-danger);
     --color-border: var(--color-danger);
+    --color-bg: transparent;
     --color-text-hover: var(--color-danger-contrast);
     --color-bg-hover: var(--color-danger);
     --color-border-hover: var(--color-danger);
+}
+
+.btn-outline-success {
+    --color-text: var(--color-success);
+    --color-border: var(--color-success);
+    --color-bg: transparent;
+    --color-text-hover: var(--color-success-contrast);
+    --color-bg-hover: var(--color-success);
+    --color-border-hover: var(--color-success);
 }
 
 .btn-ghost-default {
@@ -114,6 +133,12 @@
 
 .btn-ghost-danger {
     --color-text: var(--color-danger);
+    --color-bg: transparent;
+    --color-border: transparent;
+}
+
+.btn-ghost-success {
+    --color-text: var(--color-success);
     --color-bg: transparent;
     --color-border: transparent;
 }

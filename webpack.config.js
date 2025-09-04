@@ -32,7 +32,7 @@ module.exports = (env) => {
 	if (isLibraryBuild) {
 		return {
 			...commonConfig,
-			entry: './src/Button.tsx', // Entry point for the component library
+			entry: './index.ts', // Entry point for the component library
 			output: {
 				path: path.resolve(__dirname, 'dist'),
 				filename: 'index.js',
@@ -72,7 +72,6 @@ module.exports = (env) => {
 					amd: 'react-hook-form',
 					root: 'ReactHookForm',
 				},
-
 			},
 			optimization: {
 				minimize: true,

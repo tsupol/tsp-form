@@ -1,26 +1,43 @@
-@import '../global.css';
 @import './styles/components.css';
 @import './styles/utils.css';
 
 :root {
-    --color-danger: #ff0000;
+    --color-danger: #d50303;
+    --color-danger-hover: #ff6363;
+    --color-danger-fade: #b23030;
     --color-danger-contrast: #ffffff;
+
+    --color-success: #008000;
+    --color-success-hover: #66ff66;
+    --color-success-fade: #006600;
+    --color-success-contrast: #ffffff;
+
+    --color-warning: #ff9900;
+    --color-warning-hover: #ffff66;
+    --color-warning-fade: #cc8000;
+    --color-warning-contrast: #000000;
+
+    --color-info: #0070f3;
+    --color-info-hover: #66b3ff;
+    --color-info-fade: #005bb5;
+    --color-info-contrast: #ffffff;
+
     --spacing-main-sidebar: 10rem;
     --spacing-mini-sidebar: 2.5rem;
     --spacing-card: 1rem;
 
     --color-fg: #cccccc;
     --color-fg-contrast: #000000;
-    --color-bg: #0a0a0a;
+    --color-bg: #151515;
     --color-bg-contrast: #ffffff;
 
-    --color-line: #2a2a2a;
+    --color-line: rgba(222, 220, 209, 0.15);
     --color-link: #0070f3;
 
-    --color-surface: rgba(255, 255, 255, 0.025);
-    --color-surface-hover: rgba(255, 255, 255, 0.05);
-    --color-surface-shallow: rgba(255, 255, 255, 0.01);
-    --color-surface-elevated: rgba(255, 255, 255, 0.05);
+    --color-surface: #222222;
+    --color-surface-hover: #2a2a2a;
+    --color-surface-shallow: #111111;
+    --color-surface-elevated: #333333;
 
     --spacing-line: 1px;
 
@@ -42,25 +59,42 @@
     --spacing-control-relaxed-y: 1rem;
     --spacing-control-relaxed-x: 2rem;
     --radius-control: .5rem;
+
+    --color-control-text: var(--color-fg);
     --text-control: 1rem;
     --text-control--letter-spacing: 0em;
     --text-control--line-height: 1.5;
     --text-control--font-weight: 400;
 
+    --spacing-option-y: 0.5rem;
+    --spacing-option-x: 1rem;
+    --radius-option: .5rem;
+    --text-option: .825rem;
+    --text-option--letter-spacing: 0em;
+    --text-option--line-height: 1.5;
+
     --space-scrollbar-track: .5rem;
     --color-scrollbar-track: rgba(125, 125, 125, 0.1);
     --color-scrollbar-thumb: rgba(125, 125, 125, 0.25);
-    --color-bg-control: transparent;
-    --color-label-control: #888888;
+    --color-control-bg: transparent;
+    --color-control-placeholder: #676767;
+    --text-control-placeholder: 1rem;
+    --text-control-placeholder--font-weight: 400;
+    --text-control-placeholder--letter-spacing: 0em;
+    --text-control-placeholder--line-height: 1.5;
+    --text-control-placeholder--font-style: italic;
 
-    --space-title-x: 1rem;
-    --space-title-y: 1rem;
-    --text-title: 1.5rem;
+    --color-control-label: #888888;
+    --text-control-label: 0.875rem;
+    --text-control-label--letter-spacing: 0em;
+    --text-control-label--line-height: 1.5;
+    --text-control-label--font-weight: 600;
+
+    --text-title: 1.25rem;
     --text-title--letter-spacing: -0.025em;
     --text-title--line-height: 1.25;
     --text-title--font-weight: 600;
-
-    --spacing-title-y: 1rem;
+    --spacing-title-y: .75rem;
     --spacing-title-x: 1rem;
     --spacing-title-h: calc(var(--spacing-title-y) * 2 + var(--text-title) * var(--text-title--line-height));
 

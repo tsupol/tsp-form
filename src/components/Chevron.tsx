@@ -1,5 +1,7 @@
+"use client"
 import React from 'react';
 import clsx from 'clsx';
+import "../styles/form.css";
 import '../styles/chevron.css';
 
 type Direction = 'down' | 'up' | 'left' | 'right';

@@ -1,9 +1,11 @@
+"use client"
 import React, { useState } from 'react';
 import clsx from 'clsx';
 import { Chevron } from './Chevron';
+import "../styles/form.css";
 import '../styles/collapsible-panel.css';
 
-export const ExpandablePanel = ({
+export const CollapsiblePanel = ({
                                   title,
                                   children,
                                   className,
@@ -27,7 +29,7 @@ export const ExpandablePanel = ({
       >
         <div className="cpanel-header-title">{title}</div>
         <div className="cpanel-chevron">
-          <Chevron direction="right" open={open} className="text-current cursor-pointer" size={24} {...chevronProps}/>
+          <Chevron direction="right" open={open} className="text-current cursor-pointer" size={20} {...chevronProps}/>
         </div>
       </div>
 

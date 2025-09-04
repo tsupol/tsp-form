@@ -1,0 +1,26 @@
+.json-pretty {
+    position: relative;
+}
+
+.json-pretty-code {
+}
+
+.json-pretty-copy {
+    position: absolute;
+    right: 0.25rem;
+    top: 0.25rem;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 0.375rem;
+    border: 1px solid var(--color-line);
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1rem;
+    cursor: pointer;
+    display: none
+}
+
+.json-pretty:hover .json-pretty-copy {
+    display: inline-flex;
+    color: var(--color-fg);
+}

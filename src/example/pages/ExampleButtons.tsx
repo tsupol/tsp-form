@@ -1,6 +1,6 @@
 import React from 'react';
-import { ContentPanel } from './components/ContentPanel';
-import Button from '../components/Button';
+import { ContentPanel } from '../components/ContentPanel';
+import { Button } from '../../components/Button';
 
 export function ExampleButtons() {
   return (

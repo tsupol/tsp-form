@@ -1,0 +1,16 @@
+.date-range-picker-container {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap; /* Allows stacking on smaller screens */
+}
+
+.date-range-picker-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.date-range-label {
+    font-weight: bold;
+    margin-bottom: 4px;
+}

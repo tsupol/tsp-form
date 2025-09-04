@@ -1,5 +1,7 @@
+"use client"
 import React, { forwardRef } from "react";
 import clsx from "clsx";
+import "../styles/form.css";
 import "../styles/button.css";
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -9,7 +11,7 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
   className?: string;
 }
 
-function getClassName(variant: string, color: string, size: string, className?: string) {
+function getClassName(variant: string, color: string, size: string, disabled?: boolean, className?: string, ) {
   const classes = ['btn', `btn-${size}`, className];
   switch (variant) {
     case 'solid':
@@ -23,6 +25,9 @@ function getClassName(variant: string, color: string, size: string, className?: 
       break;
     default:
       break;
+  }
+  if (disabled) {
+    classes.push('disabled');
   }
   return clsx(classes);
 }
@@ -40,7 +45,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     },
     ref
   ) => {
-    const classes = getClassName(variant, color, size, className);
+    const classes = getClassName(variant, color, size, disabled, className);
 
     return (
       <button
@@ -55,5 +60,3 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = "Button";
-
-export default Button;

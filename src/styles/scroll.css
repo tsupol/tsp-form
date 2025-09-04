@@ -1,0 +1,37 @@
+.scroll-overlay {
+    scrollbar-width: none; /* Firefox: hidden */
+    -ms-overflow-style: none; /* IE/Edge legacy */
+}
+
+.scroll-overlay::-webkit-scrollbar {
+    width: 0;
+    height: 0; /* WebKit: hidden */
+}
+
+.scroll-overlay::-webkit-scrollbar-corner {
+    background: transparent; /* No corner block */
+}
+
+@media (hover: hover) {
+    .scroll-overlay:hover {
+        scrollbar-width: var(--space-scrollbar-track);
+    }
+
+    .scroll-overlay:hover::-webkit-scrollbar {
+        width: var(--space-scrollbar-track);
+        height: var(--space-scrollbar-track);
+    }
+
+    .scroll-overlay:hover::-webkit-scrollbar-thumb {
+        background-color: var(--color-scrollbar-thumb);
+        border-radius: 9999px;
+    }
+
+    .scroll-overlay:hover::-webkit-scrollbar-track {
+        background: var(--color-scrollbar-track);
+    }
+
+    .scroll-overlay:hover::-webkit-scrollbar-corner {
+        background: var(--color-scrollbar-track);
+    }
+}

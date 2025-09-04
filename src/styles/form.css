@@ -1,47 +1,72 @@
-@layer utilities {
-    .form-control {
-        border: 1px solid var(--color-line, #d1d5db);
-        border-radius: var(--radius-control, 0.375rem);
-        background-color: var(--color-bg-control, #ffffff);
-        padding: var(--spacing-control-y, 0.5rem) var(--spacing-control-y, 0.75rem);
-        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        font-size: var(--text-control, 0.875rem);
-        font-weight: var(--text-control--font-weight, 400);
-        letter-spacing: var(--text-control--letter-spacing, 0em);
-        line-height: var(--text-control--line-height, 1.25);
-        min-height: calc(
-                var(--text-control--line-height) * var(--text-control, 0.875rem) +
-                2 * var(--spacing-control-y) +
-                2 * 1px /* Assuming 1px border*/
-        );
+.form-control {
+    border: 1px solid var(--color-line, #d1d5db);
+    border-radius: var(--radius-control, 0.375rem);
+    background-color: var(--color-control-bg, rgba(125, 125, 125, 0.5));
+    padding: var(--spacing-control-y, 0.5rem) var(--spacing-control-y, 0.75rem);
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    font-size: var(--text-control, 1rem);
+    font-weight: var(--text-control--font-weight, 400);
+    letter-spacing: var(--text-control--letter-spacing, 0em);
+    line-height: var(--text-control--line-height, 1.25);
+    box-sizing: border-box;
+    color: var(--color-control-text, var(--color-fg));
+    min-height: calc(
+            var(--text-control--line-height) * var(--text-control, 0.875rem) +
+            2 * var(--spacing-control-y) +
+            2 * 1px /* Assuming 1px border*/
+    );
+}
 
-    }
+.form-control::placeholder,
+.control-placeholder-input::placeholder,
+.control-placeholder-apply {
+    color: var(--color-control-placeholder);
+    font-size: var(--text-control-placeholder, 0.875rem);
+    font-weight: var(--text-control--font-weight, 400);
+    letter-spacing: var(--text-control--letter-spacing, 0em);
+    line-height: var(--text-control--line-height, 1.25);
+    font-style: var(--text-control-placeholder--font-style, italic);
+}
 
-    .form-error-border .form-control, /* for Select */
-    .form-error-border {
-        border-color: var(--color-danger);
-    }
+.form-error-border .form-control, /* for Select */
+.form-error-border {
+    border-color: var(--color-danger-fade);
+}
 
-    .form-control:focus-within {
-        border-color: var(--color-primary); /* Focus border color */
-        box-shadow: none;
-        outline: none;
-    }
+.form-control:focus-within {
+    border-color: var(--color-primary); /* Focus border color */
+    box-shadow: none;
+    outline: none;
+}
 
-    .form-control:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+.form-control:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
 
-    .form-label {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--color-label-control);
-    }
+.form-label {
+    color: var(--color-control-label);
+    font-size: var(--text-control-label, 0.875rem);
+    font-weight: var(--text-control-label--font-weight, 500);
+    letter-spacing: var(--text-control-label--letter-spacing, 0em);
+    line-height: var(--text-control-label--line-height, 1.25);
+}
 
-    .form-error {
-        color: var(--color-danger);
-        font-size: 0.75rem;
-    }
+.form-error {
+    color: var(--color-danger);
+    font-size: 0.75rem;
+}
 
+.scroll-overlay {
+    scrollbar-width: none; /* Firefox: hidden */
+    -ms-overflow-style: none; /* IE/Edge legacy */
+}
+
+.scroll-overlay::-webkit-scrollbar {
+    width: 0;
+    height: 0; /* WebKit: hidden */
+}
+
+.scroll-overlay::-webkit-scrollbar-corner {
+    background: transparent; /* No corner block */
 }

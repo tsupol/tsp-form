@@ -1,0 +1,9 @@
+.popover {
+    position: fixed;
+    z-index: 100;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-control);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: opacity 0.2s ease-in-out;
+}

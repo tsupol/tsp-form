@@ -1,19 +1,30 @@
 {
   "compilerOptions": {
-    "target": "es2019",
+    "target": "es5",
     "module": "esnext",
-    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "jsx": "react",
+    "declaration": true, // Essential: Generates .d.ts files for every TypeScript file.
+    "declarationMap": true, // Optional: Generates source maps for .d.ts files, useful for debugging.
+    "emitDeclarationOnly": true, // Crucial: Ensures only .d.ts files are emitted, not .js files (Webpack handles .js).
+    "outDir": "./dist", // Specifies the output directory for the declaration files.
+    "rootDir": "./", // Specifies the root directory of your source files.
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
-    "declaration": true,
-    "outDir": "./dist",
-    "baseUrl": "./",
-    "lib": ["dom", "dom.iterable", "esnext"]
+    "allowSyntheticDefaultImports": true,
+    "noEmit": false // Allows tsc to emit files (in this case, only declarations).
   },
-  "include": ["src"],
-  "exclude": ["node_modules", "dist", "src/example"] // Added: Exclude src/example
-
+  "include": [
+    "index.ts", // Include your main library entry point.
+    "src/**/*.ts", // Include all TypeScript files in your src directory.
+    "src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/example" // Exclude the example application files from declaration generation.
+  ]
 }
