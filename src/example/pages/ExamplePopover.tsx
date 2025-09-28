@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { PopOver } from '../../components/PopOver';
 import { Button } from '../../components/Button';
 

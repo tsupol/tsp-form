@@ -1,37 +1,29 @@
-.scroll-overlay {
-    scrollbar-width: none; /* Firefox: hidden */
-    -ms-overflow-style: none; /* IE/Edge legacy */
+.better-scroll {
+    overflow-y: auto;
+    scrollbar-width: thin; /* Firefox */
 }
 
-.scroll-overlay::-webkit-scrollbar {
-    width: 0;
-    height: 0; /* WebKit: hidden */
+/* Webkit scrollbar styling */
+.better-scroll::-webkit-scrollbar {
+    width: 8px; /* Make it thin */
 }
 
-.scroll-overlay::-webkit-scrollbar-corner {
-    background: transparent; /* No corner block */
+.better-scroll::-webkit-scrollbar-track {
+    background: transparent;
 }
 
-@media (hover: hover) {
-    .scroll-overlay:hover {
-        scrollbar-width: var(--space-scrollbar-track);
-    }
+.better-scroll::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
 
-    .scroll-overlay:hover::-webkit-scrollbar {
-        width: var(--space-scrollbar-track);
-        height: var(--space-scrollbar-track);
-    }
+.better-scroll::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
 
-    .scroll-overlay:hover::-webkit-scrollbar-thumb {
-        background-color: var(--color-scrollbar-thumb);
-        border-radius: 9999px;
-    }
-
-    .scroll-overlay:hover::-webkit-scrollbar-track {
-        background: var(--color-scrollbar-track);
-    }
-
-    .scroll-overlay:hover::-webkit-scrollbar-corner {
-        background: var(--color-scrollbar-track);
-    }
+.better-scroll {
+    overflow-y: auto;
+    scrollbar-gutter: stable; /* Prevents layout shift */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox */
 }

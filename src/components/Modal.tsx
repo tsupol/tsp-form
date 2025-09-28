@@ -1,80 +1,93 @@
-"use client"
-import React, { CSSProperties, useEffect, useMemo, useRef } from 'react';
+import { CSSProperties, useEffect, useRef, type ReactNode, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { useModal } from '../context/ModalContext';
 import "../styles/modal.css";
+import { useModal } from '../context/ModalContext';
 
 type ModalProps = {
   id: string;
   open: boolean;
   onClose?: () => void;
-  closeOnBackdrop?: boolean;
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
-  backdropClassName?: string;
   ariaLabel?: string;
   width?: CSSProperties['width'];
   height?: CSSProperties['height'];
-  minWidth?: CSSProperties['minWidth'];
   maxWidth?: CSSProperties['maxWidth'];
-  minHeight?: CSSProperties['minHeight'];
   maxHeight?: CSSProperties['maxHeight'];
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 };
 
-const Z_BASE = 1000;
-const Z_STEP = 10;
+export const Modal = ({
+  id,
+  open,
+  onClose,
+  children,
+  className = '',
+  ariaLabel,
+  width,
+  height,
+  maxWidth,
+  maxHeight,
+  style
+}: ModalProps) => {
+  const modalHook = useModal(id);
+  const { isOpen, isTop, zIndex } = modalHook;
+  const mountNodeRef = useRef<HTMLElement | null>(null);
 
-export const Modal: React.FC<ModalProps> = ({
-                                              id,
-                                              open,
-                                              onClose,
-                                              closeOnBackdrop = true,
-                                              children,
-                                              className,
-                                              backdropClassName,
-                                              ariaLabel,
-                                              width = '38rem',
-                                              height,
-                                              minWidth,
-                                              maxWidth = 'calc(100vw - 2rem)',
-                                              minHeight,
-                                              maxHeight,
-                                              style
-                                            }) => {
-  const mountNode = useRef<HTMLElement | null>(null);
-
+  // Create mount node
   useEffect(() => {
-    if (mountNode.current || typeof document === 'undefined') return;
+    if (typeof document === 'undefined') return;
+
     const el = document.createElement('div');
-    el.setAttribute('data-modal-layer', id);
+    el.setAttribute('data-modal-mount', id);
     document.body.appendChild(el);
-    mountNode.current = el;
+    mountNodeRef.current = el;
+
     return () => {
-      el.remove();
+      if (el.parentNode) {
+        el.parentNode.removeChild(el);
+      }
     };
   }, [id]);
 
-  const { isTop, index } = useModal(id, open);
-  const zIndex = useMemo(
-    () => (index >= 0 ? Z_BASE + index * Z_STEP : Z_BASE),
-    [index]
-  );
+  // Sync open state with modal context
+  useEffect(() => {
+    if (open && !isOpen) {
+      modalHook.open();
+    } else if (!open && isOpen) {
+      modalHook.close();
+    }
+  }, [open, isOpen, modalHook]);
 
-  const handleBackdrop = () => {
-    if (isTop && closeOnBackdrop) onClose?.();
-  };
+  // Handle escape key for this specific modal
+  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
+    if (event.key === 'Escape' && isTop) {
+      event.preventDefault();
+      event.stopPropagation();
+      onClose?.();
+    }
+  }, [isTop, onClose]);
 
-  if (!mountNode.current) return null;
+  // Handle backdrop click on the modal layer
+  const handleLayerClick = useCallback((event: React.MouseEvent) => {
+    // Only close if this is the top modal and clicking the layer (not the panel)
+    if (event.target === event.currentTarget && isTop) {
+      onClose?.();
+    }
+  }, [isTop, onClose]);
 
-  const panelStyle: React.CSSProperties = {
+  // Prevent closing when clicking inside modal panel
+  const handleModalClick = useCallback((event: React.MouseEvent) => {
+    event.stopPropagation();
+  }, []);
+
+  if (!mountNodeRef.current || !isOpen) return null;
+
+  const panelStyle: CSSProperties = {
     width,
     height,
-    minWidth,
-    minHeight,
-    // cap to viewport
-    maxWidth: maxWidth ?? '100vw',
-    maxHeight: maxHeight ?? '100vh',
+    maxWidth,
+    maxHeight,
     ...style
   };
 
@@ -82,25 +95,89 @@ export const Modal: React.FC<ModalProps> = ({
     <div
       className="modal-layer"
       style={{ zIndex }}
-      data-open={open ? 'true' : 'false'}
+      data-open="true"
       data-top={isTop ? 'true' : 'false'}
-      aria-hidden={!open}
+      data-modal-id={id}
+      onKeyDown={handleKeyDown}
+      onClick={handleLayerClick}
     >
-      <div
-        className={`modal-backdrop ${backdropClassName ?? ''}`}
-        onClick={handleBackdrop}
-      />
       <div
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
-        className={`modal-panel ${className ?? ''}`}
+        className={`modal-panel ${className}`.trim()}
         style={panelStyle}
+        tabIndex={-1}
+        onClick={handleModalClick}
       >
         {children}
       </div>
     </div>,
-    mountNode.current
+    mountNodeRef.current
   );
 };
 
+// Convenience wrapper component with common modal structure
+export interface ModalWrapperProps {
+  id: string;
+  isOpen: boolean;
+  onClose: () => void;
+  children: ReactNode;
+  title?: string;
+  showCloseButton?: boolean;
+  footer?: ReactNode;
+  width?: CSSProperties['width'];
+  maxWidth?: CSSProperties['maxWidth'];
+  className?: string;
+}
+
+export const ModalWrapper = ({
+  id,
+  isOpen,
+  onClose,
+  children,
+  title,
+  showCloseButton = true,
+  footer,
+  width = '500px',
+  maxWidth = '90vw',
+  className = ''
+}: ModalWrapperProps) => {
+  return (
+    <Modal
+      id={id}
+      open={isOpen}
+      onClose={onClose}
+      ariaLabel={title}
+      width={width}
+      maxWidth={maxWidth}
+      className={className}
+    >
+      {title && (
+        <header className="modal-header">
+          <h2 className="modal-title">{title}</h2>
+          {showCloseButton && (
+            <button
+              type="button"
+              className="modal-close-btn"
+              onClick={onClose}
+              aria-label="Close modal"
+            >
+              ×
+            </button>
+          )}
+        </header>
+      )}
+
+      <div className="modal-content">
+        {children}
+      </div>
+
+      {footer && (
+        <footer className="modal-footer">
+          {footer}
+        </footer>
+      )}
+    </Modal>
+  );
+};

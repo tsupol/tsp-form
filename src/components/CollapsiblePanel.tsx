@@ -1,5 +1,4 @@
-"use client"
-import React, { useState } from 'react';
+import { useState, type ReactNode, type ComponentProps } from 'react';
 import clsx from 'clsx';
 import { Chevron } from './Chevron';
 import "../styles/form.css";
@@ -14,8 +13,8 @@ export const CollapsiblePanel = ({
                                 }: {
   title: string;
   className?: string;
-  children: React.ReactNode;
-  chevronProps?: React.ComponentProps<typeof Chevron>;
+  children: ReactNode;
+  chevronProps?: ComponentProps<typeof Chevron>;
   defaultOpen?: boolean;
 }) => {
   const [open, setOpen] = useState(defaultOpen);

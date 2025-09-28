@@ -1,6 +1,6 @@
-import React from 'react';
+import { type ReactNode } from 'react';
 
-export const ContentPanel = ({ title, children }: { title: string; children: React.ReactNode}) => {
+export const ContentPanel = ({ title, children }: { title: string; children: ReactNode}) => {
   return (
     <div className="content-panel">
       <div className="content-panel-header-wrapper">

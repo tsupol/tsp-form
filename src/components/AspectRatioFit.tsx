@@ -1,21 +1,19 @@
-"use client";
-import React from 'react';
-import { FC, useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 import "../styles/aspect-ratio-fit.css";
 
 interface AspectRatioFitProps {
-  children: React.ReactNode;
+  children: ReactNode;
   aspectRatio?: number; // width/height ratio, default 1 (square)
   className?: string;
   padding?: number; // padding from container edges
 }
 
-export const AspectRatioFit: FC<AspectRatioFitProps> = ({
-                                                          children,
-                                                          aspectRatio = 1,
-                                                          className = '',
-                                                          padding = 0 // Changed default from 20 to 0
-                                                        }) => {
+export const AspectRatioFit = ({
+  children,
+  aspectRatio = 1,
+  className = '',
+  padding = 0 // Changed default from 20 to 0
+}: AspectRatioFitProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 

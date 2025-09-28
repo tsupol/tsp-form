@@ -1,8 +1,12 @@
-const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import path from 'path';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
+import { fileURLToPath } from 'url';
 
-module.exports = (env) => {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+export default (env) => {
 	const isLibraryBuild = env.APP_MODE === 'library';
+	const isExampleBuild = env.APP_MODE === 'example';
 
 	const commonConfig = {
 		resolve: {
@@ -23,7 +27,27 @@ module.exports = (env) => {
 				// Add this rule for CSS files
 				{
 					test: /\.css$/,
-					use: ['style-loader', 'css-loader'],
+					use: [
+						'style-loader',
+						{
+							loader: 'css-loader',
+							options: {
+								importLoaders: isExampleBuild ? 1 : 0,
+							},
+						},
+						...(isExampleBuild ? [
+							{
+								loader: 'postcss-loader',
+								options: {
+									postcssOptions: {
+										plugins: [
+											'@tailwindcss/postcss'
+										],
+									},
+								},
+							}
+						] : []),
+					],
 				},
 			],
 		},
@@ -32,47 +56,20 @@ module.exports = (env) => {
 	if (isLibraryBuild) {
 		return {
 			...commonConfig,
-			entry: './index.ts', // Entry point for the component library
+			entry: './index.ts',
+			experiments: {
+				outputModule: true,
+			},
 			output: {
 				path: path.resolve(__dirname, 'dist'),
 				filename: 'index.js',
 				library: {
-					name: 'MyUIComponents',
-					type: 'umd', // Universal Module Definition (CJS, AMD, global)
+					type: 'module',
 				},
-				globalObject: 'this', // For UMD to work correctly in different environments
-				clean: true, // Clean the dist folder before each build
-				libraryTarget: 'umd', // Legacy, prefer 'library.type'
-				umdNamedDefine: true, // Give a name to the AMD module
-				auxiliaryComment: 'Button Component Library',
+				clean: false, // Don't clean - preserve TypeScript declarations
 			},
-			externals: {
-				// Don't bundle React and ReactDOM, expect them to be provided by the consumer
-				react: {
-					commonjs: 'react',
-					commonjs2: 'react',
-					amd: 'react',
-					root: 'React',
-				},
-				'react-dom': {
-					commonjs: 'react-dom',
-					commonjs2: 'react-dom',
-					amd: 'react-dom',
-					root: 'ReactDOM',
-				},
-				clsx: {
-					commonjs: 'clsx',
-					commonjs2: 'clsx',
-					amd: 'clsx',
-					root: 'clsx',
-				},
-				'react-hook-form': {
-					commonjs: 'react-hook-form',
-					commonjs2: 'react-hook-form',
-					amd: 'react-hook-form',
-					root: 'ReactHookForm',
-				},
-			},
+			externalsType: 'module',
+			externals: ['react', 'react-dom', 'react-router-dom', 'clsx', 'tailwindcss', 'postcss', 'postcss-loader', '@tailwindcss/postcss', 'react-hook-form', 'lucide-react'],
 			optimization: {
 				minimize: true,
 			},
@@ -81,24 +78,25 @@ module.exports = (env) => {
 		// Development server for the example app
 		return {
 			...commonConfig,
-			entry: './src/example/index.tsx', // Changed: Entry point for the example app
+			entry: './src/example/index.tsx',
 			output: {
 				path: path.resolve(__dirname, 'dist'),
 				filename: 'bundle.js',
 			},
 			plugins: [
 				new HtmlWebpackPlugin({
-					template: path.resolve(__dirname, 'src/example/index.html'), // Changed: Path to your HTML template
+					template: path.resolve(__dirname, 'src/example/index.html'),
 				}),
 			],
 			devServer: {
 				static: {
-					directory: path.join(__dirname, 'dist'), // The static directory should point to where webpack-dev-server serves files
+					directory: path.join(__dirname, 'dist'),
 				},
 				compress: true,
-				port: 3000,
+				port: 3001,
 				open: true,
 				hot: true,
+				historyApiFallback: true,
 			},
 			devtool: 'eval-source-map',
 		};

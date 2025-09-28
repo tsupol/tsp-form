@@ -1,5 +1,4 @@
-"use client"
-import React, { createContext, useState, useContext, useCallback, ReactNode } from 'react';
+import { createContext, useState, useContext, useCallback, ReactNode } from 'react';
 import { SnackbarProps, Snackbar, SnackbarPosition, SnackbarType } from '../components/Snackbar';
 
 // Make type, duration, and position optional in AddSnackbarOptions
@@ -23,7 +22,7 @@ interface SnackbarProviderProps {
   defaults?: SnackbarDefaults; // Optional defaults prop
 }
 
-export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({ children, defaults }) => {
+export const SnackbarProvider = ({ children, defaults }: SnackbarProviderProps) => {
   const [snackbars, setSnackbars] = useState<Record<SnackbarPosition, SnackbarProps[]>>({
     'top-right': [],
     'bottom-right': [],

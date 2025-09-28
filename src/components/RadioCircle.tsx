@@ -1,5 +1,4 @@
-'use client';
-import React, { forwardRef, HTMLAttributes } from "react";
+import { forwardRef, HTMLAttributes, type CSSProperties } from "react";
 import clsx from "clsx";
 
 export type RadioCircleProps = HTMLAttributes<HTMLDivElement> & {
@@ -9,7 +8,7 @@ export type RadioCircleProps = HTMLAttributes<HTMLDivElement> & {
 
 export const RadioCircle = forwardRef<HTMLDivElement, RadioCircleProps>(
   ({ className, width = '1.2rem', checked, style, ...rest }, ref) => {
-    const defaultCircleStyle: React.CSSProperties = {
+    const defaultCircleStyle: CSSProperties = {
       display: 'inline-flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -24,7 +23,7 @@ export const RadioCircle = forwardRef<HTMLDivElement, RadioCircleProps>(
       borderColor: checked ? 'var(--color-primary)' : 'var(--border-color, #cccccc)',
     };
 
-    const innerDotStyle: React.CSSProperties = {
+    const innerDotStyle: CSSProperties = {
       width: '60%',
       height: '60%',
       backgroundColor: 'var(--color-primary-contrast)',

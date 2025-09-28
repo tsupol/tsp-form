@@ -1,13 +1,12 @@
-'use client';
-import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
+import { useEffect, useRef, useState, useLayoutEffect, ReactNode } from 'react';
 import "../styles/scroll.css";
 import "../styles/popover.css";
 
 interface PopOverProps {
   isOpen: boolean;
   onClose: () => void;
-  trigger: React.ReactNode;
-  children: React.ReactNode;
+  trigger: ReactNode;
+  children: ReactNode;
   placement?: 'bottom' | 'top' | 'left' | 'right';
   align?: 'start' | 'center' | 'end';
   className?: string;
@@ -16,27 +15,30 @@ interface PopOverProps {
   minWidth?: string;
   maxWidth?: string;
   maxHeight?: string;
+  openDelay?: number; // small delay to prevent initial flicker
 }
 
 export function PopOver({
-                          isOpen,
-                          onClose,
-                          trigger,
-                          children,
-                          placement = 'bottom',
-                          align = 'start',
-                          className = '',
-                          triggerClassName = '',
-                          width = '200px',
-                          minWidth = '200px',
-                          maxWidth = '400px',
-                          maxHeight = '300px',
-                        }: PopOverProps) {
+  isOpen,
+  onClose,
+  trigger,
+  children,
+  placement = 'bottom',
+  align = 'start',
+  className = '',
+  triggerClassName = '',
+  width = '200px',
+  minWidth = '200px',
+  maxWidth = '400px',
+  maxHeight = '300px',
+  openDelay = 80,
+}: PopOverProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [actualPlacement, setActualPlacement] = useState(placement);
   const [isPositioned, setIsPositioned] = useState(false);
+  const [hasDelayElapsed, setHasDelayElapsed] = useState(false);
 
   const calculatePosition = () => {
     if (!triggerRef.current || !popoverRef.current || !isOpen) return;
@@ -166,6 +168,20 @@ export function PopOver({
     setIsPositioned(true);
   };
 
+  // Delay visibility to avoid first-time flicker
+  useEffect(() => {
+    let t: NodeJS.Timeout | undefined;
+    if (isOpen) {
+      setHasDelayElapsed(false);
+      t = setTimeout(() => setHasDelayElapsed(true), openDelay);
+    } else {
+      setHasDelayElapsed(false);
+    }
+    return () => {
+      if (t) clearTimeout(t);
+    };
+  }, [isOpen, openDelay]);
+
   // Initial positioning
   useLayoutEffect(() => {
     if (isOpen) {
@@ -245,8 +261,8 @@ export function PopOver({
       {isOpen && (
         <div
           ref={popoverRef}
-          className={`popover scroll-overlay ${
-            isPositioned ? 'opacity-100' : 'opacity-0'
+          className={`popover better-scroll ${
+            isPositioned && hasDelayElapsed ? 'opacity-100' : 'opacity-0'
           } ${className}`}
           style={{
             top: position.top,

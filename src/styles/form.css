@@ -56,17 +56,3 @@
     color: var(--color-danger);
     font-size: 0.75rem;
 }
-
-.scroll-overlay {
-    scrollbar-width: none; /* Firefox: hidden */
-    -ms-overflow-style: none; /* IE/Edge legacy */
-}
-
-.scroll-overlay::-webkit-scrollbar {
-    width: 0;
-    height: 0; /* WebKit: hidden */
-}
-
-.scroll-overlay::-webkit-scrollbar-corner {
-    background: transparent; /* No corner block */
-}

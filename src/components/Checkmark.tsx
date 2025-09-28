@@ -1,6 +1,6 @@
-"use client"
-import React from 'react';
-export function Checkmark(props: React.SVGProps<SVGSVGElement>) {
+import { type SVGProps } from 'react';
+
+export function Checkmark(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -13,7 +13,7 @@ export function Checkmark(props: React.SVGProps<SVGSVGElement>) {
       focusable="false"
       {...props}
     >
-      <polyline points="20 6 9 17 4 12" />
+      <polyline points="20 6 9 17 4 12"/>
     </svg>
   );
 }

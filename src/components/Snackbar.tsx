@@ -1,5 +1,4 @@
-"use client"
-import React, { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import '../styles/snackbar.css';
 
 // Define the possible positions for the snackbar
@@ -15,14 +14,14 @@ export interface SnackbarProps {
   position: SnackbarPosition;
 }
 
-export const Snackbar: React.FC<SnackbarProps> = ({
-                                                    id,
-                                                    message,
-                                                    type,
-                                                    duration,
-                                                    onRemove,
-                                                    position,
-                                                  }) => {
+export const Snackbar = ({
+  id,
+  message,
+  type,
+  duration,
+  onRemove,
+  position,
+}:SnackbarProps) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const startTimeRef = useRef<number>(Date.now());
   const remainingTimeRef = useRef<number>(duration);

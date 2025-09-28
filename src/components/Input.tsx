@@ -1,5 +1,4 @@
-'use client';
-import React, { forwardRef, InputHTMLAttributes } from "react";
+import { forwardRef, InputHTMLAttributes } from "react";
 import clsx from "clsx";
 import "../styles/form.css";
 

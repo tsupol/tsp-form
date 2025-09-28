@@ -1,18 +1,16 @@
-"use client";
-import React from 'react';
-import { FC, useEffect, useRef, useState } from 'react';
+import { FC, useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface ScreenHeightFitProps {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   padding?: number; // padding from bottom of screen
 }
 
-export const ScreenHeightFit: FC<ScreenHeightFitProps> = ({
+export const ScreenHeightFit = ({
                                                             children,
                                                             className = '',
                                                             padding = 20
-                                                          }) => {
+                                                          }:ScreenHeightFitProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [height, setHeight] = useState(0);
 

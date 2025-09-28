@@ -18,5 +18,6 @@ export * from './src/components/ScreenHeightFit';
 export * from './src/components/Select';
 export * from './src/components/TextArea';
 export * from './src/components/Snackbar';
+export * from './src/components/SideMenu';
 export * from './src/context/ModalContext';
 export * from './src/context/SnackbarContext';

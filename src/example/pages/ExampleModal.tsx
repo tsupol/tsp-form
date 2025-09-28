@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useSnackbarContext } from '../../context/SnackbarContext'; // Import the useSnackbar hook
-import { Modal } from '../../components/Modal';
+import { Modal, ModalWrapper } from '../../components/Modal';
 import { Button } from '../../components/Button';
 
-export const ExampleModal: React.FC = () => {
+export const ExampleModal = () => {
   const [openA, setOpenA] = useState(false);
+  const [showForm, setShowForm] = useState(false);
   const [openB, setOpenB] = useState(false);
   const { addSnackbar } = useSnackbarContext();
 
@@ -38,6 +39,7 @@ export const ExampleModal: React.FC = () => {
     <div className="page-content">
       <div className="flex gap-2">
         <Button variant="outline" onClick={handleOpenA}>Open A</Button>
+        <Button variant="outline" onClick={() => setShowForm(true)}>Open C</Button>
         <Button onClick={() => addSnackbar({
           message: getRandomWord(),
           type: getRandomSnackbarType(),
@@ -63,7 +65,7 @@ export const ExampleModal: React.FC = () => {
         </Button>
       </div>
 
-      <Modal id="modal-a" open={openA} onClose={handleCloseA} ariaLabel="Modal A">
+      <Modal id="modal-a" open={openA} onClose={handleCloseA} maxWidth="400px" ariaLabel="Modal A">
         <h2>Modal A</h2>
         <p>First modal</p>
         <div className="flex gap-2">
@@ -72,11 +74,30 @@ export const ExampleModal: React.FC = () => {
         </div>
       </Modal>
 
-      <Modal id="modal-b" open={openB} onClose={handleCloseB} ariaLabel="Modal B">
+      <Modal id="modal-b" open={openB} onClose={handleCloseB} maxWidth="300px" ariaLabel="Modal B">
         <h2>Modal B</h2>
         <p>Second modal on top</p>
         <Button onClick={handleCloseB}>Close B</Button>
       </Modal>
+
+      <ModalWrapper
+        id="form-modal"
+        isOpen={showForm}
+        onClose={() => setShowForm(false)}
+        title="User Form"
+        footer={
+          <div>
+            <button onClick={() => setShowForm(false)}>Cancel</button>
+            <button onClick={()=> addSnackbar({
+              message: getRandomWord(),
+              type: getRandomSnackbarType(),
+              position: 'bottom-center',
+            })}>Save</button>
+          </div>
+        }
+      >
+        Mock Form
+      </ModalWrapper>
     </div>
   );
 };

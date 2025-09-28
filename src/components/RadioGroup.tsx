@@ -1,10 +1,10 @@
-"use client"
-import React from 'react';
 import { RadioCircle, RadioCircleProps } from './RadioCircle';
+
+import type { ReactNode, ComponentProps } from 'react';
 
 interface RadioOption<T> {
   value: T;
-  label: React.ReactNode;
+  label: ReactNode;
 }
 
 interface RadioGroupProps<T extends string | number> {

@@ -1,10 +1,9 @@
-"use client"
-import React, { forwardRef } from "react";
+import { forwardRef, ButtonHTMLAttributes } from "react";
 import clsx from "clsx";
 import "../styles/form.css";
 import "../styles/button.css";
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   color?: string;
   variant?: string;
   size?: string;

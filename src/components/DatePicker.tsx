@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import '../styles/datepicker.css';
 import clsx from 'clsx';
 
@@ -23,18 +21,18 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-export const DatePicker: React.FC<DatePickerProps> = ({
-                                                        mode = 'single',
-                                                        selectedDate,
-                                                        toDate,
-                                                        fromDate,
-                                                        onChange,
-                                                        onToDateChange,
-                                                        minDate,
-                                                        maxDate,
-                                                        disabled = false,
-                                                        className
-                                                      }) => {
+export const DatePicker = ({
+  mode = 'single',
+  selectedDate,
+  toDate,
+  fromDate,
+  onChange,
+  onToDateChange,
+  minDate,
+  maxDate,
+  disabled = false,
+  className
+}: DatePickerProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
@@ -164,7 +162,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 
     // Empty cells for days before the first day of the month
     for (let i = 0; i < firstDayOfWeek; i++) {
-      days.push(<div key={`empty-${i}`} className="datepicker-day-empty" />);
+      days.push(<div key={`empty-${i}`} className="datepicker-day-empty"/>);
     }
 
     // Days of the month

@@ -1,4 +1,3 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { CollapsiblePanel } from '../components/CollapsiblePanel';
 import { ExampleButtons } from './pages/ExampleButtons';
@@ -9,36 +8,105 @@ import { ExampleProse } from './pages/ExampleProse';
 import { ExampleModal } from './pages/ExampleModal';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider } from '../context/SnackbarContext';
-import './styles/utils.css';
+import { Home, FileText } from 'lucide-react';
+import { SideMenu } from '../components/SideMenu';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { clsx } from 'clsx';
 import './example.css';
 
+const SideNav = () => {
+
+  const [menuCollapsed, setMenuCollapsed] = useState(false);
+  const navigate = useNavigate();
+  const customMenuItems = [
+    { icon: <Home size="1rem"/>, label: "Dashboard", to: '/dashboard' },
+    { icon: <FileText size="1rem"/>, label: "Documents", to: '/docs' },
+  ];
+  return (
+    <div className={clsx('h-screen flex-shrink-0', menuCollapsed ? 'md:w-side-menu-min' : 'md:w-side-menu')}>
+      <SideMenu
+        isCollapsed={false}
+        onToggleCollapse={(collapsed) => setMenuCollapsed(collapsed)}
+        linkFn={(to) => navigate(to)}
+        className="bg-surface-shallow border-r border-line"
+        titleRenderer={(collapsed, handleToggle) => (
+          <div className="flex pointer-events-auto relative w-side-menu p-2" onClick={() => handleToggle()}>
+            <button
+              className="bg-primary text-primary-contrast w-8 h-8 shrink-0 cursor-pointer rounded-lg"
+              aria-label={collapsed ? "Expand menu" : "Collapse menu"}
+            >
+              {collapsed ? '>' : '<'}
+            </button>
+            <div className="flex justify-center items-center w-full cursor-pointer"
+                 style={{ visibility: collapsed ? 'hidden' : 'visible' }}>TSP Form
+            </div>
+          </div>
+        )}
+        items={(
+          <div className="flex flex-col w-full h-full min-h-0">
+            <div className="side-menu-content better-scroll">
+              <div className={clsx('p-2 flex flex-col w-side-menu', menuCollapsed ? 'items-start' : '')}>
+                {customMenuItems.map((item, index) => {
+                  return (
+                    <Link key={index} className="flex py-1 rounded-lg transition-all text-item-fg hover:bg-item-hover-bg" to={item.to}>
+                      <div className="flex justify-center items-center w-8 h-8">
+                        {item.icon}
+                      </div>
+                      {!menuCollapsed && (
+                        <div className="flex items-center">
+                          {item.label}
+                        </div>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+            <div className="h-10 w-full border-t border-line flex justify-center items-center p-4">
+              {menuCollapsed ? 'U' : 'User'}
+            </div>
+          </div>
+        )}
+      />
+    </div>
+  );
+};
+
 const App = () => {
+
   return (
     <ModalProvider>
       <SnackbarProvider>
-        <div>
-          <h1 className="mb-6">Components</h1>
-          <div className="grid gap-4">
-            <CollapsiblePanel title="Modal">
-              <ExampleModal/>
-            </CollapsiblePanel>
-            <CollapsiblePanel title="Form">
-              <ExampleForm/>
-            </CollapsiblePanel>
-            <CollapsiblePanel title="PopOver">
-              <ExamplePopOver/>
-            </CollapsiblePanel>
-            <CollapsiblePanel title="Responsive Tabs">
-              <ExampleTabs/>
-            </CollapsiblePanel>
-            <CollapsiblePanel title="Buttons">
-              <ExampleButtons/>
-            </CollapsiblePanel>
-            <CollapsiblePanel title="Prose">
-              <ExampleProse/>
-            </CollapsiblePanel>
+        <BrowserRouter>
+          <div className="flex">
+            <SideNav/>
+            <div className="p-4">
+              <h1 className="">Components</h1>
+              <div className="grid gap-4">
+                <CollapsiblePanel title="Modal">
+                  <ExampleModal/>
+                </CollapsiblePanel>
+                <CollapsiblePanel title="Form">
+                  <ExampleForm/>
+                </CollapsiblePanel>
+                <CollapsiblePanel title="PopOver">
+                  <ExamplePopOver/>
+                </CollapsiblePanel>
+                <CollapsiblePanel title="Responsive Tabs">
+                  <ExampleTabs/>
+                </CollapsiblePanel>
+                <CollapsiblePanel title="Buttons">
+                  <ExampleButtons/>
+                </CollapsiblePanel>
+                <CollapsiblePanel title="Prose">
+                  <ExampleProse/>
+                </CollapsiblePanel>
+              </div>
+            </div>
           </div>
-        </div>
+        </BrowserRouter>
       </SnackbarProvider>
     </ModalProvider>
   );

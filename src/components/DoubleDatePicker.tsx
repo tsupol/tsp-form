@@ -1,8 +1,6 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import '../styles/datepicker.css';
+import { useState, useEffect } from 'react';
 import clsx from 'clsx';
+import '../styles/datepicker.css';
 
 export interface DoubleDatePickerProps {
   fromDate?: Date | null;
@@ -21,16 +19,16 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
-export const DoubleDatePicker: React.FC<DoubleDatePickerProps> = ({
-                                                                    fromDate,
-                                                                    toDate,
-                                                                    onChange,
-                                                                    onToDateChange,
-                                                                    minDate,
-                                                                    maxDate,
-                                                                    disabled = false,
-                                                                    className
-                                                                  }) => {
+export const DoubleDatePicker = ({
+  fromDate,
+  toDate,
+  onChange,
+  onToDateChange,
+  minDate,
+  maxDate,
+  disabled = false,
+  className
+}: DoubleDatePickerProps) => {
   // Initialize months - if fromDate exists, use its month, otherwise use current month
   const initialMonth = fromDate ? fromDate.getMonth() : new Date().getMonth();
   const initialYear = fromDate ? fromDate.getFullYear() : new Date().getFullYear();
@@ -150,7 +148,7 @@ export const DoubleDatePicker: React.FC<DoubleDatePickerProps> = ({
 
     // Empty cells for days before the first day of the month
     for (let i = 0; i < firstDayOfWeek; i++) {
-      days.push(<div key={`empty-${i}`} className="datepicker-day-empty" />);
+      days.push(<div key={`empty-${i}`} className="datepicker-day-empty"/>);
     }
 
     // Days of the month

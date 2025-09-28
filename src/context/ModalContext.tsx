@@ -1,56 +1,276 @@
-// src/context/ModalContext.tsx
-"use client";
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useRef
+} from "react";
+import { createPortal } from 'react-dom';
 
-type Ctx = {
-  stack: string[];
-  setOpen: (id: string, open: boolean) => void;
-  unregister: (id: string) => void;
-  isTop: (id: string) => boolean;
-  indexOf: (id: string) => number;
+type ModalState = {
+  id: string;
+  zIndex: number;
 };
 
-const ModalContext = createContext<Ctx | null>(null);
+type ModalContextValue = {
+  stack: ModalState[];
+  openModal: (id: string) => void;
+  closeModal: (id: string) => void;
+  closeAll: () => void;
+  closeTop: () => void;
+  isOpen: (id: string) => boolean;
+  isTop: (id: string) => boolean;
+  getZIndex: (id: string) => number;
+  hasModals: boolean;
+};
 
-export const ModalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [stack, setStack] = useState<string[]>([]);
+const ModalContext = createContext<ModalContextValue | null>(null);
 
-  const setOpen = useCallback((id: string, open: boolean) => {
+export interface ModalProviderProps {
+  children: ReactNode;
+  baseZIndex?: number;
+  bodyClassName?: string;
+}
+
+export const ModalProvider = ({
+  children,
+  baseZIndex = 1000,
+  bodyClassName = "has-modal-open"
+}: ModalProviderProps) => {
+  const [stack, setStack] = useState<ModalState[]>([]);
+  const backdropMountRef = useRef<HTMLElement | null>(null);
+
+  // Create backdrop mount point
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const backdropMount = document.createElement('div');
+    backdropMount.className = 'modal-backdrop-mount';
+    backdropMount.style.position = 'fixed';
+    backdropMount.style.inset = '0';
+    backdropMount.style.pointerEvents = 'none';
+    // Backdrop z-index is always one level below the top modal
+    backdropMount.style.zIndex = (baseZIndex - 1).toString();
+    document.body.appendChild(backdropMount);
+    backdropMountRef.current = backdropMount;
+
+    return () => {
+      if (backdropMount.parentNode) {
+        backdropMount.parentNode.removeChild(backdropMount);
+      }
+    };
+  }, [baseZIndex]);
+
+  // Update backdrop z-index when stack changes
+  useEffect(() => {
+    if (backdropMountRef.current && stack.length > 0) {
+      // Backdrop should be below the top modal but above all other modals
+      // Top modal gets the highest z-index, backdrop gets second highest
+      const topModalZIndex = baseZIndex + stack.length;
+      const backdropZIndex = topModalZIndex - 1;
+      backdropMountRef.current.style.zIndex = backdropZIndex.toString();
+    }
+  }, [stack.length, baseZIndex]);
+
+  const openModal = useCallback((id: string) => {
+    if (!id) return;
+
     setStack(prev => {
-      const has = prev.includes(id);
-      if (open && !has) return [...prev, id];
-      if (!open && has) return prev.filter(x => x !== id);
-      return prev;
+      // Don't add if already open
+      if (prev.some(modal => modal.id === id)) {
+        return prev;
+      }
+
+      const newModal: ModalState = {
+        id,
+        zIndex: baseZIndex + prev.length + 1
+      };
+
+      return [...prev, newModal];
     });
+  }, [baseZIndex]);
+
+  const closeModal = useCallback((id: string) => {
+    setStack(prev => {
+      const modalIndex = prev.findIndex(modal => modal.id === id);
+      if (modalIndex === -1) return prev;
+
+      // Remove the modal and recalculate z-indices
+      const newStack = prev.filter(modal => modal.id !== id);
+      return newStack.map((modal, index) => ({
+        ...modal,
+        zIndex: baseZIndex + index + 1
+      }));
+    });
+  }, [baseZIndex]);
+
+  const closeAll = useCallback(() => {
+    setStack([]);
   }, []);
 
-  const unregister = useCallback((id: string) => {
-    setStack(prev => prev.filter(x => x !== id));
+  const closeTop = useCallback(() => {
+    setStack(prev => prev.slice(0, -1));
   }, []);
 
-  const isTop = useCallback((id: string) => stack[stack.length - 1] === id, [stack]);
-  const indexOf = useCallback((id: string) => stack.indexOf(id), [stack]);
+  const isOpen = useCallback((id: string) => {
+    return stack.some(modal => modal.id === id);
+  }, [stack]);
 
+  const isTop = useCallback((id: string) => {
+    const topModal = stack[stack.length - 1];
+    return topModal?.id === id;
+  }, [stack]);
+
+  const getZIndex = useCallback((id: string) => {
+    const modal = stack.find(m => m.id === id);
+    return modal?.zIndex ?? baseZIndex;
+  }, [stack, baseZIndex]);
+
+  const hasModals = stack.length > 0;
+
+  // Handle body class and scroll lock
   useEffect(() => {
     if (typeof document === "undefined") return;
-    if (stack.length > 0) document.body.classList.add("has-modal-open");
-    else document.body.classList.remove("has-modal-open");
-  }, [stack.length]);
 
-  const value = useMemo<Ctx>(() => ({ stack, setOpen, unregister, isTop, indexOf }), [stack, setOpen, unregister, isTop, indexOf]);
+    const body = document.body;
 
-  return <ModalContext.Provider value={value}>{children}</ModalContext.Provider>;
+    if (hasModals) {
+      const originalOverflow = body.style.overflow;
+      const originalPaddingRight = body.style.paddingRight;
+
+      // Calculate scrollbar width to prevent layout shift
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+      body.classList.add(bodyClassName);
+      body.style.overflow = "hidden";
+      if (scrollbarWidth > 0) {
+        body.style.paddingRight = `${scrollbarWidth}px`;
+      }
+
+      return () => {
+        body.classList.remove(bodyClassName);
+        body.style.overflow = originalOverflow;
+        body.style.paddingRight = originalPaddingRight;
+      };
+    } else {
+      body.classList.remove(bodyClassName);
+      body.style.overflow = "";
+      body.style.paddingRight = "";
+    }
+  }, [hasModals, bodyClassName]);
+
+  // Handle backdrop click to close top modal
+  const handleBackdropClick = useCallback(() => {
+    if (hasModals) {
+      closeTop();
+    }
+  }, [hasModals, closeTop]);
+
+  // Global escape key handler
+  useEffect(() => {
+    if (!hasModals) return;
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeTop();
+      }
+    };
+
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [hasModals, closeTop]);
+
+  const contextValue = useMemo<ModalContextValue>(() => ({
+    stack,
+    openModal,
+    closeModal,
+    closeAll,
+    closeTop,
+    isOpen,
+    isTop,
+    getZIndex,
+    hasModals
+  }), [
+    stack,
+    openModal,
+    closeModal,
+    closeAll,
+    closeTop,
+    isOpen,
+    isTop,
+    getZIndex,
+    hasModals
+  ]);
+
+  return (
+    <ModalContext.Provider value={contextValue}>
+      {children}
+
+      {/* Single global backdrop */}
+      {backdropMountRef.current && hasModals && createPortal(
+        <div
+          className="modal-global-backdrop"
+          onClick={handleBackdropClick}
+          aria-hidden="true"
+        />,
+        backdropMountRef.current
+      )}
+    </ModalContext.Provider>
+  );
 };
 
-export const useModal = (id: string, open: boolean) => {
+export interface UseModalReturn {
+  isOpen: boolean;
+  isTop: boolean;
+  zIndex: number;
+  open: () => void;
+  close: () => void;
+  toggle: () => void;
+}
+
+export const useModal = (id: string): UseModalReturn => {
   const ctx = useContext(ModalContext);
-  if (!ctx) throw new Error("useModal must be used within ModalProvider");
-  const { setOpen, unregister, isTop, indexOf } = ctx;
+  if (!ctx) {
+    throw new Error("useModal must be used within ModalProvider");
+  }
 
-  useEffect(() => {
-    setOpen(id, open);
-    return () => unregister(id);
-  }, [id, open, setOpen, unregister]);
+  if (!id) {
+    throw new Error("Modal ID is required");
+  }
 
-  return { isTop: isTop(id), index: indexOf(id) };
+  const { openModal, closeModal, isOpen: ctxIsOpen, isTop: ctxIsTop, getZIndex } = ctx;
+
+  const isOpen = ctxIsOpen(id);
+  const isTop = ctxIsTop(id);
+  const zIndex = getZIndex(id);
+
+  const open = useCallback(() => {
+    openModal(id);
+  }, [openModal, id]);
+
+  const close = useCallback(() => {
+    closeModal(id);
+  }, [closeModal, id]);
+
+  const toggle = useCallback(() => {
+    if (isOpen) {
+      close();
+    } else {
+      open();
+    }
+  }, [isOpen, open, close]);
+
+  return { isOpen, isTop, zIndex, open, close, toggle };
+};
+
+export const useModalContext = () => {
+  const ctx = useContext(ModalContext);
+  if (!ctx) {
+    throw new Error("useModalContext must be used within ModalProvider");
+  }
+  return ctx;
 };

@@ -1,15 +1,13 @@
-"use client";
-
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, forwardRef, useId, type InputHTMLAttributes, type MutableRefObject, type ChangeEvent } from 'react';
 import clsx from 'clsx';
 import "../styles/checkbox.css";
 import { Checkmark } from './Checkmark';
 
-interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+interface CheckboxProps extends InputHTMLAttributes<HTMLInputElement> {}
 
-export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, id, onChange, checked: controlledCheckedProp, ...props }, forwardedRef) => {
-    const uniqueId = id || React.useId();
+    const uniqueId = id || useId();
 
     const internalInputRef = useRef<HTMLInputElement>(null);
 
@@ -19,7 +17,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       if (typeof forwardedRef === 'function') {
         forwardedRef(node);
       } else if (forwardedRef) {
-        (forwardedRef as React.MutableRefObject<HTMLInputElement | null>).current = node;
+        (forwardedRef as MutableRefObject<HTMLInputElement | null>).current = node;
       }
       internalInputRef.current = node;
     };
@@ -32,7 +30,7 @@ export const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
       }
     }, [controlledCheckedProp]); // Re-run if the controlled `checked` prop changes.
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
       setIsIconVisible(event.target.checked);
 
       onChange?.(event);

@@ -1,11 +1,9 @@
-'use client';
-
-import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo, type ComponentProps, type MouseEvent, type ChangeEvent, type KeyboardEvent } from 'react';
 import { PopOver } from './PopOver';
+import { Chevron } from './Chevron';
 import clsx from 'clsx';
 import '../styles/form.css';
 import '../styles/select.css';
-import { Chevron } from './Chevron';
 
 interface Option {
   value: string;
@@ -21,20 +19,20 @@ interface SelectProps {
   closeOnSelect?: boolean;
   disabled?: boolean;
   className?: string; // Additional classes for the main container (Select wrapper)
-  popoverProps?: Partial<React.ComponentProps<typeof PopOver>>; // New prop for PopOver specific styling
+  popoverProps?: Partial<ComponentProps<typeof PopOver>>; // New prop for PopOver specific styling
 }
 
 export function Select({
-                         options,
-                         value,
-                         onChange,
-                         multiple = false,
-                         placeholder = 'Select...',
-                         closeOnSelect,
-                         disabled = false,
-                         className,
-                         popoverProps, // Destructure new prop
-                       }: SelectProps) {
+  options,
+  value,
+  onChange,
+  multiple = false,
+  placeholder = 'Select...',
+  closeOnSelect,
+  disabled = false,
+  className,
+  popoverProps, // Destructure new prop
+}: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -114,7 +112,7 @@ export function Select({
     setTimeout(() => inputRef.current?.focus(), 0);
   }, [disabled]);
 
-  const handleChevronClick = useCallback((e: React.MouseEvent) => {
+  const handleChevronClick = useCallback((e: MouseEvent) => {
     e.stopPropagation();
     if (disabled) return;
     setIsOpen(prev => !prev);
@@ -126,7 +124,7 @@ export function Select({
     }
   }, [isOpen, disabled]);
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setIsOpen(true);
   }, []);
@@ -141,7 +139,7 @@ export function Select({
     setSearchTerm('');
   }, []);
 
-  const handleInputKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace' && searchTerm === '' && selectedValuesArray.length > 0) {
       e.preventDefault();
       handleRemoveSelected(selectedValuesArray[selectedValuesArray.length - 1]);

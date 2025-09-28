@@ -1,7 +1,6 @@
-@import './styles/components.css';
-@import './styles/utils.css';
+@import "tailwindcss" source("../../src/example");
 
-:root {
+@theme static {
     --color-danger: #d50303;
     --color-danger-hover: #ff6363;
     --color-danger-fade: #b23030;
@@ -54,8 +53,8 @@
 
     --spacing-control-y: 0.625rem;
     --spacing-control-x: 1rem;
-    --spacing-control-compact-y: 0.25rem;
-    --spacing-control-compact-x: 0.5rem;
+    --spacing-control-compact-y: 0;
+    --spacing-control-compact-x: .5rem;
     --spacing-control-relaxed-y: 1rem;
     --spacing-control-relaxed-x: 2rem;
     --radius-control: .5rem;
@@ -102,6 +101,25 @@
     --text-base--letter-spacing: 0em;
     --text-base--line-height: 1.5;
     --text-base--font-weight: 400;
+
+    /* added */
+    --spacing-nav: 3rem;
+
+    /* side menu */
+    --spacing-side-menu: 280px;
+    --spacing-side-menu-min: 3.075rem;
+
+    --color-item-bg: #1F1E1D;
+    --color-item-fg: #aaaaaa;
+    --color-item-border: var(--color-item-bg);
+
+    --color-item-hover-bg: #000000;
+    --color-item-hover-fg: var(--color-item-fg);
+    --color-item-hover-border: var(--color-item-hover-bg);
+
+    --color-item-active-bg: var(--color-primary);
+    --color-item-active-fg: var(--color-primary-contrast);
+    --color-item-active-border: var(--color-primary);
 }
 
 html, body {
@@ -109,7 +127,9 @@ html, body {
     color: var(--color-fg);
     font-family: Arial, Helvetica, sans-serif;
     font-size: var(--text-base);
+    width: 100vw;
     line-height: var(--text-base--line-height);
+    overflow-x: hidden;
 }
 
 .page-content {

@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FormControlError } from '../../components/FormControlError';
 import { JsonPretty } from '../../components/JsonPretty';
@@ -74,7 +72,13 @@ export function ExampleForm() {
             id="name"
             placeholder="Jane Doe"
             className="form-control"
-            {...register("name", { required: "Name is required" })}
+            {...register("name", {
+              required: 'Template name is required (min 3 characters)',
+              minLength: {
+                value: 3,
+                message: 'Template name must be at least 3 characters',
+              },
+            })}
           />
         </FormControlError>
       </div>

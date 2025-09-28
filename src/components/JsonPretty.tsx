@@ -1,14 +1,12 @@
-"use client";
-import React from "react";
+import { useState, useCallback } from "react";
 import { JsonView, allExpanded, darkStyles } from "react-json-view-lite";
 import "react-json-view-lite/dist/index.css";
 import "../styles/json-pretty.css";
 
-
 export function JsonPretty({ data, jsonViewProps }: { data: any, jsonViewProps?: any }) {
-  const [copied, setCopied] = React.useState(false);
+  const [copied, setCopied] = useState(false);
 
-  const toPrettyJson = React.useCallback(() => {
+  const toPrettyJson = useCallback(() => {
     try {
       return JSON.stringify(data, null, 2);
     } catch {
@@ -21,7 +19,7 @@ export function JsonPretty({ data, jsonViewProps }: { data: any, jsonViewProps?:
     }
   }, [data]);
 
-  const copyToClipboard = React.useCallback(async () => {
+  const copyToClipboard = useCallback(async () => {
     const text = toPrettyJson();
     try {
       if (navigator?.clipboard?.writeText) {

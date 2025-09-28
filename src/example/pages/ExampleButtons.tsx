@@ -1,4 +1,3 @@
-import React from 'react';
 import { ContentPanel } from '../components/ContentPanel';
 import { Button } from '../../components/Button';
 

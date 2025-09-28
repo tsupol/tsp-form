@@ -1,7 +1,3 @@
-'use client';
-
-import React from 'react';
-
 export function ExampleProse() {
   return (
     <article className="prose">
@@ -34,7 +30,7 @@ export function ExampleProse() {
   return \`Hello, \${name}\`;
 }`}</code>
       </pre>
-      <pre className="max-h-64 overflow-auto scroll-overlay">
+      <pre className="max-h-64 overflow-auto better-scroll">
         <code>{`async function fetchUserData(userId: string) {
   try {
     const response = await fetch(\`/api/users/\${userId}\`);
