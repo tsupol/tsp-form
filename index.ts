@@ -22,5 +22,6 @@ export * from './src/components/SideMenu';
 export * from './src/components/Skeleton';
 export * from './src/components/Switch';
 export * from './src/components/NumberSpinner';
+export * from './src/components/Pagination';
 export * from './src/context/ModalContext';
 export * from './src/context/SnackbarContext';

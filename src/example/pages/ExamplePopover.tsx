@@ -19,6 +19,7 @@ export function ExamplePopOver() {
   const [tCenterOpen, setTCenterOpen] = useState(false);
   const [tEndOpen, setTEndOpen] = useState(false);
   const [nestedOpen, setNestedOpen] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
 
   return (
     <div className="grid p-card">
@@ -378,49 +379,53 @@ export function ExamplePopOver() {
         {/* Rich Content Example */}
         <div>
           <h3 className="text-lg font-medium mb-3">Rich Content</h3>
-          <PopOver
-            isOpen={false}
-            onClose={() => {}}
-            placement="bottom"
-            align="end"
-            trigger={
-              <Button color="primary">
-                Status Menu (End Aligned)
-              </Button>
-            }
-          >
-            <div className="p-4 w-80">
-              <h4 className="font-semibold mb-3">User Status</h4>
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
-                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <div>
-                    <span className="text-sm font-medium">Online</span>
-                    <p className="text-xs text-gray-500">Available for chat</p>
+          <div className="flex flex-wrap gap-4">
+            <PopOver
+              isOpen={statusOpen}
+              onClose={() => setStatusOpen(false)}
+              placement="bottom"
+              align="end"
+              width="auto"
+              maxWidth="500px"
+              trigger={
+                <Button color="primary" onClick={() => setStatusOpen(!statusOpen)}>
+                  Status Menu (End Aligned)
+                </Button>
+              }
+            >
+              <div className="p-4 w-80">
+                <h4 className="font-semibold mb-3">User Status</h4>
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <div>
+                      <span className="text-sm font-medium">Online</span>
+                      <p className="text-xs text-gray-500">Available for chat</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                    <div>
+                      <span className="text-sm font-medium">Away</span>
+                      <p className="text-xs text-gray-500">Back in a few minutes</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
+                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+                    <div>
+                      <span className="text-sm font-medium">Busy</span>
+                      <p className="text-xs text-gray-500">Do not disturb</p>
+                    </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
-                  <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                  <div>
-                    <span className="text-sm font-medium">Away</span>
-                    <p className="text-xs text-gray-500">Back in a few minutes</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer">
-                  <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                  <div>
-                    <span className="text-sm font-medium">Busy</span>
-                    <p className="text-xs text-gray-500">Do not disturb</p>
-                  </div>
+                <hr className="my-3"/>
+                <div className="flex gap-2">
+                  <Button size="sm" variant="ghost">Settings</Button>
+                  <Button size="sm" variant="ghost">Sign Out</Button>
                 </div>
               </div>
-              <hr className="my-3"/>
-              <div className="flex gap-2">
-                <Button size="sm" variant="ghost">Settings</Button>
-                <Button size="sm" variant="ghost">Sign Out</Button>
-              </div>
-            </div>
-          </PopOver>
+            </PopOver>
+          </div>
         </div>
 
       </div>
