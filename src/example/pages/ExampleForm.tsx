@@ -13,6 +13,7 @@ import { DatePicker } from '../../components/DatePicker';
 import { DoubleDatePicker } from '../../components/DoubleDatePicker';
 import { NumberSpinner } from '../../components/NumberSpinner';
 import { Switch } from '../../components/Switch';
+import { Slider } from '../../components/Slider';
 import { Search, Mail, Eye, EyeOff, User } from 'lucide-react';
 
 type FormValues = {
@@ -23,6 +24,8 @@ type FormValues = {
   age?: number | "";
   quantity?: number | "";
   price?: number | "";
+  volume?: number;
+  brightness?: number;
   newsletter?: boolean;
   notifications?: boolean;
   darkMode?: boolean;
@@ -56,6 +59,8 @@ export function ExampleForm() {
       age: "",
       quantity: 5,
       price: 99,
+      volume: 50,
+      brightness: 75,
       newsletter: true,
       notifications: false,
       darkMode: true,
@@ -80,6 +85,8 @@ export function ExampleForm() {
     console.log("Submitted:", data);
   };
 
+  // @ts-ignore
+  // @ts-ignore
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3 p-card">
       <div className="flex flex-col gap-1">
@@ -173,6 +180,7 @@ export function ExampleForm() {
               min={1}
               max={100}
               step={1}
+              // @ts-ignore
               size="xs"
               error={!!errors.quantity}
             />
@@ -200,6 +208,7 @@ export function ExampleForm() {
               step={5}
               max={100}
               variant="diagonal"
+              // @ts-ignore
               size="md"
               error={!!errors.price}
             />
@@ -232,6 +241,46 @@ export function ExampleForm() {
       </div>
 
 
+      <div className="flex flex-col gap-1">
+        <label className="form-label" htmlFor="volume">Volume (with value)</label>
+        <Controller
+          name="volume"
+          control={control}
+          render={({ field: { onChange, value, ref } }) => (
+            <Slider
+              ref={ref}
+              id="volume"
+              value={value}
+              onChange={onChange}
+              min={0}
+              max={100}
+              showValue
+              size="sm"
+            />
+          )}
+        />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="form-label" htmlFor="brightness">Brightness (with min/max)</label>
+        <Controller
+          name="brightness"
+          control={control}
+          render={({ field: { onChange, value, ref } }) => (
+            <Slider
+              ref={ref}
+              id="brightness"
+              value={value}
+              onChange={onChange}
+              min={0}
+              max={100}
+              showMinMax
+              size="lg"
+            />
+          )}
+        />
+      </div>
+
       <div className="flex flex-col gap-3">
         <div className="flex items-center gap-3">
           <label className="form-label" htmlFor="notifications">Enable Notifications</label>
@@ -260,6 +309,7 @@ export function ExampleForm() {
                 id="darkMode"
                 checked={value}
                 onChange={(e) => onChange(e.target.checked)}
+                // @ts-ignore
                 size="lg"
               />
             )}

@@ -9,10 +9,11 @@ export type NumberSpinnerProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'ty
   step?: number;
   variant?: "default" | "diagonal";
   size?: "xs" | "sm" | "md" | "lg";
+  leadingZero?: boolean;
 };
 
 export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
-  ({ className, error, onChange, step = 1, min, max, value, disabled, variant = "default", size = "md", ...rest }, ref) => {
+  ({ className, error, onChange, step = 1, min, max, value, disabled, variant = "default", size = "md", leadingZero = false, ...rest }, ref) => {
     const handleIncrement = useCallback((e?: MouseEvent) => {
       e?.stopPropagation();
 
@@ -73,6 +74,10 @@ export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
       }
     }, []);
 
+    const displayValue = leadingZero && value !== "" && value !== undefined && value !== null
+      ? Number(value).toString().padStart(2, '0')
+      : value;
+
     return (
       <div className={clsx(
         "number-spinner",
@@ -97,7 +102,7 @@ export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
           type="number"
           className={clsx("form-control number-spinner-input")}
           aria-invalid={error ? "true" : undefined}
-          value={value}
+          value={displayValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           step={step}
