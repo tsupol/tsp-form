@@ -30,13 +30,13 @@
     --color-bg: #151515;
     --color-bg-contrast: #ffffff;
 
-    --color-line: rgba(222, 220, 209, 0.15);
+    --color-line: rgba(222, 220, 209, 0.12);
     --color-link: #0070f3;
 
-    --color-surface: #222222;
+    --color-surface: #202020;
     --color-surface-hover: #2a2a2a;
     --color-surface-shallow: #111111;
-    --color-surface-elevated: #333333;
+    --color-surface-elevated: #303030;
 
     --spacing-line: 1px;
 

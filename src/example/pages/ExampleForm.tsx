@@ -13,10 +13,13 @@ import { DatePicker } from '../../components/DatePicker';
 import { DoubleDatePicker } from '../../components/DoubleDatePicker';
 import { NumberSpinner } from '../../components/NumberSpinner';
 import { Switch } from '../../components/Switch';
+import { Search, Mail, Eye, EyeOff, User } from 'lucide-react';
 
 type FormValues = {
   name: string;
   email: string;
+  search?: string;
+  password?: string;
   age?: number | "";
   quantity?: number | "";
   price?: number | "";
@@ -35,6 +38,8 @@ type FormValues = {
 };
 
 export function ExampleForm() {
+  const [showPassword, setShowPassword] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -46,6 +51,8 @@ export function ExampleForm() {
     defaultValues: {
       name: "John Mayer",
       email: "test@example.com",
+      search: "",
+      password: "",
       age: "",
       quantity: 5,
       price: 99,
@@ -76,12 +83,12 @@ export function ExampleForm() {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3 p-card">
       <div className="flex flex-col gap-1">
-        <label className="form-label" htmlFor="name">Name</label>
+        <label className="form-label" htmlFor="name">Name with Icon</label>
         <FormControlError error={errors.name}>
           <Input
             id="name"
             placeholder="Jane Doe"
-            className="form-control"
+            startIcon={<User size={18} />}
             {...register("name", {
               required: 'Template name is required (min 3 characters)',
               minLength: {
@@ -94,11 +101,11 @@ export function ExampleForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="form-label" htmlFor="email">Email</label>
+        <label className="form-label" htmlFor="email">Email with Icon</label>
         <Input
           id="email"
           placeholder="jane@example.com"
-          className="form-control"
+          startIcon={<Mail size={18} />}
           {...register("email", {
           required: "Email is required",
             pattern: {
@@ -109,6 +116,28 @@ export function ExampleForm() {
         />
         {errors.email && <span className="form-error">{errors.email.message}</span>}
         <div className="form-error">Live email: {email || "—"}</div>
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="form-label" htmlFor="search">Search Input</label>
+        <Input
+          id="search"
+          placeholder="Search..."
+          startIcon={<Search size={18} />}
+          {...register("search")}
+        />
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="form-label" htmlFor="password">Password with Toggle</label>
+        <Input
+          id="password"
+          type={showPassword ? "text" : "password"}
+          placeholder="Enter password"
+          endIcon={showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          onEndIconClick={() => setShowPassword(!showPassword)}
+          {...register("password")}
+        />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -126,7 +155,7 @@ export function ExampleForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="form-label" htmlFor="quantity">Quantity (NumberSpinner)</label>
+        <label className="form-label" htmlFor="quantity">Quantity (NumberSpinner - Extra Small)</label>
         <Controller
           name="quantity"
           control={control}
@@ -144,6 +173,7 @@ export function ExampleForm() {
               min={1}
               max={100}
               step={1}
+              size="xs"
               error={!!errors.quantity}
             />
           )}
@@ -152,7 +182,7 @@ export function ExampleForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="form-label" htmlFor="price">Price (Diagonal Spinner)</label>
+        <label className="form-label" htmlFor="price">Price (Diagonal Spinner - Large)</label>
         <Controller
           name="price"
           control={control}
@@ -170,6 +200,7 @@ export function ExampleForm() {
               step={5}
               max={100}
               variant="diagonal"
+              size="md"
               error={!!errors.price}
             />
           )}
@@ -258,16 +289,20 @@ export function ExampleForm() {
           name="birthday"
           control={control}
           rules={{ required: 'Birthday is required' }}
-          render={({ field: { onChange, value } }) => (
-            <DatePicker
-              minDate={new Date()}
-              selectedDate={value}
-              onChange={onChange}
-              className="form-control"
-              showTime={true}
-              timeFormat="12h"
-            />
-          )}
+          render={({ field: { onChange, value } }) => {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            return (
+              <DatePicker
+                minDate={today}
+                selectedDate={value}
+                onChange={onChange}
+                className="form-control"
+                showTime={true}
+                timeFormat="12h"
+              />
+            );
+          }}
         />
         {errors.birthday && <span className="form-error">{errors.birthday.message}</span>}
       </div>

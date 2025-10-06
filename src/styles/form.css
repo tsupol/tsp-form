@@ -56,3 +56,51 @@
     color: var(--color-danger);
     font-size: 0.75rem;
 }
+
+/* Input with icons */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.input-icon {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-control-placeholder);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.input-icon-clickable {
+    pointer-events: auto;
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.input-icon-clickable:hover {
+    color: var(--color-fg);
+}
+
+.input-icon-start {
+    left: var(--spacing-control-x);
+}
+
+.input-icon-end {
+    right: var(--spacing-control-x);
+}
+
+.input-with-icon {
+    width: 100%;
+}
+
+.input-has-start-icon {
+    padding-left: calc(var(--spacing-control-x) * 2.5);
+}
+
+.input-has-end-icon {
+    padding-right: calc(var(--spacing-control-x) * 2.5);
+}

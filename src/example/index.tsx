@@ -9,6 +9,7 @@ import { ExampleModal } from './pages/ExampleModal';
 import { ExampleSkeleton } from './pages/ExampleSkeleton';
 import { ExamplePagination } from './pages/ExamplePagination';
 import { ExampleTooltip } from './pages/ExampleTooltip';
+import { ExampleProgressBar } from './pages/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider } from '../context/SnackbarContext';
 import { Home, FileText } from 'lucide-react';
@@ -111,6 +112,9 @@ const App = () => {
                 </CollapsiblePanel>
                 <CollapsiblePanel title="Tooltip">
                   <ExampleTooltip/>
+                </CollapsiblePanel>
+                <CollapsiblePanel title="Progress Bar">
+                  <ExampleProgressBar/>
                 </CollapsiblePanel>
                 <CollapsiblePanel title="Prose">
                   <ExampleProse/>

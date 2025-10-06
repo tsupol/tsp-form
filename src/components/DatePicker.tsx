@@ -2,6 +2,7 @@ import { useState } from 'react';
 import '../styles/datepicker.css';
 import clsx from 'clsx';
 import { Button } from './Button';
+import { NumberSpinner } from './NumberSpinner';
 
 export interface DatePickerProps {
   mode?: 'single' | 'range';
@@ -406,28 +407,19 @@ const TimeInput = ({ hours, minutes, onChange, disabled, format }: TimeInputProp
   const displayHours = is12Hour ? (hours % 12 || 12) : hours;
   const period = hours >= 12 ? 'PM' : 'AM';
 
-  const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = parseInt(e.target.value, 10);
-    if (isNaN(value)) return;
+  const handleHoursChange = (value: number | "") => {
+    if (value === "") return;
 
     if (is12Hour) {
-      // Convert 12-hour to 24-hour
-      if (value < 1) value = 1;
-      if (value > 12) value = 12;
       const newHours = period === 'PM' ? (value === 12 ? 12 : value + 12) : (value === 12 ? 0 : value);
       onChange('hours', newHours);
     } else {
-      if (value < 0) value = 0;
-      if (value > 23) value = 23;
       onChange('hours', value);
     }
   };
 
-  const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let value = parseInt(e.target.value, 10);
-    if (isNaN(value)) return;
-    if (value < 0) value = 0;
-    if (value > 59) value = 59;
+  const handleMinutesChange = (value: number | "") => {
+    if (value === "") return;
     onChange('minutes', value);
   };
 
@@ -440,35 +432,36 @@ const TimeInput = ({ hours, minutes, onChange, disabled, format }: TimeInputProp
 
   return (
     <div className="datepicker-time-input">
-      <input
-        type="number"
-        value={displayHours.toString().padStart(2, '0')}
-        onChange={handleHoursChange}
-        disabled={disabled}
-        className="datepicker-time-field"
-        min={is12Hour ? 1 : 0}
-        max={is12Hour ? 12 : 23}
-      />
-      <span className="datepicker-time-separator">:</span>
-      <input
-        type="number"
-        value={minutes.toString().padStart(2, '0')}
-        onChange={handleMinutesChange}
-        disabled={disabled}
-        className="datepicker-time-field"
-        min={0}
-        max={59}
-      />
-      {is12Hour && (
-        <button
-          type="button"
-          onClick={togglePeriod}
+      <div className="datepicker-time-row">
+        <NumberSpinner
+          value={displayHours}
+          onChange={handleHoursChange}
           disabled={disabled}
-          className="datepicker-time-period"
-        >
-          {period}
-        </button>
-      )}
+          min={is12Hour ? 1 : 0}
+          max={is12Hour ? 12 : 23}
+          size="sm"
+        />
+        {is12Hour && (
+          <button
+            type="button"
+            onClick={togglePeriod}
+            disabled={disabled}
+            className="datepicker-time-period"
+          >
+            {period}
+          </button>
+        )}
+      </div>
+      <div className="datepicker-time-row">
+        <NumberSpinner
+          value={minutes}
+          onChange={handleMinutesChange}
+          disabled={disabled}
+          min={0}
+          max={59}
+          size="sm"
+        />
+      </div>
     </div>
   );
 };
