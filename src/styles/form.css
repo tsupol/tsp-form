@@ -47,7 +47,7 @@
 .form-label {
     color: var(--color-control-label);
     font-size: var(--text-control-label, 0.875rem);
-    font-weight: var(--text-control-label--font-weight, 500);
+    font-weight: var(--text-control-label--font-weight, 600);
     letter-spacing: var(--text-control-label--letter-spacing, 0em);
     line-height: var(--text-control-label--line-height, 1.25);
 }

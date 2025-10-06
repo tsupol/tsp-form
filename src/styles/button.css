@@ -17,7 +17,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+    font-weight: var(--font-weight-button);
 }
 
 .btn:hover {

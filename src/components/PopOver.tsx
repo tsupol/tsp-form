@@ -27,7 +27,7 @@ export function PopOver({
   align = 'start',
   className = '',
   triggerClassName = '',
-  width = '200px',
+  width = 'auto',
   minWidth = '200px',
   maxWidth = '400px',
   maxHeight = '300px',
@@ -271,7 +271,8 @@ export function PopOver({
             minWidth: minWidth,
             maxWidth: `min(${maxWidth}, ${window.innerWidth - 32}px)`,
             maxHeight: `min(${maxHeight}, ${window.innerHeight - 32}px)`,
-            overflowY: 'auto'
+            overflowY: 'auto',
+            visibility: isPositioned ? 'visible' : 'hidden'
           }}
         >
           {children}

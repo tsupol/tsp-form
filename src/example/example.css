@@ -102,6 +102,8 @@
     --text-base--line-height: 1.5;
     --text-base--font-weight: 400;
 
+    --font-weight-button: 600;
+
     /* added */
     --spacing-nav: 3rem;
 
@@ -125,7 +127,7 @@
 html, body {
     background: var(--color-bg);
     color: var(--color-fg);
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Zalando Sans", "Roboto", "Inter", "Manrope", "DM Sans", sans-serif;
     font-size: var(--text-base);
     width: 100vw;
     line-height: var(--text-base--line-height);

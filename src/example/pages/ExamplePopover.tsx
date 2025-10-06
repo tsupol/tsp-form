@@ -385,7 +385,6 @@ export function ExamplePopOver() {
               onClose={() => setStatusOpen(false)}
               placement="bottom"
               align="end"
-              width="auto"
               maxWidth="500px"
               trigger={
                 <Button color="primary" onClick={() => setStatusOpen(!statusOpen)}>
