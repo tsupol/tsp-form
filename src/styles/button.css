@@ -115,8 +115,8 @@
     --color-bg: transparent;
     --color-border: transparent;
     --color-text-hover: var(--color-fg);
-    --color-bg-hover: var(--color-surface);
-    --color-border-hover: var(--color-surface);
+    --color-bg-hover: var(--color-surface-elevated);
+    --color-border-hover: var(--color-surface-elevated);
 }
 
 .btn-ghost-primary {
@@ -124,8 +124,8 @@
     --color-bg: transparent;
     --color-border: transparent;
     --color-text-hover: var(--color-fg);
-    --color-bg-hover: var(--color-surface);
-    --color-border-hover: var(--color-surface);
+    --color-bg-hover: var(--color-surface-elevated);
+    --color-border-hover: var(--color-surface-elevated);
 }
 
 .btn-ghost-secondary {
@@ -133,8 +133,8 @@
     --color-bg: transparent;
     --color-border: transparent;
     --color-text-hover: var(--color-fg);
-    --color-bg-hover: var(--color-surface);
-    --color-border-hover: var(--color-surface);
+    --color-bg-hover: var(--color-surface-elevated);
+    --color-border-hover: var(--color-surface-elevated);
 }
 
 .btn-ghost-danger {

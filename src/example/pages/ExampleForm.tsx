@@ -11,11 +11,14 @@ import { TextArea } from '../../components/TextArea';
 import { RadioGroup } from '../../components/RadioGroup';
 import { DatePicker } from '../../components/DatePicker';
 import { DoubleDatePicker } from '../../components/DoubleDatePicker';
+import { NumberSpinner } from '../../components/NumberSpinner';
 
 type FormValues = {
   name: string;
   email: string;
   age?: number | "";
+  quantity?: number | "";
+  price?: number | "";
   newsletter?: boolean;
   singleEdible: string;
   multiEdibles: string[];
@@ -41,6 +44,8 @@ export function ExampleForm() {
       name: "John Mayer",
       email: "test@example.com",
       age: "",
+      quantity: 5,
+      price: 99,
       newsletter: true,
       singleEdible: 'banana',
       multiEdibles: ['apple', 'banana'],
@@ -90,7 +95,7 @@ export function ExampleForm() {
           placeholder="jane@example.com"
           className="form-control"
           {...register("email", {
-            required: "Email is required",
+          required: "Email is required",
             pattern: {
               value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
               message: "Enter a valid email",
@@ -113,6 +118,57 @@ export function ExampleForm() {
           })}
         />
         {errors.age && <span className="form-error">{errors.age.message}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="form-label" htmlFor="quantity">Quantity (NumberSpinner)</label>
+        <Controller
+          name="quantity"
+          control={control}
+          rules={{
+            required: "Quantity is required",
+            min: { value: 1, message: "Quantity must be at least 1" },
+            max: { value: 100, message: "Quantity cannot exceed 100" },
+          }}
+          render={({ field: { onChange, value, ref } }) => (
+            <NumberSpinner
+              ref={ref}
+              id="quantity"
+              value={value}
+              onChange={onChange}
+              min={1}
+              max={100}
+              step={1}
+              error={!!errors.quantity}
+            />
+          )}
+        />
+        {errors.quantity && <span className="form-error">{errors.quantity.message}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="form-label" htmlFor="price">Price (Diagonal Spinner)</label>
+        <Controller
+          name="price"
+          control={control}
+          rules={{
+            required: "Price is required",
+            min: { value: 0, message: "Price must be at least 0" },
+          }}
+          render={({ field: { onChange, value, ref } }) => (
+            <NumberSpinner
+              ref={ref}
+              id="price"
+              value={value}
+              onChange={onChange}
+              min={0}
+              step={5}
+              variant="diagonal"
+              error={!!errors.price}
+            />
+          )}
+        />
+        {errors.price && <span className="form-error">{errors.price.message}</span>}
       </div>
 
       <div className="flex flex-col gap-1">
@@ -156,7 +212,7 @@ export function ExampleForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="form-label">Birthday</label>
+        <label className="form-label">Birthday (with time)</label>
         <Controller
           name="birthday"
           control={control}
@@ -167,6 +223,8 @@ export function ExampleForm() {
               selectedDate={value}
               onChange={onChange}
               className="form-control"
+              showTime={true}
+              timeFormat="12h"
             />
           )}
         />
@@ -174,7 +232,7 @@ export function ExampleForm() {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="form-label">Event Period</label>
+        <label className="form-label">Event Period (with time)</label>
         <Controller
           name="eventPeriodStart"
           control={control}
@@ -191,6 +249,8 @@ export function ExampleForm() {
                   onChange={onFromDateChange}
                   onToDateChange={onToDateChange}
                   toDate={toDate}
+                  showTime={true}
+                  timeFormat="24h"
                 />
               )}
             />

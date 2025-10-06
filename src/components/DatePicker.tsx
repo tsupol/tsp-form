@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import '../styles/datepicker.css';
 import clsx from 'clsx';
+import { Button } from './Button';
 
 export interface DatePickerProps {
   mode?: 'single' | 'range';
@@ -13,6 +14,8 @@ export interface DatePickerProps {
   maxDate?: Date;
   disabled?: boolean;
   className?: string;
+  showTime?: boolean;
+  timeFormat?: '12h' | '24h';
 }
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -31,11 +34,21 @@ export const DatePicker = ({
   minDate,
   maxDate,
   disabled = false,
-  className
+  className,
+  showTime = false,
+  timeFormat = '24h'
 }: DatePickerProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
+
+  // Time state for single mode or range start
+  const [startHours, setStartHours] = useState(0);
+  const [startMinutes, setStartMinutes] = useState(0);
+
+  // Time state for range end
+  const [endHours, setEndHours] = useState(23);
+  const [endMinutes, setEndMinutes] = useState(59);
 
   // Get the start date for the component
   const getStartDate = (): Date | null => {
@@ -63,14 +76,20 @@ export const DatePicker = ({
 
     if (mode === 'single') {
       if (onChange) {
-        onChange(date);
+        const dateWithTime = showTime
+          ? new Date(date.getFullYear(), date.getMonth(), date.getDate(), startHours, startMinutes)
+          : date;
+        onChange(dateWithTime);
       }
     } else {
       // Range mode
       if (!startDate) {
         // No start date yet - set it
         if (onChange) {
-          onChange(date);
+          const dateWithTime = showTime
+            ? new Date(date.getFullYear(), date.getMonth(), date.getDate(), startHours, startMinutes)
+            : date;
+          onChange(dateWithTime);
         }
         if (onToDateChange) {
           onToDateChange(null);
@@ -80,15 +99,24 @@ export const DatePicker = ({
         if (date < startDate) {
           // If clicked date is before start date, swap them
           if (onChange) {
-            onChange(date);
+            const dateWithTime = showTime
+              ? new Date(date.getFullYear(), date.getMonth(), date.getDate(), startHours, startMinutes)
+              : date;
+            onChange(dateWithTime);
           }
           if (onToDateChange) {
-            onToDateChange(startDate);
+            const endDateWithTime = showTime
+              ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), endHours, endMinutes)
+              : startDate;
+            onToDateChange(endDateWithTime);
           }
         } else {
           // Normal case: set end date
           if (onToDateChange) {
-            onToDateChange(date);
+            const dateWithTime = showTime
+              ? new Date(date.getFullYear(), date.getMonth(), date.getDate(), endHours, endMinutes)
+              : date;
+            onToDateChange(dateWithTime);
           }
         }
       } else if (startDate && endDate) {
@@ -96,15 +124,24 @@ export const DatePicker = ({
         if (date < startDate) {
           // If clicked date is before start date, swap them
           if (onChange) {
-            onChange(date);
+            const dateWithTime = showTime
+              ? new Date(date.getFullYear(), date.getMonth(), date.getDate(), startHours, startMinutes)
+              : date;
+            onChange(dateWithTime);
           }
           if (onToDateChange) {
-            onToDateChange(startDate);
+            const endDateWithTime = showTime
+              ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), endHours, endMinutes)
+              : startDate;
+            onToDateChange(endDateWithTime);
           }
         } else {
           // Update end date
           if (onToDateChange) {
-            onToDateChange(date);
+            const dateWithTime = showTime
+              ? new Date(date.getFullYear(), date.getMonth(), date.getDate(), endHours, endMinutes)
+              : date;
+            onToDateChange(dateWithTime);
           }
         }
       }
@@ -216,37 +253,222 @@ export const DatePicker = ({
     }
   };
 
+  const handleClear = () => {
+    if (disabled) return;
+    if (onChange) onChange(null);
+    if (onToDateChange) onToDateChange(null);
+  };
+
+  const handleToday = () => {
+    if (disabled) return;
+    const today = new Date();
+    const todayWithTime = showTime
+      ? new Date(today.getFullYear(), today.getMonth(), today.getDate(), startHours, startMinutes)
+      : today;
+
+    if (onChange) onChange(todayWithTime);
+    if (mode === 'range' && onToDateChange) {
+      onToDateChange(null);
+    }
+
+    // Navigate to current month
+    setCurrentMonth(today.getMonth());
+    setCurrentYear(today.getFullYear());
+  };
+
+  const handleTimeChange = (type: 'start' | 'end', field: 'hours' | 'minutes', value: number) => {
+    if (type === 'start') {
+      if (field === 'hours') {
+        setStartHours(value);
+        if (mode === 'single' && startDate && onChange) {
+          onChange(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), value, startMinutes));
+        } else if (mode === 'range' && startDate && onChange) {
+          onChange(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), value, startMinutes));
+        }
+      } else {
+        setStartMinutes(value);
+        if (mode === 'single' && startDate && onChange) {
+          onChange(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startHours, value));
+        } else if (mode === 'range' && startDate && onChange) {
+          onChange(new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), startHours, value));
+        }
+      }
+    } else {
+      if (field === 'hours') {
+        setEndHours(value);
+        if (endDate && onToDateChange) {
+          onToDateChange(new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), value, endMinutes));
+        }
+      } else {
+        setEndMinutes(value);
+        if (endDate && onToDateChange) {
+          onToDateChange(new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate(), endHours, value));
+        }
+      }
+    }
+  };
+
   return (
-    <div className={clsx('datepicker-container', { 'opacity-50': disabled }, className)}>
-      <div className="datepicker-header">
-        <button
-          type="button"
-          className="datepicker-nav-button"
-          onClick={() => navigateMonth('prev')}
-          disabled={disabled}
-        >
-          ←
-        </button>
-        <div className="datepicker-month-year">
-          {MONTHS[currentMonth]} {currentYear}
+    <div className={clsx('datepicker-wrapper', { 'opacity-50': disabled }, className)}>
+      <div className="datepicker-container">
+        <div className="datepicker-header">
+          <button
+            type="button"
+            className="datepicker-nav-button"
+            onClick={() => navigateMonth('prev')}
+            disabled={disabled}
+          >
+            ←
+          </button>
+          <div className="datepicker-month-year">
+            {MONTHS[currentMonth]} {currentYear}
+          </div>
+          <button
+            type="button"
+            className="datepicker-nav-button"
+            onClick={() => navigateMonth('next')}
+            disabled={disabled}
+          >
+            →
+          </button>
         </div>
+        <div className="datepicker-weekdays">
+          {WEEKDAYS.map((day) => (
+            <div key={day}>{day}</div>
+          ))}
+        </div>
+        <div className="datepicker-days-container">
+          {renderCalendar()}
+        </div>
+        <div className="datepicker-actions">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleClear}
+            disabled={disabled}
+          >
+            Clear
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleToday}
+            disabled={disabled}
+          >
+            Today
+          </Button>
+        </div>
+      </div>
+
+      {showTime && (
+        <div className="datepicker-time-container">
+          <div className="datepicker-time-section">
+            <div className="datepicker-time-label">
+              {mode === 'range' ? 'Start Time' : 'Time'}
+            </div>
+            <TimeInput
+              hours={startHours}
+              minutes={startMinutes}
+              onChange={(field, value) => handleTimeChange('start', field, value)}
+              disabled={disabled}
+              format={timeFormat}
+            />
+          </div>
+
+          {mode === 'range' && (
+            <div className="datepicker-time-section">
+              <div className="datepicker-time-label">End Time</div>
+              <TimeInput
+                hours={endHours}
+                minutes={endMinutes}
+                onChange={(field, value) => handleTimeChange('end', field, value)}
+                disabled={disabled}
+                format={timeFormat}
+              />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+interface TimeInputProps {
+  hours: number;
+  minutes: number;
+  onChange: (field: 'hours' | 'minutes', value: number) => void;
+  disabled?: boolean;
+  format: '12h' | '24h';
+}
+
+const TimeInput = ({ hours, minutes, onChange, disabled, format }: TimeInputProps) => {
+  const is12Hour = format === '12h';
+  const displayHours = is12Hour ? (hours % 12 || 12) : hours;
+  const period = hours >= 12 ? 'PM' : 'AM';
+
+  const handleHoursChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = parseInt(e.target.value, 10);
+    if (isNaN(value)) return;
+
+    if (is12Hour) {
+      // Convert 12-hour to 24-hour
+      if (value < 1) value = 1;
+      if (value > 12) value = 12;
+      const newHours = period === 'PM' ? (value === 12 ? 12 : value + 12) : (value === 12 ? 0 : value);
+      onChange('hours', newHours);
+    } else {
+      if (value < 0) value = 0;
+      if (value > 23) value = 23;
+      onChange('hours', value);
+    }
+  };
+
+  const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    let value = parseInt(e.target.value, 10);
+    if (isNaN(value)) return;
+    if (value < 0) value = 0;
+    if (value > 59) value = 59;
+    onChange('minutes', value);
+  };
+
+  const togglePeriod = () => {
+    if (is12Hour) {
+      const newHours = hours >= 12 ? hours - 12 : hours + 12;
+      onChange('hours', newHours);
+    }
+  };
+
+  return (
+    <div className="datepicker-time-input">
+      <input
+        type="number"
+        value={displayHours.toString().padStart(2, '0')}
+        onChange={handleHoursChange}
+        disabled={disabled}
+        className="datepicker-time-field"
+        min={is12Hour ? 1 : 0}
+        max={is12Hour ? 12 : 23}
+      />
+      <span className="datepicker-time-separator">:</span>
+      <input
+        type="number"
+        value={minutes.toString().padStart(2, '0')}
+        onChange={handleMinutesChange}
+        disabled={disabled}
+        className="datepicker-time-field"
+        min={0}
+        max={59}
+      />
+      {is12Hour && (
         <button
           type="button"
-          className="datepicker-nav-button"
-          onClick={() => navigateMonth('next')}
+          onClick={togglePeriod}
           disabled={disabled}
+          className="datepicker-time-period"
         >
-          →
+          {period}
         </button>
-      </div>
-      <div className="datepicker-weekdays">
-        {WEEKDAYS.map((day) => (
-          <div key={day}>{day}</div>
-        ))}
-      </div>
-      <div className="datepicker-days-container">
-        {renderCalendar()}
-      </div>
+      )}
     </div>
   );
 };
