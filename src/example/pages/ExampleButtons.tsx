@@ -118,8 +118,28 @@ export function ExampleButtons() {
             Large
           </Button>
           <div>
+            <Button variant="outline" size="lg">
+              L
+            </Button>
+          </div>
+          <div>
+            <Button variant="outline" color="secondary" size="md">
+              Medium
+            </Button>
+          </div>
+          <div>
+            <Button variant="outline" color="secondary" size="md">
+              M
+            </Button>
+          </div>
+          <div>
             <Button variant="outline" color="secondary" size="sm">
               Small
+            </Button>
+          </div>
+          <div>
+            <Button variant="outline" color="secondary" size="sm">
+              S
             </Button>
           </div>
         </div>

@@ -7,6 +7,7 @@
     --color-text-hover: var(--color-fg-contrast);
     padding: var(--spacing-control-y) var(--spacing-control-x);
     min-height: calc(var(--text-control) * var(--text-control--line-height) + 2 * var(--spacing-control-y));
+    min-width: calc(var(--text-control) * var(--text-control--line-height) + 2 * var(--spacing-control-y));
     border-radius: var(--radius-control);
     border: 1px solid var(--color-border);
     cursor: pointer;
@@ -32,10 +33,15 @@
 
 .btn-sm {
     padding: var(--spacing-control-compact-y) var(--spacing-control-compact-x);
+    --min-h: calc(var(--text-control) * var(--text-control--line-height) + 2 * var(--spacing-control-compact-y));
+    min-height: var(--min-h);
+    min-width: var(--min-h);
 }
 
 .btn-lg {
     padding: var(--spacing-control-relaxed-y) var(--spacing-control-relaxed-x);
+    min-height: calc(var(--text-control) * var(--text-control--line-height) + 2 * var(--spacing-control-relaxed-y));
+    min-width: calc(var(--text-control) * var(--text-control--line-height) + 2 * var(--spacing-control-relaxed-y));
 }
 
 .btn-primary {

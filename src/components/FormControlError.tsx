@@ -1,30 +1,32 @@
-"use client"
-import React from 'react';
+import { isValidElement, cloneElement, type ReactNode } from 'react';
 import clsx from 'clsx';
 import "../styles/form.css";
 
 interface FormControlErrorProps {
-  children: React.ReactElement; // Narrow down the type to React.ReactElement
+  children: ReactNode;
   error?: {
     message?: string;
   };
 }
-
-export const FormControlError: React.FC<FormControlErrorProps> = ({ children, error }) => {
-  // Ensure children is a valid React element before attempting to clone
-  if (!React.isValidElement(children)) {
+export const FormControlError = ({ children, error }: FormControlErrorProps) => {
+  if (!isValidElement(children)) {
     console.error("FormControlError expects a single React element as children.");
-    return <>{children}</>; // Render children as-is or throw an error based on desired behavior
+    return <>{children}</>;
   }
 
-  const inputWithErrorClass = React.cloneElement(children, {
-    className: clsx((children.props as any).className, { 'form-error-border': error }),
-  } as any);
+  const childProps = children.props as { className?: string };
+  const enhancedChild = cloneElement(children, {
+    key: "form-control-input",
+    // @ts-ignore
+    className: clsx(childProps.className, { 'form-error-border': error }),
+  });
 
   return (
     <>
-      {inputWithErrorClass}
-      {error && <span className="form-error">{error.message}</span>}
+      {enhancedChild}
+      {error && <span key="form-control-error" className="form-error">{error.message}</span>}
     </>
   );
 };
+
+
