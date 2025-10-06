@@ -44,11 +44,33 @@ export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
         return;
       }
 
+      // Prevent 'e', 'E', '+', '-', '.' from being entered
+      if (inputValue.includes('e') || inputValue.includes('E') || inputValue.includes('+') || inputValue.includes('-') || inputValue.includes('.')) {
+        return;
+      }
+
       const numValue = Number(inputValue);
       if (!isNaN(numValue)) {
+        // Enforce max limit
+        if (max !== undefined && numValue > Number(max)) {
+          onChange?.(Number(max));
+          return;
+        }
+        // Enforce min limit
+        if (min !== undefined && numValue < Number(min)) {
+          onChange?.(Number(min));
+          return;
+        }
         onChange?.(numValue);
       }
-    }, [onChange]);
+    }, [onChange, min, max]);
+
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+      // Prevent 'e', 'E', '+', '-', '.' from being entered
+      if (e.key === 'e' || e.key === 'E' || e.key === '+' || e.key === '-' || e.key === '.') {
+        e.preventDefault();
+      }
+    }, []);
 
     return (
       <div className={clsx(
@@ -75,6 +97,7 @@ export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
           aria-invalid={error ? "true" : undefined}
           value={value}
           onChange={handleInputChange}
+          onKeyDown={handleKeyDown}
           step={step}
           min={min}
           max={max}

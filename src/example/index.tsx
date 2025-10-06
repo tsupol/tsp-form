@@ -6,6 +6,7 @@ import { ExamplePopOver } from './pages/ExamplePopover';
 import { ExampleTabs } from './pages/ExampleTabs';
 import { ExampleProse } from './pages/ExampleProse';
 import { ExampleModal } from './pages/ExampleModal';
+import { ExampleSkeleton } from './pages/ExampleSkeleton';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider } from '../context/SnackbarContext';
 import { Home, FileText } from 'lucide-react';
@@ -99,6 +100,9 @@ const App = () => {
                 </CollapsiblePanel>
                 <CollapsiblePanel title="Buttons">
                   <ExampleButtons/>
+                </CollapsiblePanel>
+                <CollapsiblePanel title="Skeleton">
+                  <ExampleSkeleton/>
                 </CollapsiblePanel>
                 <CollapsiblePanel title="Prose">
                   <ExampleProse/>

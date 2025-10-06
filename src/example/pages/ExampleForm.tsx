@@ -12,6 +12,7 @@ import { RadioGroup } from '../../components/RadioGroup';
 import { DatePicker } from '../../components/DatePicker';
 import { DoubleDatePicker } from '../../components/DoubleDatePicker';
 import { NumberSpinner } from '../../components/NumberSpinner';
+import { Switch } from '../../components/Switch';
 
 type FormValues = {
   name: string;
@@ -20,6 +21,8 @@ type FormValues = {
   quantity?: number | "";
   price?: number | "";
   newsletter?: boolean;
+  notifications?: boolean;
+  darkMode?: boolean;
   singleEdible: string;
   multiEdibles: string[];
   note: string;
@@ -47,6 +50,8 @@ export function ExampleForm() {
       quantity: 5,
       price: 99,
       newsletter: true,
+      notifications: false,
+      darkMode: true,
       singleEdible: 'banana',
       multiEdibles: ['apple', 'banana'],
       note: "This is a note.",
@@ -163,6 +168,7 @@ export function ExampleForm() {
               onChange={onChange}
               min={0}
               step={5}
+              max={100}
               variant="diagonal"
               error={!!errors.price}
             />
@@ -194,6 +200,41 @@ export function ExampleForm() {
         {errors.color && <span className="form-error">{errors.color.message}</span>}
       </div>
 
+
+      <div className="flex flex-col gap-3">
+        <div className="flex items-center gap-3">
+          <label className="form-label" htmlFor="notifications">Enable Notifications</label>
+          <Controller
+            name="notifications"
+            control={control}
+            render={({ field: { onChange, value, ref } }) => (
+              <Switch
+                ref={ref}
+                id="notifications"
+                checked={value}
+                onChange={(e) => onChange(e.target.checked)}
+              />
+            )}
+          />
+        </div>
+
+        <div className="flex items-center gap-3">
+          <label className="form-label" htmlFor="darkMode">Dark Mode</label>
+          <Controller
+            name="darkMode"
+            control={control}
+            render={({ field: { onChange, value, ref } }) => (
+              <Switch
+                ref={ref}
+                id="darkMode"
+                checked={value}
+                onChange={(e) => onChange(e.target.checked)}
+                size="lg"
+              />
+            )}
+          />
+        </div>
+      </div>
 
       <div className="flex flex-col gap-1">
         <label className="form-label" htmlFor="note">Notes</label>

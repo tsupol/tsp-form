@@ -39,10 +39,16 @@
     cursor: pointer;
 }
 
-.cpanel-content.open {
-    display: block;
+.cpanel-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
 }
 
-.cpanel-content {
-    display: none;
+.cpanel-content.open {
+    overflow: visible;
+}
+
+.cpanel-content-inner {
+    /* Add any padding or spacing here if needed */
 }

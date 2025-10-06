@@ -1,4 +1,4 @@
-import { useState, type ReactNode, type ComponentProps } from 'react';
+import { useState, useRef, useEffect, type ReactNode, type ComponentProps } from 'react';
 import clsx from 'clsx';
 import { Chevron } from './Chevron';
 import "../styles/form.css";
@@ -18,6 +18,17 @@ export const CollapsiblePanel = ({
   defaultOpen?: boolean;
 }) => {
   const [open, setOpen] = useState(defaultOpen);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      if (open) {
+        contentRef.current.style.maxHeight = contentRef.current.scrollHeight + 'px';
+      } else {
+        contentRef.current.style.maxHeight = '0px';
+      }
+    }
+  }, [open, children]);
 
   return (
     <div className={clsx('cpanel', className)}>
@@ -32,8 +43,13 @@ export const CollapsiblePanel = ({
         </div>
       </div>
 
-      <div className={clsx('cpanel-content', open && 'open')}>
-        {children}
+      <div
+        ref={contentRef}
+        className={clsx('cpanel-content', open && 'open')}
+      >
+        <div className="cpanel-content-inner">
+          {children}
+        </div>
       </div>
     </div>
   );

@@ -19,5 +19,8 @@ export * from './src/components/Select';
 export * from './src/components/TextArea';
 export * from './src/components/Snackbar';
 export * from './src/components/SideMenu';
+export * from './src/components/Skeleton';
+export * from './src/components/Switch';
+export * from './src/components/NumberSpinner';
 export * from './src/context/ModalContext';
 export * from './src/context/SnackbarContext';

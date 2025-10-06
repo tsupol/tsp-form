@@ -1,0 +1,95 @@
+.switch {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    --switch-offset: .2rem;
+}
+
+.switch-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.switch-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.switch-slider {
+    position: relative;
+    display: block;
+    border-radius: 9999px;
+    background: var(--color-line);
+    transition: background-color 0.2s ease;
+}
+
+.switch-slider::before {
+    content: "";
+    position: absolute;
+    top: var(--switch-offset);
+    left: var(--switch-offset);
+    border-radius: 50%;
+    background: var(--color-surface);
+    transition: transform 0.2s ease;
+}
+
+.switch-input:checked + .switch-slider {
+    background: var(--color-primary);
+}
+
+.switch-input:focus-visible + .switch-slider {
+    box-shadow: 0 0 0 2px var(--color-primary);
+}
+
+/* Small size */
+.switch-sm .switch-slider {
+    width: 2.25rem;
+    height: 1.25rem;
+}
+
+.switch-sm .switch-slider::before {
+    width: 0.85rem;
+    height: 0.85rem;
+}
+
+.switch-sm .switch-input:checked + .switch-slider::before {
+    transform: translateX(1rem);
+}
+
+/* Medium size (default) */
+.switch-md .switch-slider {
+    width: 2.75rem;
+    height: 1.5rem;
+}
+
+.switch-md .switch-slider::before {
+    width: 1.1rem;
+    height: 1.1rem;
+}
+
+.switch-md .switch-input:checked + .switch-slider::before {
+    transform: translateX(1.25rem);
+}
+
+/* Large size */
+.switch-lg .switch-slider {
+    width: 3.5rem;
+    height: 1.875rem;
+}
+
+.switch-lg .switch-slider::before {
+    width: 1.475rem;
+    height: 1.475rem;
+}
+
+.switch-lg .switch-input:checked + .switch-slider::before {
+    transform: translateX(1.625rem);
+}
