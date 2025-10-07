@@ -439,7 +439,7 @@ const TimeInput = ({ hours, minutes, onChange, disabled, format }: TimeInputProp
           disabled={disabled}
           min={is12Hour ? 1 : 0}
           max={is12Hour ? 12 : 23}
-          size="sm"
+          scale="sm"
           leadingZero
         />
         {is12Hour && (
@@ -460,7 +460,7 @@ const TimeInput = ({ hours, minutes, onChange, disabled, format }: TimeInputProp
           disabled={disabled}
           min={0}
           max={59}
-          size="sm"
+          scale="sm"
           leadingZero
         />
       </div>

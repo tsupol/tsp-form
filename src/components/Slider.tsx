@@ -10,7 +10,7 @@ export type SliderProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | '
   step?: number;
   showValue?: boolean;
   showMinMax?: boolean;
-  size?: 'sm' | 'md' | 'lg';
+  scale?: 'sm' | 'md' | 'lg';
   error?: boolean;
 };
 
@@ -25,7 +25,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
       step = 1,
       showValue = false,
       showMinMax = false,
-      size = 'md',
+      scale = 'md',
       disabled = false,
       error = false,
       ...rest
@@ -48,7 +48,7 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
       <div
         className={clsx(
           'slider-wrapper',
-          `slider-${size}`,
+          `slider-${scale}`,
           {
             'slider-disabled': disabled,
             'slider-dragging': isDragging,

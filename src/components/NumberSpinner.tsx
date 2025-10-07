@@ -8,12 +8,12 @@ export type NumberSpinnerProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'ty
   onChange?: (value: number | "") => void;
   step?: number;
   variant?: "default" | "diagonal";
-  size?: "xs" | "sm" | "md" | "lg";
+  scale?: "xs" | "sm" | "md" | "lg";
   leadingZero?: boolean;
 };
 
 export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
-  ({ className, error, onChange, step = 1, min, max, value, disabled, variant = "default", size = "md", leadingZero = false, ...rest }, ref) => {
+  ({ className, error, onChange, step = 1, min, max, value, disabled, variant = "default", scale = "md", leadingZero = false, ...rest }, ref) => {
     const handleIncrement = useCallback((e?: MouseEvent) => {
       e?.stopPropagation();
 
@@ -82,7 +82,7 @@ export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
       <div className={clsx(
         "number-spinner",
         `number-spinner-${variant}`,
-        `number-spinner-${size}`,
+        `number-spinner-${scale}`,
         className,
         disabled && "number-spinner-disabled"
       )}>

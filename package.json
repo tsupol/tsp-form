@@ -1,6 +1,6 @@
 {
   "name": "tsp-form",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "type": "module",
   "description": "A unified Tailwind 4 variables compatible UI component library for my own projects.",
   "module": "dist/index.js",

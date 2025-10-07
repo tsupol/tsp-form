@@ -180,8 +180,7 @@ export function ExampleForm() {
               min={1}
               max={100}
               step={1}
-              // @ts-ignore
-              size="xs"
+              scale="xs"
               error={!!errors.quantity}
             />
           )}
@@ -208,8 +207,7 @@ export function ExampleForm() {
               step={5}
               max={100}
               variant="diagonal"
-              // @ts-ignore
-              size="md"
+              scale="md"
               error={!!errors.price}
             />
           )}
@@ -255,7 +253,7 @@ export function ExampleForm() {
               min={0}
               max={100}
               showValue
-              size="sm"
+              scale="sm"
             />
           )}
         />
@@ -275,7 +273,7 @@ export function ExampleForm() {
               min={0}
               max={100}
               showMinMax
-              size="lg"
+              scale="lg"
             />
           )}
         />
