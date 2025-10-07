@@ -26,30 +26,34 @@
 }
 
 .tooltip-top::after {
-    bottom: -8px;
+    bottom: -7px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 2;
     border-top-color: var(--color-fg);
 }
 
 .tooltip-bottom::after {
-    top: -8px;
+    top: -7px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 2;
     border-bottom-color: var(--color-fg);
 }
 
 .tooltip-left::after {
-    right: -8px;
+    right: -7px;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 2;
     border-left-color: var(--color-fg);
 }
 
 .tooltip-right::after {
-    left: -8px;
+    left: -7px;
     top: 50%;
     transform: translateY(-50%);
+    z-index: 2;
     border-right-color: var(--color-fg);
 }
 

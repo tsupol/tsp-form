@@ -1,7 +1,4 @@
 .datepicker-container {
-    border: 1px solid var(--color-line);
-    background-color: var(--color-surface);
-    border-radius: 8px;
     padding: 16px;
     max-width: 300px;
 }
@@ -106,7 +103,6 @@
 /* Time picker wrapper - horizontal layout */
 .datepicker-wrapper {
     display: flex;
-    gap: 16px;
 }
 
 /* Time picker container - right side */
@@ -115,9 +111,7 @@
     flex-direction: column;
     gap: 16px;
     padding: 16px;
-    border: 1px solid var(--color-line);
-    background-color: var(--color-surface);
-    border-radius: 8px;
+    border-left: 1px solid var(--color-line);
     min-width: 140px;
 }
 

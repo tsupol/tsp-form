@@ -5,7 +5,7 @@ import "../styles/popover.css";
 interface PopOverProps {
   isOpen: boolean;
   onClose: () => void;
-  trigger: ReactNode;
+  trigger?: ReactNode;
   children: ReactNode;
   placement?: 'bottom' | 'top' | 'left' | 'right';
   align?: 'start' | 'center' | 'end';

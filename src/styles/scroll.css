@@ -23,7 +23,6 @@
 
 .better-scroll {
     overflow-y: auto;
-    scrollbar-gutter: stable; /* Prevents layout shift */
     scrollbar-width: thin; /* Firefox */
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox */
 }

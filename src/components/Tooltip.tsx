@@ -18,7 +18,7 @@ export const Tooltip = ({
   className = '',
   disabled = false,
 }: TooltipProps) => {
-  const triggerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLSpanElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -131,7 +131,7 @@ export const Tooltip = ({
 
   return (
     <>
-      <div
+      <span
         ref={triggerRef}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
@@ -140,7 +140,7 @@ export const Tooltip = ({
         className="tooltip-trigger"
       >
         {children}
-      </div>
+      </span>
 
       {isVisible && (
         <div

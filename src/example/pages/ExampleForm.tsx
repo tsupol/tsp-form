@@ -14,6 +14,7 @@ import { DoubleDatePicker } from '../../components/DoubleDatePicker';
 import { NumberSpinner } from '../../components/NumberSpinner';
 import { Switch } from '../../components/Switch';
 import { Slider } from '../../components/Slider';
+import { InputDatePicker } from '../../components/InputDatePicker';
 import { Search, Mail, Eye, EyeOff, User } from 'lucide-react';
 
 type FormValues = {
@@ -95,7 +96,6 @@ export function ExampleForm() {
           <Input
             id="name"
             placeholder="Jane Doe"
-            startIcon={<User size={18} />}
             {...register("name", {
               required: 'Template name is required (min 3 characters)',
               minLength: {
@@ -341,13 +341,26 @@ export function ExampleForm() {
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             return (
-              <DatePicker
-                minDate={today}
-                selectedDate={value}
+              <InputDatePicker
+                value={value}
                 onChange={onChange}
-                className="form-control"
-                showTime={true}
-                timeFormat="12h"
+                placeholder="Select your birthday"
+                datePickerProps={{
+                  minDate: today,
+                  showTime: false,
+                  timeFormat: "12h"
+                }}
+                dateFormat={(date) => {
+                  if (!date) return '';
+                  return date.toLocaleString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true
+                  });
+                }}
               />
             );
           }}
