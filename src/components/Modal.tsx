@@ -1,10 +1,10 @@
-import { CSSProperties, useEffect, useRef, type ReactNode, useCallback } from 'react';
+import { CSSProperties, useEffect, useRef, type ReactNode, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
 import "../styles/modal.css";
 import { useModal } from '../context/ModalContext';
 
 type ModalProps = {
-  id: string;
+  id?: string;
   open: boolean;
   onClose?: () => void;
   children: ReactNode;
@@ -30,7 +30,9 @@ export const Modal = ({
   maxHeight,
   style
 }: ModalProps) => {
-  const modalHook = useModal(id);
+  const autoId = useId();
+  const modalId = id ?? autoId;
+  const modalHook = useModal(modalId);
   const { isOpen, isTop, zIndex } = modalHook;
   const mountNodeRef = useRef<HTMLElement | null>(null);
   const prevOpenRef = useRef<boolean>(open);
@@ -40,7 +42,7 @@ export const Modal = ({
     if (typeof document === 'undefined') return;
 
     const el = document.createElement('div');
-    el.setAttribute('data-modal-mount', id);
+    el.setAttribute('data-modal-mount', modalId);
     document.body.appendChild(el);
     mountNodeRef.current = el;
 
@@ -49,7 +51,7 @@ export const Modal = ({
         el.parentNode.removeChild(el);
       }
     };
-  }, [id]);
+  }, [modalId]);
 
   // Sync open state with modal context
   useEffect(() => {
@@ -103,7 +105,7 @@ export const Modal = ({
       style={{ zIndex }}
       data-open="true"
       data-top={isTop ? 'true' : 'false'}
-      data-modal-id={id}
+      data-modal-id={modalId}
       onKeyDown={handleKeyDown}
       onClick={handleLayerClick}
     >
@@ -125,7 +127,7 @@ export const Modal = ({
 
 // Convenience wrapper component with common modal structure
 export interface ModalWrapperProps {
-  id: string;
+  id?: string;
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;

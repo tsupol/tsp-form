@@ -65,7 +65,7 @@ export const ExampleModal = () => {
         </Button>
       </div>
 
-      <Modal id="modal-a" open={openA} onClose={handleCloseA} maxWidth="400px" ariaLabel="Modal A">
+      <Modal open={openA} onClose={handleCloseA} maxWidth="400px" ariaLabel="Modal A">
         <h2>Modal A</h2>
         <p>First modal</p>
         <div className="flex gap-2">

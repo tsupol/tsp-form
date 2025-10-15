@@ -110,7 +110,6 @@ export function ExampleFormModal() {
       )}
 
       <Modal
-        id="form-modal1"
         open={isModalOpen}
         onClose={handleCloseModal}
         width="600px"
