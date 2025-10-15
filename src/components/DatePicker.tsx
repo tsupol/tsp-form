@@ -17,6 +17,8 @@ export interface DatePickerProps {
   className?: string;
   showTime?: boolean;
   timeFormat?: '12h' | '24h';
+  defaultStartTime?: { hours: number; minutes: number };
+  defaultEndTime?: { hours: number; minutes: number };
 }
 
 const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -37,19 +39,43 @@ export const DatePicker = ({
   disabled = false,
   className,
   showTime = false,
-  timeFormat = '24h'
+  timeFormat = '24h',
+  defaultStartTime = { hours: 0, minutes: 0 },
+  defaultEndTime = { hours: 23, minutes: 59 }
 }: DatePickerProps) => {
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
 
+  // Get initial time from date or use defaults
+  const getInitialStartTime = () => {
+    const date = selectedDate || fromDate;
+    if (date) {
+      return {
+        hours: date.getHours(),
+        minutes: date.getMinutes()
+      };
+    }
+    return defaultStartTime;
+  };
+
+  const getInitialEndTime = () => {
+    if (toDate) {
+      return {
+        hours: toDate.getHours(),
+        minutes: toDate.getMinutes()
+      };
+    }
+    return defaultEndTime;
+  };
+
   // Time state for single mode or range start
-  const [startHours, setStartHours] = useState(0);
-  const [startMinutes, setStartMinutes] = useState(0);
+  const [startHours, setStartHours] = useState(getInitialStartTime().hours);
+  const [startMinutes, setStartMinutes] = useState(getInitialStartTime().minutes);
 
   // Time state for range end
-  const [endHours, setEndHours] = useState(23);
-  const [endMinutes, setEndMinutes] = useState(59);
+  const [endHours, setEndHours] = useState(getInitialEndTime().hours);
+  const [endMinutes, setEndMinutes] = useState(getInitialEndTime().minutes);
 
   // Get the start date for the component
   const getStartDate = (): Date | null => {

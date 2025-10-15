@@ -3,9 +3,11 @@ import clsx from "clsx";
 import "../styles/form.css";
 import "../styles/number-spinner.css";
 
-export type NumberSpinnerProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange'> & {
+export type NumberSpinnerProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange' | 'min' | 'max' | 'step'> & {
   error?: boolean;
   onChange?: (value: number | "") => void;
+  min?: number;
+  max?: number;
   step?: number;
   variant?: "default" | "diagonal";
   scale?: "xs" | "sm" | "md" | "lg";
@@ -105,9 +107,6 @@ export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
           value={displayValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          step={step}
-          min={min}
-          max={max}
           disabled={disabled}
           {...rest}
         />

@@ -16,6 +16,7 @@ interface PopOverProps {
   maxWidth?: string;
   maxHeight?: string;
   openDelay?: number; // small delay to prevent initial flicker
+  offset?: number; // distance between trigger and popover in pixels
 }
 
 export function PopOver({
@@ -32,6 +33,7 @@ export function PopOver({
   maxWidth = '400px',
   maxHeight = '300px',
   openDelay = 80,
+  offset = 8,
 }: PopOverProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
@@ -67,7 +69,7 @@ export function PopOver({
     // Restore original styles
     Object.assign(popover.style, originalStyle);
 
-    const gap = 8;
+    const gap = offset;
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
 

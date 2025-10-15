@@ -8,6 +8,8 @@ export * from './src/components/DatePicker';
 export * from './src/components/DoubleDatePicker';
 export * from './src/components/FormControlError';
 export * from './src/components/Input';
+export * from './src/components/InputDatePicker';
+export * from './src/components/InputDateRangePicker';
 export * from './src/components/JsonPretty';
 export * from './src/components/LabeledCheckbox';
 export * from './src/components/Modal';

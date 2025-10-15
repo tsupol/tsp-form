@@ -9,6 +9,7 @@
     border-radius: 0;
     text-align: center;
     min-width: 80px;
+    width: 80px;
     /* Remove spinner arrows from number input */
     -moz-appearance: textfield;
 }
@@ -139,7 +140,8 @@
 
 /* Size variants */
 .number-spinner-xs .number-spinner-input {
-    min-width: 1rem;
+    min-width: 2rem;
+    width: 2rem;
     min-height: 1.75rem;
     padding: 0.25rem 0.25rem;
     font-size: 0.75rem;
@@ -152,6 +154,7 @@
 
 .number-spinner-sm .number-spinner-input {
     min-width: 3rem;
+    width: 3rem;
     min-height: 2rem;
     padding: var(--spacing-control-compact-y) var(--spacing-control-compact-x);
     font-size: 0.875rem;
@@ -164,10 +167,12 @@
 
 .number-spinner-md .number-spinner-input {
     min-width: 5rem;
+    width: 5rem;
 }
 
 .number-spinner-lg .number-spinner-input {
     min-width: 100px;
+    width: 100px;
     padding: var(--spacing-control-relaxed-y) var(--spacing-control-relaxed-x);
     font-size: 1.125rem;
 }

@@ -33,6 +33,7 @@ export const Modal = ({
   const modalHook = useModal(id);
   const { isOpen, isTop, zIndex } = modalHook;
   const mountNodeRef = useRef<HTMLElement | null>(null);
+  const prevOpenRef = useRef<boolean>(open);
 
   // Create mount node
   useEffect(() => {
@@ -52,12 +53,17 @@ export const Modal = ({
 
   // Sync open state with modal context
   useEffect(() => {
-    if (open && !isOpen) {
-      modalHook.open();
-    } else if (!open && isOpen) {
-      modalHook.close();
+    // Only sync if the open prop actually changed
+    if (prevOpenRef.current !== open) {
+      prevOpenRef.current = open;
+
+      if (open && !isOpen) {
+        modalHook.open();
+      } else if (!open && isOpen) {
+        modalHook.close();
+      }
     }
-  }, [open, isOpen, modalHook]);
+  }, [open, isOpen, modalHook.open, modalHook.close]);
 
   // Handle escape key for this specific modal
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {

@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { clsx } from 'clsx';
 import './example.css';
+import { ExampleFormModal } from './pages/ExampleFormModal';
 
 const SideNav = () => {
 
@@ -89,6 +90,9 @@ const App = () => {
             <div className="p-4">
               <h1 className="">Components</h1>
               <div className="grid gap-4">
+                <CollapsiblePanel title="Modal">
+                  <ExampleFormModal/>
+                </CollapsiblePanel>
                 <CollapsiblePanel title="Modal">
                   <ExampleModal/>
                 </CollapsiblePanel>

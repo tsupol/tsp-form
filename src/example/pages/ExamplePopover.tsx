@@ -21,6 +21,10 @@ export function ExamplePopOver() {
   const [nestedOpen, setNestedOpen] = useState(false);
   const [statusOpen, setStatusOpen] = useState(false);
 
+  // Context menu states
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const [submenuOpen, setSubmenuOpen] = useState(false);
+
   return (
     <div className="grid p-card">
       <div className="grid gap-6">
@@ -136,6 +140,7 @@ export function ExamplePopOver() {
               isOpen={rightOpen}
               onClose={() => setRightOpen(false)}
               placement="right"
+              offset={-4}
               trigger={
                 <Button
                   variant="outline"
@@ -148,7 +153,7 @@ export function ExamplePopOver() {
               <div className="p-4">
                 <h4 className="font-semibold mb-2">Right PopOver</h4>
                 <p className="text-sm text-gray-600 mb-3">
-                  Appears to the right of the trigger.
+                  Appears to the right of the trigger with negative offset (-4px).
                 </p>
                 <Button
                   variant="ghost"
@@ -373,6 +378,88 @@ export function ExamplePopOver() {
                 </div>
               </PopOver>
             </div>
+          </div>
+        </div>
+
+        {/* Context Menu Example */}
+        <div>
+          <h3 className="text-lg font-medium mb-3">Context Menu with Submenu</h3>
+          <p className="text-sm text-gray-600 mb-4">Hover over "More Options" to see a submenu appear without gap</p>
+          <div className="flex flex-wrap gap-4">
+            <PopOver
+              isOpen={contextMenuOpen}
+              onClose={() => {
+                setContextMenuOpen(false);
+                setSubmenuOpen(false);
+              }}
+              placement="bottom"
+              align="start"
+              trigger={
+                <Button onClick={() => setContextMenuOpen(!contextMenuOpen)}>
+                  Open Context Menu
+                </Button>
+              }
+            >
+              <div className="py-1 min-w-[180px]">
+                <button className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer">
+                  Cut
+                </button>
+                <button className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer">
+                  Copy
+                </button>
+                <button className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer">
+                  Paste
+                </button>
+                <hr className="my-1 border-line"/>
+
+                <PopOver
+                  isOpen={submenuOpen}
+                  onClose={() => setSubmenuOpen(false)}
+                  placement="right"
+                  align="start"
+                  offset={0}
+                  trigger={
+                    <button
+                      className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer flex items-center justify-between"
+                      onMouseEnter={() => setSubmenuOpen(true)}
+                      onMouseLeave={(e) => {
+                        // Don't close if moving to submenu
+                        const rect = e.currentTarget.getBoundingClientRect();
+                        const isMovingRight = e.clientX > rect.right;
+                        if (!isMovingRight) setSubmenuOpen(false);
+                      }}
+                    >
+                      More Options
+                      <span className="ml-2">▶</span>
+                    </button>
+                  }
+                >
+                  <div
+                    className="py-1 min-w-[160px]"
+                    onMouseLeave={() => setSubmenuOpen(false)}
+                  >
+                    <button className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer">
+                      Rename
+                    </button>
+                    <button className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer">
+                      Duplicate
+                    </button>
+                    <button className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer">
+                      Move to...
+                    </button>
+                    <hr className="my-1 border-line"/>
+                    <button className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover text-danger transition-colors cursor-pointer">
+                      Delete
+                    </button>
+                  </div>
+                </PopOver>
+
+                <hr className="my-1 border-line"/>
+                <button className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer">
+                  Properties
+                </button>
+              </div>
+            </PopOver>
           </div>
         </div>
 

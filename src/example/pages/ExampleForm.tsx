@@ -15,7 +15,8 @@ import { NumberSpinner } from '../../components/NumberSpinner';
 import { Switch } from '../../components/Switch';
 import { Slider } from '../../components/Slider';
 import { InputDatePicker } from '../../components/InputDatePicker';
-import { Search, Mail, Eye, EyeOff, User } from 'lucide-react';
+import { InputDateRangePicker } from '../../components/InputDateRangePicker';
+import { Search, Mail, Eye, EyeOff, User, Calendar } from 'lucide-react';
 
 type FormValues = {
   name: string;
@@ -39,6 +40,10 @@ type FormValues = {
   flightToDate: Date | null;
   eventPeriodStart: Date | null;
   eventPeriodEnd: Date | null;
+  vacationFromDate: Date | null;
+  vacationToDate: Date | null;
+  conferenceFromDate: Date | null;
+  conferenceToDate: Date | null;
 };
 
 export function ExampleForm() {
@@ -73,6 +78,10 @@ export function ExampleForm() {
       flightToDate: null,
       eventPeriodStart: null,
       eventPeriodEnd: null,
+      vacationFromDate: null,
+      vacationToDate: null,
+      conferenceFromDate: new Date(2025, 11, 1), // Dec 1, 2025
+      conferenceToDate: new Date(2025, 11, 5), // Dec 5, 2025
     },
     mode: "onTouched",
   });
@@ -193,10 +202,6 @@ export function ExampleForm() {
         <Controller
           name="price"
           control={control}
-          rules={{
-            required: "Price is required",
-            min: { value: 0, message: "Price must be at least 0" },
-          }}
           render={({ field: { onChange, value, ref } }) => (
             <NumberSpinner
               ref={ref}
@@ -208,11 +213,9 @@ export function ExampleForm() {
               max={100}
               variant="diagonal"
               scale="md"
-              error={!!errors.price}
             />
           )}
         />
-        {errors.price && <span className="form-error">{errors.price.message}</span>}
       </div>
 
       <div className="flex flex-col gap-1">
@@ -347,7 +350,7 @@ export function ExampleForm() {
                 placeholder="Select your birthday"
                 datePickerProps={{
                   minDate: today,
-                  showTime: false,
+                  showTime: true,
                   timeFormat: "12h"
                 }}
                 dateFormat={(date) => {
@@ -421,6 +424,93 @@ export function ExampleForm() {
         />
         {errors.flightFromDate && <span className="form-error">{errors.flightFromDate.message}</span>}
         {errors.flightToDate && <span className="form-error">{errors.flightToDate.message}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="form-label">Vacation Period (InputDateRangePicker with time & default times 9:00-17:00)</label>
+        <Controller
+          name="vacationFromDate"
+          control={control}
+          rules={{ required: 'From date is required' }}
+          render={({ field: { onChange: onFromDateChange, value: fromDate } }) => (
+            <Controller
+              name="vacationToDate"
+              control={control}
+              render={({ field: { onChange: onToDateChange, value: toDate } }) => (
+                <InputDateRangePicker
+                  fromDate={fromDate}
+                  toDate={toDate}
+                  onFromDateChange={onFromDateChange}
+                  onToDateChange={onToDateChange}
+                  placeholder="Select vacation dates"
+                  endIcon={<Calendar size={18} />}
+                  defaultStartTime={{ hours: 9, minutes: 0 }}
+                  defaultEndTime={{ hours: 17, minutes: 0 }}
+                  datePickerProps={{
+                    showTime: true,
+                    timeFormat: "24h"
+                  }}
+                  dateFormat={(from, to) => {
+                    if (!from && !to) return '';
+
+                    const formatDate = (date: Date | null) => {
+                      if (!date) return '';
+                      return date.toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: false
+                      });
+                    };
+
+                    const fromStr = formatDate(from);
+                    const toStr = formatDate(to);
+
+                    if (fromStr && toStr) {
+                      return `${fromStr} - ${toStr}`;
+                    } else if (fromStr) {
+                      return fromStr;
+                    }
+                    return '';
+                  }}
+                />
+              )}
+            />
+          )}
+        />
+        {errors.vacationFromDate && <span className="form-error">{errors.vacationFromDate.message}</span>}
+        {errors.vacationToDate && <span className="form-error">{errors.vacationToDate.message}</span>}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label className="form-label">Conference Dates (InputDateRangePicker - no time, with initial value)</label>
+        <Controller
+          name="conferenceFromDate"
+          control={control}
+          render={({ field: { onChange: onFromDateChange, value: fromDate } }) => (
+            <Controller
+              name="conferenceToDate"
+              control={control}
+              render={({ field: { onChange: onToDateChange, value: toDate } }) => (
+                <InputDateRangePicker
+                  fromDate={fromDate}
+                  toDate={toDate}
+                  onFromDateChange={onFromDateChange}
+                  onToDateChange={onToDateChange}
+                  placeholder="Select conference dates"
+                  endIcon={<Calendar size={18} />}
+                  datePickerProps={{
+                    showTime: false
+                  }}
+                />
+              )}
+            />
+          )}
+        />
+        {errors.conferenceFromDate && <span className="form-error">{errors.conferenceFromDate.message}</span>}
+        {errors.conferenceToDate && <span className="form-error">{errors.conferenceToDate.message}</span>}
       </div>
 
       <EdibleSelect control={control} errors={errors}/>
