@@ -1,6 +1,6 @@
 .popover {
     position: fixed;
-    z-index: 100;
+    /* z-index is now set dynamically via inline style */
     background-color: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-control);

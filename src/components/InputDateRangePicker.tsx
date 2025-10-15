@@ -69,16 +69,6 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
 
     return (
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
-        <Input
-          ref={ref}
-          {...inputProps}
-          value={formattedValue}
-          readOnly
-          onClick={() => setIsOpen(true)}
-          endIcon={endIcon}
-          onEndIconClick={endIcon ? () => setIsOpen(!isOpen) : undefined}
-          style={{ cursor: 'pointer' }}
-        />
         <PopOver
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
@@ -86,6 +76,18 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
           align="end"
           maxWidth="auto"
           maxHeight="auto"
+          trigger={
+            <Input
+              ref={ref}
+              {...inputProps}
+              value={formattedValue}
+              readOnly
+              onClick={() => setIsOpen(true)}
+              endIcon={endIcon}
+              onEndIconClick={endIcon ? () => setIsOpen(!isOpen) : undefined}
+              style={{ cursor: 'pointer' }}
+            />
+          }
         >
           <div className="flex">
             <DatePicker

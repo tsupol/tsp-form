@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useLayoutEffect, ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import "../styles/scroll.css";
 import "../styles/popover.css";
 
@@ -17,6 +18,7 @@ interface PopOverProps {
   maxHeight?: string;
   openDelay?: number; // small delay to prevent initial flicker
   offset?: number; // distance between trigger and popover in pixels
+  zIndex?: number; // optional manual z-index override
 }
 
 export function PopOver({
@@ -34,13 +36,32 @@ export function PopOver({
   maxHeight = '300px',
   openDelay = 80,
   offset = 8,
+  zIndex,
 }: PopOverProps) {
   const triggerRef = useRef<HTMLDivElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const mountNodeRef = useRef<HTMLElement | null>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [actualPlacement, setActualPlacement] = useState(placement);
   const [isPositioned, setIsPositioned] = useState(false);
   const [hasDelayElapsed, setHasDelayElapsed] = useState(false);
+  const [calculatedZIndex, setCalculatedZIndex] = useState<number>(zIndex ?? 100);
+
+  // Create portal mount node
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const el = document.createElement('div');
+    el.setAttribute('data-popover-mount', 'true');
+    document.body.appendChild(el);
+    mountNodeRef.current = el;
+
+    return () => {
+      if (el.parentNode) {
+        el.parentNode.removeChild(el);
+      }
+    };
+  }, []);
 
   const calculatePosition = () => {
     if (!triggerRef.current || !popoverRef.current || !isOpen) return;
@@ -170,6 +191,40 @@ export function PopOver({
     setIsPositioned(true);
   };
 
+  // Calculate z-index based on modal context
+  useEffect(() => {
+    if (zIndex !== undefined) {
+      // If zIndex is explicitly provided, use it
+      setCalculatedZIndex(zIndex);
+      return;
+    }
+
+    if (!isOpen) return;
+
+    // Find if trigger is inside a modal by checking all modal layers in the document
+    const modalLayers = document.querySelectorAll('.modal-layer[data-open="true"]');
+    let highestModalZIndex = 100; // default popover z-index
+
+    // Check if trigger is inside any of the open modals
+    if (triggerRef.current) {
+      modalLayers.forEach((modalLayer) => {
+        if (modalLayer.contains(triggerRef.current)) {
+          const modalZIndex = parseInt(window.getComputedStyle(modalLayer).zIndex || '0', 10);
+          if (modalZIndex > highestModalZIndex) {
+            highestModalZIndex = modalZIndex;
+          }
+        }
+      });
+    }
+
+    // Set popover z-index to be higher than the modal
+    if (highestModalZIndex > 100) {
+      setCalculatedZIndex(highestModalZIndex + 1);
+    } else {
+      setCalculatedZIndex(100);
+    }
+  }, [isOpen, zIndex]);
+
   // Delay visibility to avoid first-time flicker
   useEffect(() => {
     let t: NodeJS.Timeout | undefined;
@@ -254,32 +309,35 @@ export function PopOver({
     };
   }, [isOpen, onClose]);
 
+  const popoverContent = isOpen && mountNodeRef.current ? createPortal(
+    <div
+      ref={popoverRef}
+      className={`popover better-scroll ${
+        isPositioned && hasDelayElapsed ? 'opacity-100' : 'opacity-0'
+      } ${className}`}
+      style={{
+        top: position.top,
+        left: position.left,
+        width: width,
+        minWidth: minWidth,
+        maxWidth: `min(${maxWidth}, ${window.innerWidth - 32}px)`,
+        maxHeight: `min(${maxHeight}, ${window.innerHeight - 32}px)`,
+        overflowY: 'auto',
+        visibility: isPositioned ? 'visible' : 'hidden',
+        zIndex: calculatedZIndex
+      }}
+    >
+      {children}
+    </div>,
+    mountNodeRef.current
+  ) : null;
+
   return (
     <>
       <div ref={triggerRef} className={triggerClassName}>
         {trigger}
       </div>
-
-      {isOpen && (
-        <div
-          ref={popoverRef}
-          className={`popover better-scroll ${
-            isPositioned && hasDelayElapsed ? 'opacity-100' : 'opacity-0'
-          } ${className}`}
-          style={{
-            top: position.top,
-            left: position.left,
-            width: width,
-            minWidth: minWidth,
-            maxWidth: `min(${maxWidth}, ${window.innerWidth - 32}px)`,
-            maxHeight: `min(${maxHeight}, ${window.innerHeight - 32}px)`,
-            overflowY: 'auto',
-            visibility: isPositioned ? 'visible' : 'hidden'
-          }}
-        >
-          {children}
-        </div>
-      )}
+      {popoverContent}
     </>
   );
 }
