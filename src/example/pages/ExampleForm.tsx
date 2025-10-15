@@ -71,7 +71,7 @@ export function ExampleForm() {
       notifications: false,
       darkMode: true,
       singleEdible: 'banana',
-      multiEdibles: ['apple', 'banana'],
+      multiEdibles: ['apple', 'banana', 'grape-aloe', 'very-long-name'],
       note: "This is a note.",
       birthday: null,
       flightFromDate: null,
@@ -549,8 +549,9 @@ const EdibleSelect = ({ control, errors }: { control: any, errors: any }) => {
     { value: 'banana', label: 'Banana' },
     { value: 'cherry', label: 'Cherry' },
     { value: 'date', label: 'Date' },
-    { value: 'grape', label: 'Grape' },
+    { value: 'grape-aloe', label: 'Grape-Aloe' },
     { value: 'lemon', label: 'Lemon' },
+    { value: 'very-long-name', label: 'Lemon Apple Cherry Banana Date Grape-Aloe Lemon Apple Cherry Banana Date Grape-Aloe' },
   ];
 
   return (
@@ -564,6 +565,7 @@ const EdibleSelect = ({ control, errors }: { control: any, errors: any }) => {
           render={({ field: { onChange, value } }) => (
             <FormControlError error={errors.singleEdible}>
               <Select
+                id="fruit-select"
                 options={options}
                 value={value}
                 onChange={onChange} // Use react-hook-form's onChange

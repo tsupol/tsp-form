@@ -11,6 +11,7 @@ interface Option {
 }
 
 interface SelectProps {
+  id?: string;
   options: Option[];
   value: string | string[] | null;
   onChange: (value: string | string[] | null) => void;
@@ -23,6 +24,7 @@ interface SelectProps {
 }
 
 export function Select({
+  id,
   options,
   value,
   onChange,
@@ -191,6 +193,7 @@ export function Select({
         </div>
       ))}
       <input
+        id={id}
         ref={inputRef}
         type="text"
         placeholder={displayPlaceholder ? placeholder : ''}
