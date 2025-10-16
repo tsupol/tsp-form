@@ -24,11 +24,25 @@ const defaultDateFormat = (date: Date | null): string => {
 export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps>(
   ({ value, onChange, datePickerProps, dateFormat = defaultDateFormat, endIcon, defaultStartTime, ...inputProps }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
-    // const triggerRef = useRef<HTMLDivElement>(null);
+    const openDateRef = useRef<Date | null>(null);
 
     const handleDateChange = (date: Date | null) => {
       onChange?.(date);
-      setIsOpen(false);
+
+      // Only close the popover if the date day has actually changed (not just time)
+      // This prevents closing when adjusting time with keyboard or when clicking inside
+      const openDate = openDateRef.current;
+
+      // Check if the actual date (day/month/year) has changed
+      const isSameDate = openDate && date &&
+        openDate.getDate() === date.getDate() &&
+        openDate.getMonth() === date.getMonth() &&
+        openDate.getFullYear() === date.getFullYear();
+
+      // Only close if a different day was selected
+      if (!isSameDate && date) {
+        setIsOpen(false);
+      }
     };
 
     const formattedValue = dateFormat(value || null);
@@ -40,9 +54,15 @@ export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps
           {...inputProps}
           value={formattedValue}
           readOnly
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            openDateRef.current = value;
+            setIsOpen(true);
+          }}
           endIcon={endIcon}
-          onEndIconClick={endIcon ? () => setIsOpen(!isOpen) : undefined}
+          onEndIconClick={endIcon ? () => {
+            openDateRef.current = value;
+            setIsOpen(!isOpen);
+          } : undefined}
           style={{ cursor: 'pointer' }}
         />
         <PopOver
