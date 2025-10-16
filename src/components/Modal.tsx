@@ -36,6 +36,7 @@ export const Modal = ({
   const { isOpen, isTop, zIndex } = modalHook;
   const mountNodeRef = useRef<HTMLElement | null>(null);
   const prevOpenRef = useRef<boolean>(open);
+  const mouseDownTargetRef = useRef<EventTarget | null>(null);
 
   // Create mount node
   useEffect(() => {
@@ -76,12 +77,24 @@ export const Modal = ({
     }
   }, [isTop, onClose]);
 
+  // Track mousedown target to prevent closing when selecting text
+  const handleMouseDown = useCallback((event: React.MouseEvent) => {
+    mouseDownTargetRef.current = event.target;
+  }, []);
+
   // Handle backdrop click on the modal layer
   const handleLayerClick = useCallback((event: React.MouseEvent) => {
-    // Only close if this is the top modal and clicking the layer (not the panel)
-    if (event.target === event.currentTarget && isTop) {
+    // Only close if this is the top modal, clicking the layer (not the panel),
+    // and both mousedown and mouseup happened on the backdrop
+    if (
+      event.target === event.currentTarget &&
+      mouseDownTargetRef.current === event.currentTarget &&
+      isTop
+    ) {
       onClose?.();
     }
+    // Reset after handling click
+    mouseDownTargetRef.current = null;
   }, [isTop, onClose]);
 
   // Prevent closing when clicking inside modal panel
@@ -107,6 +120,7 @@ export const Modal = ({
       data-top={isTop ? 'true' : 'false'}
       data-modal-id={modalId}
       onKeyDown={handleKeyDown}
+      onMouseDown={handleMouseDown}
       onClick={handleLayerClick}
     >
       <div
