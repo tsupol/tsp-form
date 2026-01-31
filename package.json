@@ -19,11 +19,10 @@
     "dist"
   ],
   "scripts": {
-    "dev": "webpack serve --mode development --env APP_MODE=example --port 3003",
-    "build": "npm run clean && tsc && webpack --mode production --env APP_MODE=library",
-    "clean": "rm -rf dist",
-    "build:example": "webpack",
-    "start:example": "webpack serve",
+    "dev": "vite --port 3003",
+    "dev:webpack": "webpack serve --mode development --env APP_MODE=example --port 3003",
+    "build": "vite build",
+    "build:lib": "rm -rf dist && tsc && webpack --mode production --env APP_MODE=library",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -40,8 +39,10 @@
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
     "@tailwindcss/postcss": "^4.1.13",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react-swc": "^4.2.2",
     "babel-loader": "^10.0.0",
     "clsx": "^2.1.1",
     "css-loader": "^7.1.2",
@@ -56,6 +57,7 @@
     "style-loader": "^4.0.0",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2",
+    "vite": "^7.3.1",
     "webpack": "^5.101.3",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
