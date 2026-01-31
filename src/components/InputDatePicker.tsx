@@ -55,12 +55,12 @@ export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps
           value={formattedValue}
           readOnly
           onClick={() => {
-            openDateRef.current = value;
+            openDateRef.current = value ?? null;
             setIsOpen(true);
           }}
           endIcon={endIcon}
           onEndIconClick={endIcon ? () => {
-            openDateRef.current = value;
+            openDateRef.current = value ?? null;
             setIsOpen(!isOpen);
           } : undefined}
           style={{ cursor: 'pointer' }}
