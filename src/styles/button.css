@@ -20,7 +20,15 @@
     font-weight: var(--font-weight-button);
 }
 
-.btn:hover {
+@media (hover: hover) and (pointer: fine) {
+    .btn:hover {
+        background: var(--color-bg-hover);
+        border-color: var(--color-border-hover);
+        color: var(--color-text-hover);
+    }
+}
+
+.btn:active {
     background: var(--color-bg-hover);
     border-color: var(--color-border-hover);
     color: var(--color-text-hover);
