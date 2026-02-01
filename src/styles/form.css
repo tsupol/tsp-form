@@ -34,9 +34,8 @@
 }
 
 .form-control:focus-within {
-    border-color: var(--color-primary); /* Focus border color */
-    box-shadow: none;
-    outline: none;
+    outline: 2px solid var(--color-primary);
+    outline-offset: -1px;
 }
 
 .form-control:disabled {
@@ -50,6 +49,7 @@
     font-weight: var(--text-control-label--font-weight, 600);
     letter-spacing: var(--text-control-label--letter-spacing, 0em);
     line-height: var(--text-control-label--line-height, 1.25);
+    padding-left: var(--spacing-label-x);
 }
 
 .form-error {
@@ -103,4 +103,47 @@
 
 .input-has-end-icon {
     padding-right: calc(var(--spacing-control-x) * 2.5);
+}
+
+/* Input group - joined controls in a single bordered container */
+.input-group {
+    display: flex;
+    align-items: stretch;
+    border: 1px solid var(--color-line, #d1d5db);
+    border-radius: var(--radius-control, 0.375rem);
+    background-color: var(--color-control-bg, rgba(125, 125, 125, 0.5));
+    transition: border-color 0.2s ease-in-out;
+}
+
+
+.input-group > * {
+    min-width: 0;
+}
+
+.input-group .form-control {
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+.input-group > :first-child .form-control,
+.input-group > :first-child.form-control {
+    border-radius: var(--radius-control, 0.375rem) 0 0 var(--radius-control, 0.375rem);
+}
+
+.input-group > :last-child .form-control,
+.input-group > :last-child.form-control {
+    border-radius: 0 var(--radius-control, 0.375rem) var(--radius-control, 0.375rem) 0;
+}
+
+.input-group .form-control:focus-within {
+    outline: 2px solid var(--color-primary);
+    outline-offset: -1px;
+}
+
+.input-group-divider {
+    width: 1px;
+    flex-shrink: 0;
+    align-self: stretch;
+    background: var(--color-line, #d1d5db);
 }

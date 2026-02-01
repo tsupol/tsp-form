@@ -1,25 +1,26 @@
 import { createRoot } from 'react-dom/client';
 import { CollapsiblePanel } from '../components/CollapsiblePanel';
-import { ExampleButtons } from './pages/ExampleButtons';
-import { ExampleForm } from './pages/ExampleForm';
-import { ExamplePopOver } from './pages/ExamplePopover';
-import { ExampleTabs } from './pages/ExampleTabs';
-import { ExampleProse } from './pages/ExampleProse';
-import { ExampleModal } from './pages/ExampleModal';
-import { ExampleSkeleton } from './pages/ExampleSkeleton';
-import { ExamplePagination } from './pages/ExamplePagination';
-import { ExampleTooltip } from './pages/ExampleTooltip';
-import { ExampleProgressBar } from './pages/ExampleProgressBar';
+import { ExampleButtons } from './main-sections/ExampleButtons';
+import { ExampleForm } from './main-sections/ExampleForm';
+import { ExamplePopOver } from './main-sections/ExamplePopover';
+import { ExampleTabs } from './main-sections/ExampleTabs';
+import { ExampleProse } from './main-sections/ExampleProse';
+import { ExampleModal } from './main-sections/ExampleModal';
+import { ExampleSkeleton } from './main-sections/ExampleSkeleton';
+import { ExamplePagination } from './main-sections/ExamplePagination';
+import { ExampleTooltip } from './main-sections/ExampleTooltip';
+import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider } from '../context/SnackbarContext';
 import { Home, FileText } from 'lucide-react';
 import { SideMenu } from '../components/SideMenu';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { clsx } from 'clsx';
 import './example.css';
-import { ExampleFormModal } from './pages/ExampleFormModal';
+import { ExampleFormModal } from './main-sections/ExampleFormModal';
+import { CustomFormPage } from './pages/CustomFormPage';
 
 const SideNav = () => {
 
@@ -28,6 +29,7 @@ const SideNav = () => {
   const customMenuItems = [
     { icon: <Home size="1rem"/>, label: "Dashboard", to: '/dashboard' },
     { icon: <FileText size="1rem"/>, label: "Documents", to: '/docs' },
+    { icon: <FileText size="1rem"/>, label: "Custom Form", to: '/custom-form' },
   ];
   return (
     <div className={clsx('h-screen flex-shrink-0', menuCollapsed ? 'md:w-side-menu-min' : 'md:w-side-menu')}>
@@ -88,42 +90,49 @@ const App = () => {
           <div className="flex">
             <SideNav/>
             <div className="p-4">
-              <h1 className="">Components</h1>
-              <div className="grid gap-4">
-                <CollapsiblePanel title="Modal">
-                  <ExampleFormModal/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Modal">
-                  <ExampleModal/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Form">
-                  <ExampleForm/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="PopOver">
-                  <ExamplePopOver/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Responsive Tabs">
-                  <ExampleTabs/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Buttons">
-                  <ExampleButtons/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Skeleton">
-                  <ExampleSkeleton/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Pagination">
-                  <ExamplePagination/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Tooltip">
-                  <ExampleTooltip/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Progress Bar">
-                  <ExampleProgressBar/>
-                </CollapsiblePanel>
-                <CollapsiblePanel title="Prose">
-                  <ExampleProse/>
-                </CollapsiblePanel>
-              </div>
+              <Routes>
+                <Route path="/custom-form" element={<CustomFormPage/>}/>
+                <Route path="*" element={
+                  <>
+                    <h1 className="">Components</h1>
+                    <div className="grid gap-4">
+                      <CollapsiblePanel title="Modal">
+                        <ExampleFormModal/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="Modal">
+                        <ExampleModal/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="Form">
+                        <ExampleForm/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="PopOver">
+                        <ExamplePopOver/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="Responsive Tabs">
+                        <ExampleTabs/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="Buttons">
+                        <ExampleButtons/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="Skeleton">
+                        <ExampleSkeleton/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="Pagination">
+                        <ExamplePagination/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="Tooltip">
+                        <ExampleTooltip/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="Progress Bar">
+                        <ExampleProgressBar/>
+                      </CollapsiblePanel>
+                      <CollapsiblePanel title="Prose">
+                        <ExampleProse/>
+                      </CollapsiblePanel>
+                    </div>
+                  </>
+                }/>
+              </Routes>
             </div>
           </div>
         </BrowserRouter>
