@@ -1,4 +1,4 @@
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, ReactNode } from 'react';
 import '../styles/snackbar.css';
 
 // Define the possible positions for the snackbar
@@ -7,7 +7,7 @@ export type SnackbarType = 'success' | 'error' | 'info' | 'warning'; // New type
 
 export interface SnackbarProps {
   id: string;
-  message: string;
+  message: ReactNode;
   type: SnackbarType; // Use the new type alias
   duration: number;
   onRemove: (id: string) => void;

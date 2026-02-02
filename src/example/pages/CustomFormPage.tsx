@@ -2,14 +2,15 @@ import { useState } from 'react';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Select } from '../../components/Select';
+import { Search } from 'lucide-react';
 
 export function CustomFormPage() {
   const [selectValue, setSelectValue] = useState<string | null>(null);
-  const [selectValue2, setSelectValue2] = useState<string | null>(null);
+  const [selectValue3, setSelectValue3] = useState<string | null>(null);
 
   return (
     <div className="page-content">
-      <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full max-w-[500px]">
+      <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full max-w-[600px]">
         <h1 className="text-xl font-bold mb-4">Custom Form</h1>
         <div className="grid gap-3">
           <div className="flex flex-col gap-1">
@@ -33,18 +34,19 @@ export function CustomFormPage() {
             </div>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="form-label">Type</label>
+            <label className="form-label">Status</label>
             <div className="w-5/12">
               <Select
-                id="type"
+                id="status"
+                startIcon={<Search size={16} />}
                 options={[
-                  { value: 'typeA', label: 'Type A' },
-                  { value: 'typeB', label: 'Type B' },
-                  { value: 'typeC', label: 'Type C' },
+                  { value: 'active', label: 'Active', icon: <span style={{ color: '#22c55e' }}>●</span> },
+                  { value: 'pending', label: 'Pending', icon: <span style={{ color: '#eab308' }}>●</span> },
+                  { value: 'inactive', label: 'Inactive', icon: <span style={{ color: '#ef4444' }}>●</span> },
                 ]}
-                value={selectValue2}
-                onChange={(v) => setSelectValue2(v as string | null)}
-                placeholder="Select type..."
+                value={selectValue3}
+                onChange={(v) => setSelectValue3(v as string | null)}
+                placeholder="Select status..."
               />
             </div>
           </div>

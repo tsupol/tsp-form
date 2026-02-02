@@ -1,13 +1,14 @@
-import { useState, useRef, useEffect, useCallback, useMemo, type ComponentProps, type MouseEvent, type ChangeEvent, type KeyboardEvent } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo, type ComponentProps, type MouseEvent, type ChangeEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { PopOver } from './PopOver';
 import { Chevron } from './Chevron';
 import clsx from 'clsx';
 import '../styles/form.css';
 import '../styles/select.css';
 
-interface Option {
+export interface Option {
   value: string;
   label: string;
+  icon?: ReactNode;
 }
 
 interface SelectProps {
@@ -21,6 +22,7 @@ interface SelectProps {
   disabled?: boolean;
   className?: string; // Additional classes for the main container (Select wrapper)
   popoverProps?: Partial<ComponentProps<typeof PopOver>>; // New prop for PopOver specific styling
+  startIcon?: ReactNode;
 }
 
 export function Select({
@@ -34,6 +36,7 @@ export function Select({
   disabled = false,
   className,
   popoverProps, // Destructure new prop
+  startIcon,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -163,18 +166,21 @@ export function Select({
     <div
       className={clsx(
         "form-control select",
+        startIcon && "input-has-start-icon",
         disabled && "disabled",
         className
       )}
       onClick={handleWrapperClick}
       ref={selectRef}
     >
+      {startIcon && <div className="input-icon input-icon-start">{startIcon}</div>}
       {selectedOptions.map(option => (
         <div
           key={option.value}
           className="selected-chip"
         >
           <div className="selected-chip-label">
+            {option.icon && <span className="select-option-icon">{option.icon}</span>}
             {option.label}
           </div>
           {!disabled && (multiple || selectedOptions.length === 1) && (
@@ -245,6 +251,7 @@ export function Select({
               )}
               onClick={() => handleSelect(option)}
             >
+              {option.icon && <span className="select-option-icon">{option.icon}</span>}
               {option.label}
             </div>
           ))

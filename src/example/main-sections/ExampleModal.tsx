@@ -63,6 +63,21 @@ export const ExampleModal = () => {
         })}>
           Show Snackbar Bottom Center
         </Button>
+        <Button onClick={() => addSnackbar({
+          message: (
+            <span>
+              Something happened.{' '}
+              <button style={{ textDecoration: 'underline', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0 }} onClick={() => setOpenA(true)}>
+                Open Modal
+              </button>
+            </span>
+          ),
+          type: 'info',
+          duration: 5000,
+          position: 'bottom-right',
+        })}>
+          Snackbar with Action
+        </Button>
       </div>
 
       <Modal open={openA} onClose={handleCloseA} maxWidth="400px" ariaLabel="Modal A">
