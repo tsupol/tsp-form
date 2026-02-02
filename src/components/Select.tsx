@@ -27,6 +27,9 @@ interface SelectProps {
   onSearchChange?: (searchTerm: string) => void;
   loading?: boolean;
   loadingContent?: ReactNode;
+  unstyled?: boolean;
+  searchTerm?: string;
+  children?: ReactNode;
 }
 
 export function Select({
@@ -44,9 +47,13 @@ export function Select({
   onSearchChange,
   loading = false,
   loadingContent,
+  unstyled = false,
+  searchTerm: controlledSearchTerm,
+  children,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [internalSearchTerm, setInternalSearchTerm] = useState('');
+  const searchTerm = controlledSearchTerm ?? internalSearchTerm;
   const inputRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLDivElement>(null); // Ref for the main select container
 
@@ -93,17 +100,17 @@ export function Select({
       }
     } else {
       newValue = option.value;
-      setSearchTerm('');
+      setInternalSearchTerm('');
     }
 
     onChange(newValue);
 
     if (actualCloseOnSelect) {
       setIsOpen(false);
-      setSearchTerm('');
+      setInternalSearchTerm('');
     } else if (multiple) {
       inputRef.current?.focus();
-      setSearchTerm('');
+      setInternalSearchTerm('');
     }
   }, [multiple, selectedValuesArray, onChange, actualCloseOnSelect, disabled]);
 
@@ -131,13 +138,13 @@ export function Select({
     if (!isOpen) {
       setTimeout(() => inputRef.current?.focus(), 50);
     } else {
-      setSearchTerm('');
+      setInternalSearchTerm('');
       inputRef.current?.blur();
     }
   }, [isOpen, disabled]);
 
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
+    setInternalSearchTerm(e.target.value);
     setIsOpen(true);
     onSearchChange?.(e.target.value);
   }, [onSearchChange]);
@@ -145,12 +152,12 @@ export function Select({
   const handleInputFocus = useCallback(() => {
     if (disabled) return;
     setIsOpen(true);
-    setSearchTerm('');
+    setInternalSearchTerm('');
     onSearchChange?.('');
   }, [disabled, onSearchChange]);
 
   const handleInputBlur = useCallback(() => {
-    setSearchTerm('');
+    setInternalSearchTerm('');
   }, []);
 
   const handleInputKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
@@ -162,7 +169,7 @@ export function Select({
 
   useEffect(() => {
     if (!isOpen) {
-      setSearchTerm('');
+      setInternalSearchTerm('');
       onSearchChange?.('');
     }
   }, [isOpen, onSearchChange]);
@@ -172,7 +179,29 @@ export function Select({
   // Get the width of the select trigger to set as minWidth for the popover
   const selectTriggerWidth = selectRef.current?.offsetWidth;
 
-  const triggerContent = (
+  const triggerContent = unstyled ? (
+    <div
+      className={className}
+      onClick={handleWrapperClick}
+      ref={selectRef}
+    >
+      {children}
+      <input
+        id={id}
+        ref={inputRef}
+        type="text"
+        className="select-unstyled-input"
+        value={searchTerm}
+        onChange={handleInputChange}
+        onFocus={handleInputFocus}
+        onBlur={handleInputBlur}
+        disabled={disabled}
+        onKeyDown={handleInputKeyDown}
+        tabIndex={-1}
+        aria-hidden
+      />
+    </div>
+  ) : (
     <div
       className={clsx(
         "form-control select",
@@ -241,7 +270,7 @@ export function Select({
       isOpen={isOpen}
       onClose={() => {
         setIsOpen(false);
-        setSearchTerm('');
+        setInternalSearchTerm('');
       }}
       trigger={triggerContent}
       placement="bottom"

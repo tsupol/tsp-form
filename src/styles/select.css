@@ -102,6 +102,17 @@
     flex-shrink: 0;
 }
 
+.select-unstyled-input {
+    position: absolute;
+    width: 0;
+    height: 0;
+    padding: 0;
+    border: none;
+    outline: none;
+    opacity: 0;
+    pointer-events: none;
+}
+
 .select-loading {
     display: flex;
     flex-direction: column;

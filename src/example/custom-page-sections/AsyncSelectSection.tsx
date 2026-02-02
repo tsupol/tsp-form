@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { Select, Option } from '../../../components/Select';
+import { Select, Option } from '../../components/Select';
 
 const MOCK_DATA: Option[] = [
   { value: '1', label: 'Alice Johnson' },

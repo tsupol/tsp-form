@@ -3,7 +3,8 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { Select } from '../../components/Select';
 import { Search } from 'lucide-react';
-import { AsyncSelectSection } from './custom-page-sections/AsyncSelectSection';
+import { AsyncSelectSection } from '../custom-page-sections/AsyncSelectSection';
+import { UnstyledSelectSection } from '../custom-page-sections/UnstyledSelectSection';
 
 export function CustomFormPage() {
   const [selectValue, setSelectValue] = useState<string | null>(null);
@@ -59,6 +60,9 @@ export function CustomFormPage() {
         </div>
         <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full max-w-[600px]">
           <AsyncSelectSection/>
+        </div>
+        <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full max-w-[600px]">
+          <UnstyledSelectSection/>
         </div>
       </div>
     </div>
