@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo, type ComponentProps, type MouseEvent, type ChangeEvent, type KeyboardEvent, type ReactNode } from 'react';
 import { PopOver } from './PopOver';
 import { Chevron } from './Chevron';
+import { Skeleton } from './Skeleton';
 import clsx from 'clsx';
 import '../styles/form.css';
 import '../styles/select.css';
@@ -23,6 +24,9 @@ interface SelectProps {
   className?: string; // Additional classes for the main container (Select wrapper)
   popoverProps?: Partial<ComponentProps<typeof PopOver>>; // New prop for PopOver specific styling
   startIcon?: ReactNode;
+  onSearchChange?: (searchTerm: string) => void;
+  loading?: boolean;
+  loadingContent?: ReactNode;
 }
 
 export function Select({
@@ -37,6 +41,9 @@ export function Select({
   className,
   popoverProps, // Destructure new prop
   startIcon,
+  onSearchChange,
+  loading = false,
+  loadingContent,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -132,13 +139,15 @@ export function Select({
   const handleInputChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
     setIsOpen(true);
-  }, []);
+    onSearchChange?.(e.target.value);
+  }, [onSearchChange]);
 
   const handleInputFocus = useCallback(() => {
     if (disabled) return;
     setIsOpen(true);
     setSearchTerm('');
-  }, [disabled]);
+    onSearchChange?.('');
+  }, [disabled, onSearchChange]);
 
   const handleInputBlur = useCallback(() => {
     setSearchTerm('');
@@ -154,8 +163,9 @@ export function Select({
   useEffect(() => {
     if (!isOpen) {
       setSearchTerm('');
+      onSearchChange?.('');
     }
-  }, [isOpen]);
+  }, [isOpen, onSearchChange]);
 
   const displayPlaceholder = selectedValuesArray.length === 0 && searchTerm === '';
 
@@ -241,7 +251,15 @@ export function Select({
       {...popoverProps}
     >
       <div className="select-popover">
-        {availableOptions.length > 0 ? (
+        {loading ? (
+          loadingContent ?? (
+            <div className="select-loading">
+              <Skeleton width="60%" />
+              <Skeleton width="80%" />
+              <Skeleton width="40%" />
+            </div>
+          )
+        ) : availableOptions.length > 0 ? (
           availableOptions.map(option => (
             <div
               key={option.value}

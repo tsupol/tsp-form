@@ -102,6 +102,13 @@
     flex-shrink: 0;
 }
 
+.select-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: var(--spacing-option-y) var(--spacing-option-x);
+}
+
 .select-popover-item:hover {
     background-color: var(--color-surface-hover);
 }
