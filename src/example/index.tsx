@@ -12,7 +12,7 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, User, Monitor, Keyboard, ChevronRight } from 'lucide-react';
+import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { SideMenu } from '../components/SideMenu';
 import { PopOver } from '../components/PopOver';
 import { Link, useNavigate, Routes, Route } from 'react-router-dom';
@@ -24,6 +24,7 @@ import { ExampleFormModal } from './main-sections/ExampleFormModal';
 import { CustomFormPage } from './pages/CustomFormPage';
 import { ContextMenuPage } from './pages/ContextMenuPage';
 import { CarouselPage } from './pages/CarouselPage';
+import { SettingsModalPage } from './pages/SettingsModalPage';
 
 // Menu item component for user menu
 function UserMenuItem({ icon, label, onClick, shortcut, danger }: {
@@ -128,63 +129,26 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
         </button>
       }
     >
-      <div className="py-1 min-w-[220px]">
-        {/* Account section */}
-        <div className="px-3 py-2 border-b border-line">
-          <div className="text-sm font-medium">John Doe</div>
-          <div className="text-xs opacity-60">john.doe@example.com</div>
-        </div>
-
-        <div className="py-1">
-          <UserMenuItem
-            icon={<User size={14} />}
-            label="Account settings"
-            onClick={() => handleAction('Account settings')}
-          />
-          <UserSubMenu icon={<Settings size={14} />} label="Settings">
-            <UserMenuItem label="General" onClick={() => handleAction('Settings > General')} />
-            <UserMenuItem label="Appearance" onClick={() => handleAction('Settings > Appearance')} />
-            <UserSubMenu label="Theme">
-              <UserMenuItem label="Light" onClick={() => handleAction('Settings > Theme > Light')} />
-              <UserMenuItem label="Dark" onClick={() => handleAction('Settings > Theme > Dark')} />
-              <UserMenuItem label="System" onClick={() => handleAction('Settings > Theme > System')} />
-            </UserSubMenu>
-            <UserMenuItem label="Privacy" onClick={() => handleAction('Settings > Privacy')} />
+      <div className="py-1 min-w-[200px]">
+        <UserSubMenu icon={<Settings size={14} />} label="Settings">
+          <UserMenuItem label="General" onClick={() => handleAction('Settings > General')} />
+          <UserSubMenu label="Theme">
+            <UserMenuItem label="Light" onClick={() => handleAction('Theme > Light')} />
+            <UserMenuItem label="Dark" onClick={() => handleAction('Theme > Dark')} />
           </UserSubMenu>
-        </div>
-
-        <hr className="border-line" />
-
-        <div className="py-1">
-          <UserSubMenu icon={<Monitor size={14} />} label="Downloads">
-            <UserMenuItem label="macOS" onClick={() => handleAction('Downloads > macOS')} />
-            <UserMenuItem label="Windows" onClick={() => handleAction('Downloads > Windows')} />
-            <UserMenuItem label="iOS" onClick={() => handleAction('Downloads > iOS')} />
-            <UserMenuItem label="Android" onClick={() => handleAction('Downloads > Android')} />
-          </UserSubMenu>
-          <UserMenuItem
-            icon={<Keyboard size={14} />}
-            label="Keyboard shortcuts"
-            shortcut="⌘K"
-            onClick={() => handleAction('Keyboard shortcuts')}
-          />
-          <UserMenuItem
-            icon={<HelpCircle size={14} />}
-            label="Help & support"
-            onClick={() => handleAction('Help & support')}
-          />
-        </div>
-
-        <hr className="border-line" />
-
-        <div className="py-1">
-          <UserMenuItem
-            icon={<LogOut size={14} />}
-            label="Sign out"
-            onClick={() => handleAction('Sign out')}
-            danger
-          />
-        </div>
+        </UserSubMenu>
+        <UserMenuItem
+          icon={<HelpCircle size={14} />}
+          label="Help"
+          onClick={() => handleAction('Help')}
+        />
+        <hr className="border-line my-1" />
+        <UserMenuItem
+          icon={<LogOut size={14} />}
+          label="Sign out"
+          onClick={() => handleAction('Sign out')}
+          danger
+        />
       </div>
     </PopOver>
   );
@@ -200,6 +164,7 @@ const SideNav = () => {
     { icon: <FileText size="1rem"/>, label: "Custom Form", to: '/custom-form' },
     { icon: <MousePointerClick size="1rem"/>, label: "Context Menu", to: '/context-menu' },
     { icon: <Image size="1rem"/>, label: "Carousel", to: '/carousel' },
+    { icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", to: '/nav-modal' },
   ];
   return (
     <div className={clsx('h-screen flex-shrink-0', menuCollapsed ? 'md:w-side-menu-min' : 'md:w-side-menu')}>
@@ -262,6 +227,7 @@ const App = () => {
                 <Route path="/custom-form" element={<CustomFormPage/>}/>
                 <Route path="/context-menu" element={<ContextMenuPage/>}/>
                 <Route path="/carousel" element={<CarouselPage/>}/>
+                <Route path="/nav-modal" element={<SettingsModalPage/>}/>
                 <Route path="*" element={
                   <>
                     <h1 className="">Components</h1>

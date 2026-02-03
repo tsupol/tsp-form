@@ -26,3 +26,14 @@
     scrollbar-width: thin; /* Firefox */
     scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox */
 }
+
+/* Hidden scrollbar but still scrollable */
+.hidden-scroll {
+    overflow-y: auto;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+}
+
+.hidden-scroll::-webkit-scrollbar {
+    display: none; /* Chrome/Safari/Opera */
+}
