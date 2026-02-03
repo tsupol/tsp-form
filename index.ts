@@ -1,5 +1,6 @@
 export * from './src/components/AspectRatioFit';
 export * from './src/components/Button';
+export * from './src/components/Carousel';
 export * from './src/components/Checkbox';
 export * from './src/components/Checkmark';
 export * from './src/components/Chevron';
