@@ -12,7 +12,7 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider } from '../context/SnackbarContext';
-import { Home, FileText } from 'lucide-react';
+import { Home, FileText, MousePointerClick } from 'lucide-react';
 import { SideMenu } from '../components/SideMenu';
 import { Link, useNavigate, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
@@ -21,6 +21,7 @@ import { clsx } from 'clsx';
 import './example.css';
 import { ExampleFormModal } from './main-sections/ExampleFormModal';
 import { CustomFormPage } from './pages/CustomFormPage';
+import { ContextMenuPage } from './pages/ContextMenuPage';
 
 const SideNav = () => {
 
@@ -30,6 +31,7 @@ const SideNav = () => {
     { icon: <Home size="1rem"/>, label: "Dashboard", to: '/dashboard' },
     { icon: <FileText size="1rem"/>, label: "Documents", to: '/docs' },
     { icon: <FileText size="1rem"/>, label: "Custom Form", to: '/custom-form' },
+    { icon: <MousePointerClick size="1rem"/>, label: "Context Menu", to: '/context-menu' },
   ];
   return (
     <div className={clsx('h-screen flex-shrink-0', menuCollapsed ? 'md:w-side-menu-min' : 'md:w-side-menu')}>
@@ -92,6 +94,7 @@ const App = () => {
             <div className="p-4">
               <Routes>
                 <Route path="/custom-form" element={<CustomFormPage/>}/>
+                <Route path="/context-menu" element={<ContextMenuPage/>}/>
                 <Route path="*" element={
                   <>
                     <h1 className="">Components</h1>

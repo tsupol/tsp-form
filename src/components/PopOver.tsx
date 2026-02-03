@@ -284,12 +284,19 @@ export function PopOver({
     if (!isOpen) return;
 
     const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
       if (
         triggerRef.current &&
         popoverRef.current &&
-        !triggerRef.current.contains(event.target as Node) &&
-        !popoverRef.current.contains(event.target as Node)
+        !triggerRef.current.contains(target) &&
+        !popoverRef.current.contains(target)
       ) {
+        // Don't close if the click landed inside another popover portal
+        // (e.g. a nested submenu rendered via createPortal)
+        const popoverMounts = document.querySelectorAll('[data-popover-mount]');
+        for (const mount of popoverMounts) {
+          if (mount.contains(target)) return;
+        }
         onClose();
       }
     };
