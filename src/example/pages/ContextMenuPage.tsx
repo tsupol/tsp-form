@@ -1,23 +1,27 @@
-import { useState, useCallback, useRef, MouseEvent } from 'react';
+import { useState, useCallback, useRef, MouseEvent, ReactNode } from 'react';
 import { PopOver } from '../../components/PopOver';
+import { Chevron } from '../../components/Chevron';
+import { Scissors, Copy, ClipboardPaste, Plus, Type, Image, Shapes, Square, Circle, Triangle, Table, PaintBucket, Bold, Italic, AlignLeft, AlignCenter, AlignRight, MousePointer2, Trash2, Command } from 'lucide-react';
 
 interface MenuPosition {
   x: number;
   y: number;
 }
 
-function MenuItem({ label, onClick, danger }: { label: string; onClick?: () => void; danger?: boolean }) {
+function MenuItem({ icon, label, rightIcon, onClick, danger }: { icon?: ReactNode; label: string; rightIcon?: ReactNode; onClick?: () => void; danger?: boolean }) {
   return (
     <button
-      className={`w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer ${danger ? 'text-danger' : ''}`}
+      className={`w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer flex items-center gap-3 ${danger ? 'text-danger' : ''}`}
       onClick={onClick}
     >
-      {label}
+      {icon && <span className="w-4 h-4 flex items-center justify-center opacity-70">{icon}</span>}
+      <span className="flex-1">{label}</span>
+      {rightIcon && <span className="w-4 h-4 flex items-center justify-center opacity-70">{rightIcon}</span>}
     </button>
   );
 }
 
-function SubMenu({ label, children }: { label: string; children: React.ReactNode }) {
+function SubMenu({ icon, label, children }: { icon?: ReactNode; label: string; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout>>();
 
@@ -39,12 +43,13 @@ function SubMenu({ label, children }: { label: string; children: React.ReactNode
       openDelay={0}
       trigger={
         <button
-          className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer flex items-center justify-between"
+          className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer flex items-center gap-3"
           onMouseEnter={() => { cancelClose(); setOpen(true); }}
           onMouseLeave={() => scheduleClose()}
         >
-          {label}
-          <span className="ml-2 text-xs">▶</span>
+          {icon && <span className="w-4 h-4 flex items-center justify-center opacity-70">{icon}</span>}
+          <span className="flex-1">{label}</span>
+          <Chevron direction="right" size={16} />
         </button>
       }
     >
@@ -107,37 +112,37 @@ export function ContextMenuPage() {
             }
           >
             <div className="py-1 min-w-[180px]">
-              <MenuItem label="Cut" onClick={() => handleAction('Cut')}/>
-              <MenuItem label="Copy" onClick={() => handleAction('Copy')}/>
-              <MenuItem label="Paste" onClick={() => handleAction('Paste')}/>
+              <MenuItem icon={<Scissors size={16} />} label="Cut" rightIcon={<Command size={14} />} onClick={() => handleAction('Cut')}/>
+              <MenuItem icon={<Copy size={16} />} label="Copy" onClick={() => handleAction('Copy')}/>
+              <MenuItem icon={<ClipboardPaste size={16} />} label="Paste" onClick={() => handleAction('Paste')}/>
 
               <hr className="my-1 border-line"/>
 
-              <SubMenu label="Insert">
-                <MenuItem label="Text" onClick={() => handleAction('Insert > Text')}/>
-                <MenuItem label="Image" onClick={() => handleAction('Insert > Image')}/>
-                <SubMenu label="Shape">
-                  <MenuItem label="Rectangle" onClick={() => handleAction('Insert > Shape > Rectangle')}/>
-                  <MenuItem label="Circle" onClick={() => handleAction('Insert > Shape > Circle')}/>
-                  <MenuItem label="Triangle" onClick={() => handleAction('Insert > Shape > Triangle')}/>
+              <SubMenu icon={<Plus size={16} />} label="Insert">
+                <MenuItem icon={<Type size={16} />} label="Text" onClick={() => handleAction('Insert > Text')}/>
+                <MenuItem icon={<Image size={16} />} label="Image" onClick={() => handleAction('Insert > Image')}/>
+                <SubMenu icon={<Shapes size={16} />} label="Shape">
+                  <MenuItem icon={<Square size={16} />} label="Rectangle" onClick={() => handleAction('Insert > Shape > Rectangle')}/>
+                  <MenuItem icon={<Circle size={16} />} label="Circle" onClick={() => handleAction('Insert > Shape > Circle')}/>
+                  <MenuItem icon={<Triangle size={16} />} label="Triangle" onClick={() => handleAction('Insert > Shape > Triangle')}/>
                 </SubMenu>
-                <MenuItem label="Table" onClick={() => handleAction('Insert > Table')}/>
+                <MenuItem icon={<Table size={16} />} label="Table" onClick={() => handleAction('Insert > Table')}/>
               </SubMenu>
 
-              <SubMenu label="Format">
-                <MenuItem label="Bold" onClick={() => handleAction('Format > Bold')}/>
-                <MenuItem label="Italic" onClick={() => handleAction('Format > Italic')}/>
-                <SubMenu label="Alignment">
-                  <MenuItem label="Left" onClick={() => handleAction('Format > Alignment > Left')}/>
-                  <MenuItem label="Center" onClick={() => handleAction('Format > Alignment > Center')}/>
-                  <MenuItem label="Right" onClick={() => handleAction('Format > Alignment > Right')}/>
+              <SubMenu icon={<PaintBucket size={16} />} label="Format">
+                <MenuItem icon={<Bold size={16} />} label="Bold" onClick={() => handleAction('Format > Bold')}/>
+                <MenuItem icon={<Italic size={16} />} label="Italic" onClick={() => handleAction('Format > Italic')}/>
+                <SubMenu icon={<AlignLeft size={16} />} label="Alignment">
+                  <MenuItem icon={<AlignLeft size={16} />} label="Left" onClick={() => handleAction('Format > Alignment > Left')}/>
+                  <MenuItem icon={<AlignCenter size={16} />} label="Center" onClick={() => handleAction('Format > Alignment > Center')}/>
+                  <MenuItem icon={<AlignRight size={16} />} label="Right" onClick={() => handleAction('Format > Alignment > Right')}/>
                 </SubMenu>
               </SubMenu>
 
               <hr className="my-1 border-line"/>
 
-              <MenuItem label="Select All" onClick={() => handleAction('Select All')}/>
-              <MenuItem label="Delete" onClick={() => handleAction('Delete')} danger/>
+              <MenuItem icon={<MousePointer2 size={16} />} label="Select All" onClick={() => handleAction('Select All')}/>
+              <MenuItem icon={<Trash2 size={16} />} label="Delete" onClick={() => handleAction('Delete')} danger/>
             </div>
           </PopOver>
         </div>
