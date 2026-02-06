@@ -293,9 +293,9 @@ export function PopOver({
       ) {
         // Don't close if the click landed inside another popover portal
         // (e.g. a nested submenu rendered via createPortal)
-        const popoverMounts = document.querySelectorAll('[data-popover-mount]');
-        for (const mount of popoverMounts) {
-          if (mount.contains(target)) return;
+        const popoverMounts = Array.from(document.querySelectorAll('[data-popover-mount]'));
+        for (let i = 0; i < popoverMounts.length; i++) {
+          if (popoverMounts[i].contains(target)) return;
         }
         onClose();
       }
