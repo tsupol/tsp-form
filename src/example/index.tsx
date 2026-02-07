@@ -25,6 +25,7 @@ import { CustomFormPage } from './pages/CustomFormPage';
 import { ContextMenuPage } from './pages/ContextMenuPage';
 import { CarouselPage } from './pages/CarouselPage';
 import { SettingsModalPage } from './pages/SettingsModalPage';
+import { FormSizesPage } from './pages/FormSizesPage';
 
 // Menu item component for user menu
 function UserMenuItem({ icon, label, onClick, shortcut, danger }: {
@@ -164,6 +165,7 @@ const SideNav = () => {
     { icon: <Home size="1rem"/>, label: "Dashboard", to: '/dashboard' },
     { icon: <FileText size="1rem"/>, label: "Documents", to: '/docs' },
     { icon: <FileText size="1rem"/>, label: "Custom Form", to: '/custom-form' },
+    { icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", to: '/form-sizes' },
     { icon: <MousePointerClick size="1rem"/>, label: "Context Menu", to: '/context-menu' },
     { icon: <Image size="1rem"/>, label: "Carousel", to: '/carousel' },
     { icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", to: '/nav-modal' },
@@ -230,6 +232,7 @@ const App = () => {
             <div className="p-4">
               <Routes>
                 <Route path="/custom-form" element={<CustomFormPage/>}/>
+                <Route path="/form-sizes" element={<FormSizesPage/>}/>
                 <Route path="/context-menu" element={<ContextMenuPage/>}/>
                 <Route path="/carousel" element={<CarouselPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>

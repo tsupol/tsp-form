@@ -11,6 +11,7 @@ export type InputDatePickerProps = Omit<InputProps, 'value' | 'onChange' | 'endI
   endIcon?: ReactNode;
   defaultStartTime?: { hours: number; minutes: number };
   error?: boolean;
+  size?: "sm" | "md" | "lg";
 };
 
 const defaultDateFormat = (date: Date | null): string => {
@@ -23,7 +24,7 @@ const defaultDateFormat = (date: Date | null): string => {
 };
 
 export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps>(
-  ({ value, onChange, datePickerProps, dateFormat = defaultDateFormat, endIcon, defaultStartTime, error, ...inputProps }, ref) => {
+  ({ value, onChange, datePickerProps, dateFormat = defaultDateFormat, endIcon, defaultStartTime, error, size, ...inputProps }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const openDateRef = useRef<Date | null>(null);
 
@@ -66,6 +67,7 @@ export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps
           } : undefined}
           style={{ cursor: 'pointer' }}
           error={error}
+          size={size}
         />
         <PopOver
           isOpen={isOpen}

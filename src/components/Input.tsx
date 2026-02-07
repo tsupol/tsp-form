@@ -4,19 +4,26 @@ import "../styles/form.css";
 
 export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   error?: boolean;
+  size?: "sm" | "md" | "lg";
   startIcon?: ReactNode;
   endIcon?: ReactNode;
   onStartIconClick?: () => void;
   onEndIconClick?: () => void;
 };
 
+const sizeClass = (size?: "sm" | "md" | "lg") => {
+  if (size === "sm") return "form-control-sm";
+  if (size === "lg") return "form-control-lg";
+  return undefined;
+};
+
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, error, startIcon, endIcon, onStartIconClick, onEndIconClick, ...rest }, ref) => {
+  ({ className, error, size, startIcon, endIcon, onStartIconClick, onEndIconClick, ...rest }, ref) => {
     if (!startIcon && !endIcon) {
       return (
         <input
           ref={ref}
-          className={clsx("form-control", error && "form-field-error", className)}
+          className={clsx("form-control", sizeClass(size), error && "form-field-error", className)}
           aria-invalid={error ? "true" : undefined}
           {...rest}
         />
@@ -24,7 +31,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     }
 
     return (
-      <div className={clsx("input-wrapper", error && "form-field-error", className)}>
+      <div className={clsx("input-wrapper", sizeClass(size), error && "form-field-error", className)}>
         {startIcon && (
           <div
             className={clsx("input-icon input-icon-start", onStartIconClick && "input-icon-clickable")}

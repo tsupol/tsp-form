@@ -31,6 +31,7 @@ interface SelectProps {
   searchTerm?: string;
   children?: ReactNode;
   error?: boolean;
+  size?: "sm" | "md" | "lg";
 }
 
 export function Select({
@@ -52,7 +53,9 @@ export function Select({
   searchTerm: controlledSearchTerm,
   children,
   error = false,
+  size,
 }: SelectProps) {
+  const sizeClass = size === "sm" ? "form-control-sm" : size === "lg" ? "form-control-lg" : undefined;
   const [isOpen, setIsOpen] = useState(false);
   const [internalSearchTerm, setInternalSearchTerm] = useState('');
   const searchTerm = controlledSearchTerm ?? internalSearchTerm;
@@ -207,6 +210,7 @@ export function Select({
     <div
       className={clsx(
         "form-control select",
+        sizeClass,
         startIcon && "input-has-start-icon",
         disabled && "disabled",
         error && "form-field-error",

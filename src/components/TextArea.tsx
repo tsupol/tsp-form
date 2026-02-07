@@ -4,14 +4,21 @@ import "../styles/form.css";
 
 export type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
   error?: boolean;
+  size?: "sm" | "md" | "lg";
+};
+
+const sizeClass = (size?: "sm" | "md" | "lg") => {
+  if (size === "sm") return "form-control-sm";
+  if (size === "lg") return "form-control-lg";
+  return undefined;
 };
 
 export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
-  ({ className, error, ...rest }, ref) => {
+  ({ className, error, size, ...rest }, ref) => {
     return (
       <textarea
         ref={ref}
-        className={clsx("form-control", error && "form-field-error", className)}
+        className={clsx("form-control", sizeClass(size), error && "form-field-error", className)}
         aria-invalid={error ? "true" : undefined}
         {...rest}
       />
