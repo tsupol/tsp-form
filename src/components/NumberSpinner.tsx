@@ -86,7 +86,8 @@ export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
         `number-spinner-${variant}`,
         `number-spinner-${scale}`,
         className,
-        disabled && "number-spinner-disabled"
+        disabled && "number-spinner-disabled",
+        error && "form-field-error"
       )}>
         {variant === "default" && (
           <button

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { FormControlError } from '../../components/FormControlError';
+import { FormErrorMessage } from '../../components/FormErrorSignal';
 import { JsonPretty } from '../../components/JsonPretty';
 import { Select } from '../../components/Select';
 import { Button } from '../../components/Button';
@@ -161,13 +162,14 @@ export function ExampleForm() {
         <Input
           id="age"
           type="number"
-          className="form-control"
+          error={!!errors.age}
           {...register("age", {
+            required: "Age is required",
             setValueAs: (v) => (v === "" ? "" : Number(v)),
             min: { value: 0, message: "Age must be positive" },
           })}
         />
-        {errors.age && <span className="form-error">{errors.age.message}</span>}
+        <FormErrorMessage error={errors.age} />
       </div>
 
       <div className="flex flex-col gap-1">
@@ -348,6 +350,7 @@ export function ExampleForm() {
                 value={value}
                 onChange={onChange}
                 placeholder="Select your birthday"
+                error={!!errors.birthday}
                 datePickerProps={{
                   minDate: today,
                   showTime: true,
@@ -368,7 +371,7 @@ export function ExampleForm() {
             );
           }}
         />
-        {errors.birthday && <span className="form-error">{errors.birthday.message}</span>}
+        <FormErrorMessage error={errors.birthday} />
       </div>
 
       <div className="flex flex-col gap-1">

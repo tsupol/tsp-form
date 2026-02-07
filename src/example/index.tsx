@@ -12,7 +12,7 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal } from 'lucide-react';
+import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown } from 'lucide-react';
 import { SideMenu } from '../components/SideMenu';
 import { PopOver } from '../components/PopOver';
 import { Link, useNavigate, Routes, Route } from 'react-router-dom';
@@ -114,22 +114,24 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
       triggerClassName="w-full"
       trigger={
         <button
-          className="h-12 w-full border-t border-line flex items-center gap-2 px-2 hover:bg-surface-hover transition-colors cursor-pointer"
+          className="flex items-center gap-2 py-2 px-2 rounded-lg transition-all text-item-fg hover:bg-item-hover-bg w-full cursor-pointer"
           onClick={() => setOpen(!open)}
         >
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-contrast text-sm font-medium shrink-0">
+          <div className="w-7.5 h-7.5 rounded-full bg-primary flex items-center justify-center text-primary-contrast text-xs font-semibold shrink-0">
             JD
           </div>
           {!collapsed && (
-            <div className="flex flex-col items-start text-left min-w-0">
-              <span className="text-sm font-medium truncate">John Doe</span>
-              <span className="text-xs opacity-60 truncate">Pro Plan</span>
-            </div>
+            <>
+              <div className="flex-1 text-left truncate">
+                <span className="text-sm">John Doe</span>
+              </div>
+              <ChevronsUpDown size={14} className="opacity-50 shrink-0" />
+            </>
           )}
         </button>
       }
     >
-      <div className="py-1 min-w-[200px]">
+      <div className="py-1 w-[260px]">
         <UserSubMenu icon={<Settings size={14} />} label="Settings">
           <UserMenuItem label="General" onClick={() => handleAction('Settings > General')} />
           <UserSubMenu label="Theme">
@@ -174,15 +176,16 @@ const SideNav = () => {
         linkFn={(to) => navigate(to)}
         className="bg-surface-shallow border-r border-line"
         titleRenderer={(collapsed, handleToggle) => (
-          <div className="flex pointer-events-auto relative w-side-menu p-2" onClick={() => handleToggle()}>
+          <div key="title" className="flex pointer-events-auto relative w-side-menu p-2" onClick={() => handleToggle()}>
             <button
-              className="bg-primary text-primary-contrast w-8 h-8 shrink-0 cursor-pointer rounded-lg"
+              className="hover:bg-surface w-8 h-8 shrink-0 cursor-pointer rounded-lg transition-all flex justify-center items-center"
               aria-label={collapsed ? "Expand menu" : "Collapse menu"}
             >
-              {collapsed ? '>' : '<'}
+              {collapsed ? <ArrowRightFromLine size={18} /> : <ArrowLeftFromLine size={18} />}
             </button>
             <div className="flex justify-center items-center w-full cursor-pointer"
-                 style={{ visibility: collapsed ? 'hidden' : 'visible' }}>TSP Form
+                 style={{ visibility: collapsed ? 'hidden' : 'visible' }}>
+              <span className="font-semibold">TSP Form</span>
             </div>
           </div>
         )}
@@ -206,7 +209,9 @@ const SideNav = () => {
                 })}
               </div>
             </div>
-            <UserMenu collapsed={menuCollapsed} />
+            <div className={clsx('border-t border-line py-2 pointer-events-auto', menuCollapsed ? 'px-0' : 'px-2')}>
+              <UserMenu collapsed={menuCollapsed} />
+            </div>
           </div>
         )}
       />

@@ -16,7 +16,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       return (
         <input
           ref={ref}
-          className={clsx("form-control", className)}
+          className={clsx("form-control", error && "form-field-error", className)}
           aria-invalid={error ? "true" : undefined}
           {...rest}
         />
@@ -24,7 +24,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     }
 
     return (
-      <div className={clsx("input-wrapper", className)}>
+      <div className={clsx("input-wrapper", error && "form-field-error", className)}>
         {startIcon && (
           <div
             className={clsx("input-icon input-icon-start", onStartIconClick && "input-icon-clickable")}

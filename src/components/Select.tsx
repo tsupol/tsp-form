@@ -30,6 +30,7 @@ interface SelectProps {
   unstyled?: boolean;
   searchTerm?: string;
   children?: ReactNode;
+  error?: boolean;
 }
 
 export function Select({
@@ -50,6 +51,7 @@ export function Select({
   unstyled = false,
   searchTerm: controlledSearchTerm,
   children,
+  error = false,
 }: SelectProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [internalSearchTerm, setInternalSearchTerm] = useState('');
@@ -207,6 +209,7 @@ export function Select({
         "form-control select",
         startIcon && "input-has-start-icon",
         disabled && "disabled",
+        error && "form-field-error",
         className
       )}
       onClick={handleWrapperClick}

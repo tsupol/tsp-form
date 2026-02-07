@@ -11,7 +11,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
     return (
       <textarea
         ref={ref}
-        className={clsx("form-control", className)}
+        className={clsx("form-control", error && "form-field-error", className)}
         aria-invalid={error ? "true" : undefined}
         {...rest}
       />

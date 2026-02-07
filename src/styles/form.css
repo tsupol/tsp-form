@@ -33,6 +33,18 @@
     border-color: var(--color-danger-fade);
 }
 
+/* Error state - applied directly to form control element */
+.form-field-error.form-control,
+.form-field-error .form-control {
+    border-color: var(--color-danger-fade);
+}
+
+/* Error state for radio/checkbox groups */
+.form-field-error [role="radio"],
+.form-field-error [role="checkbox"] {
+    border-color: var(--color-danger-fade) !important;
+}
+
 .form-control:focus-within {
     outline: 2px solid var(--color-primary);
     outline-offset: -1px;
@@ -139,6 +151,11 @@
 .input-group .form-control:focus-within {
     outline: 2px solid var(--color-primary);
     outline-offset: -1px;
+}
+
+.input-group.form-field-error,
+.input-group:has(.form-field-error) {
+    border-color: var(--color-danger-fade);
 }
 
 .input-group-divider {

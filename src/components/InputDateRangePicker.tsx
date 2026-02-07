@@ -13,6 +13,7 @@ export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 
   endIcon?: ReactNode;
   defaultStartTime?: { hours: number; minutes: number };
   defaultEndTime?: { hours: number; minutes: number };
+  error?: boolean;
 };
 
 const defaultDateRangeFormat = (fromDate: Date | null, toDate: Date | null): string => {
@@ -50,6 +51,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
     endIcon,
     defaultStartTime,
     defaultEndTime,
+    error,
     ...inputProps
   }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
@@ -86,6 +88,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
               endIcon={endIcon}
               onEndIconClick={endIcon ? () => setIsOpen(!isOpen) : undefined}
               style={{ cursor: 'pointer' }}
+              error={error}
             />
           }
         >

@@ -1,4 +1,5 @@
 import { RadioCircle, RadioCircleProps } from './RadioCircle';
+import clsx from 'clsx';
 
 import type { ReactNode, ComponentProps } from 'react';
 
@@ -14,6 +15,7 @@ interface RadioGroupProps<T extends string | number> {
   options: RadioOption<T>[];
   className?: string;
   radioCircleProps?: Partial<Omit<RadioCircleProps, 'checked' | 'onClick'>>;
+  error?: boolean;
 }
 
 export const RadioGroup = <T extends string | number>(
@@ -24,9 +26,10 @@ export const RadioGroup = <T extends string | number>(
     options,
     className,
     radioCircleProps,
+    error,
   }: RadioGroupProps<T>) => {
   return (
-    <div className={className} role="radiogroup" aria-label={name}>
+    <div className={clsx(className, error && 'form-field-error')} role="radiogroup" aria-label={name}>
       {options.map((option) => (
         <div
           key={String(option.value)}
