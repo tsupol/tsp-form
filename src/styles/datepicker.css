@@ -1,6 +1,6 @@
 .datepicker-container {
     padding: 16px;
-    max-width: 300px;
+    width: 280px;
 }
 
 .datepicker-header {
@@ -28,6 +28,34 @@
 .datepicker-month-year {
     font-size: 1.2em;
     font-weight: bold;
+}
+
+.datepicker-header-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: currentColor;
+    padding: 4px 8px;
+    border-radius: var(--radius-control);
+    transition: background-color 0.2s;
+}
+
+.datepicker-header-title:hover:not(:disabled) {
+    background-color: var(--color-surface-hover);
+}
+
+.datepicker-header-title:disabled {
+    cursor: not-allowed;
+}
+
+.datepicker-header-title-static {
+    cursor: default;
+}
+
+.datepicker-header-title-static:hover {
+    background-color: transparent;
 }
 
 .datepicker-weekdays {
@@ -164,6 +192,58 @@
     cursor: not-allowed;
 }
 
+/* Months grid */
+.datepicker-months-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.datepicker-month-cell {
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: var(--radius-control);
+    transition: background-color 0.2s;
+}
+
+.datepicker-month-cell:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.datepicker-month-cell-selected {
+    background-color: var(--color-primary);
+    color: var(--color-primary-contrast);
+    font-weight: 600;
+}
+
+/* Years grid */
+.datepicker-years-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px 0;
+}
+
+.datepicker-year-cell {
+    padding: 12px 8px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: var(--radius-control);
+    transition: background-color 0.2s;
+}
+
+.datepicker-year-cell:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.datepicker-year-cell-selected {
+    background-color: var(--color-primary);
+    color: var(--color-primary-contrast);
+    font-weight: 600;
+}
+
 /* Action buttons container */
 .datepicker-actions {
     display: flex;
@@ -175,4 +255,37 @@
 
 .datepicker-actions button {
     flex: 1;
+}
+
+/* Mobile vertical layout */
+@media (max-width: 480px) {
+    .datepicker-wrapper {
+        flex-direction: column;
+    }
+
+    .datepicker-time-container {
+        border-left: none;
+        border-top: 1px solid var(--color-line);
+        min-width: unset;
+    }
+
+    .datepicker-time-section {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .datepicker-time-label {
+        flex-shrink: 0;
+    }
+
+    .datepicker-time-input {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .datepicker-time-row {
+        flex-direction: row;
+    }
 }

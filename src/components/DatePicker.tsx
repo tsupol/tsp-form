@@ -27,6 +27,8 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
+type ViewMode = 'days' | 'months' | 'years';
+
 export const DatePicker = ({
   mode = 'single',
   selectedDate,
@@ -46,6 +48,8 @@ export const DatePicker = ({
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
+  const [viewMode, setViewMode] = useState<ViewMode>('days');
+  const [yearsRangeStart, setYearsRangeStart] = useState(Math.floor(new Date().getFullYear() / 12) * 12);
 
   // Get initial time from date or use defaults
   const getInitialStartTime = () => {
@@ -280,6 +284,66 @@ export const DatePicker = ({
     }
   };
 
+  const navigateYear = (direction: 'prev' | 'next') => {
+    if (disabled) return;
+    setCurrentYear(direction === 'prev' ? currentYear - 1 : currentYear + 1);
+  };
+
+  const navigateYearsRange = (direction: 'prev' | 'next') => {
+    if (disabled) return;
+    setYearsRangeStart(direction === 'prev' ? yearsRangeStart - 12 : yearsRangeStart + 12);
+  };
+
+  const handleMonthSelect = (month: number) => {
+    setCurrentMonth(month);
+    setViewMode('days');
+  };
+
+  const handleYearSelect = (year: number) => {
+    setCurrentYear(year);
+    setViewMode('months');
+  };
+
+  const renderMonthsGrid = () => {
+    return (
+      <div className="datepicker-months-grid">
+        {MONTHS.map((month, index) => (
+          <div
+            key={month}
+            className={clsx('datepicker-month-cell', {
+              'datepicker-month-cell-selected': index === currentMonth
+            })}
+            onClick={() => handleMonthSelect(index)}
+          >
+            {month.slice(0, 3)}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderYearsGrid = () => {
+    const years = [];
+    for (let i = 0; i < 12; i++) {
+      years.push(yearsRangeStart + i);
+    }
+    return (
+      <div className="datepicker-years-grid">
+        {years.map((year) => (
+          <div
+            key={year}
+            className={clsx('datepicker-year-cell', {
+              'datepicker-year-cell-selected': year === currentYear
+            })}
+            onClick={() => handleYearSelect(year)}
+          >
+            {year}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const handleClear = () => {
     if (disabled) return;
     if (onChange) onChange(null);
@@ -335,9 +399,9 @@ export const DatePicker = ({
     }
   };
 
-  return (
-    <div className={clsx('datepicker-wrapper', { 'opacity-50': disabled }, className)}>
-      <div className="datepicker-container">
+  const renderHeader = () => {
+    if (viewMode === 'days') {
+      return (
         <div className="datepicker-header">
           <button
             type="button"
@@ -347,9 +411,14 @@ export const DatePicker = ({
           >
             ←
           </button>
-          <div className="datepicker-month-year">
+          <button
+            type="button"
+            className="datepicker-header-title"
+            onClick={() => setViewMode('months')}
+            disabled={disabled}
+          >
             {MONTHS[currentMonth]} {currentYear}
-          </div>
+          </button>
           <button
             type="button"
             className="datepicker-nav-button"
@@ -359,14 +428,85 @@ export const DatePicker = ({
             →
           </button>
         </div>
-        <div className="datepicker-weekdays">
-          {WEEKDAYS.map((day) => (
-            <div key={day}>{day}</div>
-          ))}
+      );
+    } else if (viewMode === 'months') {
+      return (
+        <div className="datepicker-header">
+          <button
+            type="button"
+            className="datepicker-nav-button"
+            onClick={() => navigateYear('prev')}
+            disabled={disabled}
+          >
+            ←
+          </button>
+          <button
+            type="button"
+            className="datepicker-header-title"
+            onClick={() => setViewMode('years')}
+            disabled={disabled}
+          >
+            {currentYear}
+          </button>
+          <button
+            type="button"
+            className="datepicker-nav-button"
+            onClick={() => navigateYear('next')}
+            disabled={disabled}
+          >
+            →
+          </button>
         </div>
-        <div className="datepicker-days-container">
-          {renderCalendar()}
+      );
+    } else {
+      return (
+        <div className="datepicker-header">
+          <button
+            type="button"
+            className="datepicker-nav-button"
+            onClick={() => navigateYearsRange('prev')}
+            disabled={disabled}
+          >
+            ←
+          </button>
+          <div className="datepicker-header-title datepicker-header-title-static">
+            {yearsRangeStart} - {yearsRangeStart + 11}
+          </div>
+          <button
+            type="button"
+            className="datepicker-nav-button"
+            onClick={() => navigateYearsRange('next')}
+            disabled={disabled}
+          >
+            →
+          </button>
         </div>
+      );
+    }
+  };
+
+  return (
+    <div className={clsx('datepicker-wrapper', { 'opacity-50': disabled }, className)}>
+      <div className="datepicker-container">
+        {renderHeader()}
+
+        {viewMode === 'days' && (
+          <>
+            <div className="datepicker-weekdays">
+              {WEEKDAYS.map((day) => (
+                <div key={day}>{day}</div>
+              ))}
+            </div>
+            <div className="datepicker-days-container">
+              {renderCalendar()}
+            </div>
+          </>
+        )}
+
+        {viewMode === 'months' && renderMonthsGrid()}
+
+        {viewMode === 'years' && renderYearsGrid()}
+
         <div className="datepicker-actions">
           <Button
             variant="ghost"
