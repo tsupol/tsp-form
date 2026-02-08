@@ -190,7 +190,7 @@ export function ExampleForm() {
               min={1}
               max={100}
               step={1}
-              scale="xs"
+              scale="sm"
               error={!!errors.quantity}
             />
           )}

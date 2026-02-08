@@ -4,6 +4,7 @@ import { TextArea } from '../../components/TextArea';
 import { Select } from '../../components/Select';
 import { InputDatePicker } from '../../components/InputDatePicker';
 import { InputDateRangePicker } from '../../components/InputDateRangePicker';
+import { NumberSpinner } from '../../components/NumberSpinner';
 import { Search, Calendar } from 'lucide-react';
 
 const selectOptions = [
@@ -28,6 +29,12 @@ export function FormSizesPage() {
   const [rangeToMd, setRangeToMd] = useState<Date | null>(null);
   const [rangeFromLg, setRangeFromLg] = useState<Date | null>(null);
   const [rangeToLg, setRangeToLg] = useState<Date | null>(null);
+  const [spinnerSm, setSpinnerSm] = useState<number | "">(0);
+  const [spinnerMd, setSpinnerMd] = useState<number | "">(0);
+  const [spinnerLg, setSpinnerLg] = useState<number | "">(0);
+  const [spinnerDiagSm, setSpinnerDiagSm] = useState<number | "">(0);
+  const [spinnerDiagMd, setSpinnerDiagMd] = useState<number | "">(0);
+  const [spinnerDiagLg, setSpinnerDiagLg] = useState<number | "">(0);
 
   return (
     <div className="page-content">
@@ -239,6 +246,83 @@ export function FormSizesPage() {
                 onToDateChange={setRangeToLg}
                 placeholder="Large date range"
                 endIcon={<Calendar size={20} />}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* NumberSpinner */}
+        <section className="border border-line bg-surface p-card rounded-lg">
+          <h2 className="text-lg font-semibold mb-4">NumberSpinner</h2>
+          <div className="grid gap-3">
+            <div className="flex flex-col">
+              <label className="form-label">Small</label>
+              <NumberSpinner
+                scale="sm"
+                value={spinnerSm}
+                onChange={setSpinnerSm}
+                min={0}
+                max={100}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="form-label">Medium (default)</label>
+              <NumberSpinner
+                scale="md"
+                value={spinnerMd}
+                onChange={setSpinnerMd}
+                min={0}
+                max={100}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="form-label">Large</label>
+              <NumberSpinner
+                scale="lg"
+                value={spinnerLg}
+                onChange={setSpinnerLg}
+                min={0}
+                max={100}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* NumberSpinner Diagonal */}
+        <section className="border border-line bg-surface p-card rounded-lg">
+          <h2 className="text-lg font-semibold mb-4">NumberSpinner (Diagonal)</h2>
+          <div className="grid gap-3">
+            <div className="flex flex-col">
+              <label className="form-label">Small</label>
+              <NumberSpinner
+                variant="diagonal"
+                scale="sm"
+                value={spinnerDiagSm}
+                onChange={setSpinnerDiagSm}
+                min={0}
+                max={100}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="form-label">Medium (default)</label>
+              <NumberSpinner
+                variant="diagonal"
+                scale="md"
+                value={spinnerDiagMd}
+                onChange={setSpinnerDiagMd}
+                min={0}
+                max={100}
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="form-label">Large</label>
+              <NumberSpinner
+                variant="diagonal"
+                scale="lg"
+                value={spinnerDiagLg}
+                onChange={setSpinnerDiagLg}
+                min={0}
+                max={100}
               />
             </div>
           </div>

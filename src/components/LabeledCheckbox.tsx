@@ -15,7 +15,7 @@ export const LabeledCheckbox = forwardRef<HTMLInputElement, LabeledCheckboxProps
     return (
       <div className={clsx("flex items-center gap-2", wrapperClassName)}>
         <Checkbox id={uniqueId} ref={ref} {...checkboxProps} />
-        <label htmlFor={uniqueId} className="cursor-pointer select-none">
+        <label htmlFor={uniqueId} className="form-option-label">
           {label}
         </label>
       </div>

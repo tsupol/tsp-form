@@ -1,7 +1,8 @@
 import { RadioCircle, RadioCircleProps } from './RadioCircle';
 import clsx from 'clsx';
+import '../styles/form.css';
 
-import type { ReactNode, ComponentProps } from 'react';
+import type { ReactNode } from 'react';
 
 interface RadioOption<T> {
   value: T;
@@ -39,7 +40,7 @@ export const RadioGroup = <T extends string | number>(
             checked={option.value === value}
             {...radioCircleProps}
           />
-          <span style={{ marginLeft: '0.5rem' }}>{option.label}</span>
+          <span className="form-option-label" style={{ marginLeft: '0.5rem' }}>{option.label}</span>
         </div>
       ))}
     </div>

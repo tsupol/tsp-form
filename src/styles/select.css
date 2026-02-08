@@ -50,7 +50,7 @@
     border-radius: 0.25rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--color-line);
-    font-size: 0.75rem;
+    font-size: 0.857em; /* smaller than control text */
     line-height: 1.2;
     flex-shrink: 1;
     min-width: 0;
@@ -60,14 +60,14 @@
 }
 
 .form-control-sm.select .selected-chip {
-    font-size: 0.625rem;
+    font-size: 0.75em;
     line-height: 1;
     border-width: 0;
     height: 1rem;
 }
 
 .form-control-lg.select .selected-chip {
-    font-size: 0.875rem;
+    font-size: 1em;
 }
 
 .selected-chip-label {

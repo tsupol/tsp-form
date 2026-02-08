@@ -149,14 +149,14 @@
 
 /* Labels */
 .slider-min-max-label {
-    font-size: 0.875rem;
+    font-size: var(--text-control, 0.875rem);
     color: var(--color-fg-muted);
     min-width: 2rem;
     text-align: center;
 }
 
 .slider-value-label {
-    font-size: 0.875rem;
+    font-size: var(--text-control, 0.875rem);
     font-weight: 600;
     color: var(--color-fg);
     min-width: 3rem;

@@ -10,7 +10,7 @@ export type NumberSpinnerProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'ty
   max?: number;
   step?: number;
   variant?: "default" | "diagonal";
-  scale?: "xs" | "sm" | "md" | "lg";
+  scale?: "sm" | "md" | "lg";
   leadingZero?: boolean;
 };
 
@@ -53,7 +53,8 @@ export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
         return;
       }
 
-      const numValue = Number(inputValue);
+      // Parse as integer to remove leading zeros (e.g., "01" becomes 1)
+      const numValue = parseInt(inputValue, 10);
       if (!isNaN(numValue)) {
         // Enforce max limit
         if (max !== undefined && numValue > Number(max)) {
@@ -102,7 +103,9 @@ export const NumberSpinner = forwardRef<HTMLInputElement, NumberSpinnerProps>(
         )}
         <input
           ref={ref}
-          type="number"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           className={clsx("form-control number-spinner-input")}
           aria-invalid={error ? "true" : undefined}
           value={displayValue}
