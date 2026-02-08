@@ -12,7 +12,7 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown } from 'lucide-react';
+import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload } from 'lucide-react';
 import { SideMenu } from '../components/SideMenu';
 import { PopOver } from '../components/PopOver';
 import { Link, useNavigate, Routes, Route } from 'react-router-dom';
@@ -26,6 +26,7 @@ import { ContextMenuPage } from './pages/ContextMenuPage';
 import { CarouselPage } from './pages/CarouselPage';
 import { SettingsModalPage } from './pages/SettingsModalPage';
 import { FormSizesPage } from './pages/FormSizesPage';
+import { ImageUploaderPage } from './pages/ImageUploaderPage';
 
 // Menu item component for user menu
 function UserMenuItem({ icon, label, onClick, shortcut, danger }: {
@@ -168,6 +169,7 @@ const SideNav = () => {
     { icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", to: '/form-sizes' },
     { icon: <MousePointerClick size="1rem"/>, label: "Context Menu", to: '/context-menu' },
     { icon: <Image size="1rem"/>, label: "Carousel", to: '/carousel' },
+    { icon: <Upload size="1rem"/>, label: "Image Uploader", to: '/image-uploader' },
     { icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", to: '/nav-modal' },
   ];
   return (
@@ -246,6 +248,7 @@ const App = () => {
                 <Route path="/form-sizes" element={<FormSizesPage/>}/>
                 <Route path="/context-menu" element={<ContextMenuPage/>}/>
                 <Route path="/carousel" element={<CarouselPage/>}/>
+                <Route path="/image-uploader" element={<ImageUploaderPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>
                 <Route path="*" element={
                   <>
