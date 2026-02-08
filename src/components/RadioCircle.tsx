@@ -7,29 +7,34 @@ export type RadioCircleProps = HTMLAttributes<HTMLDivElement> & {
 };
 
 export const RadioCircle = forwardRef<HTMLDivElement, RadioCircleProps>(
-  ({ className, width = '1.2rem', checked, style, ...rest }, ref) => {
+  ({ className, width = '1rem', checked, style, ...rest }, ref) => {
     const defaultCircleStyle: CSSProperties = {
       display: 'inline-flex',
       justifyContent: 'center',
       alignItems: 'center',
-      border: '2px solid var(--border-color, #cccccc)',
       borderRadius: '50%',
       width: width,
       height: width,
+      minWidth: width,
+      minHeight: width,
       cursor: 'pointer',
       boxSizing: 'border-box',
       transition: 'all 0.2s ease-in-out',
       backgroundColor: checked ? 'var(--color-primary)' : 'var(--color-surface)',
-      borderColor: checked ? 'var(--color-primary)' : 'var(--border-color, #cccccc)',
+      boxShadow: checked
+        ? 'inset 0 0 0 1px var(--color-primary)'
+        : 'inset 0 0 0 1px var(--border-color, #cccccc)',
+      flexShrink: 0,
     };
 
     const innerDotStyle: CSSProperties = {
-      width: '60%',
-      height: '60%',
+      width: '50%',
+      height: '50%',
       backgroundColor: 'var(--color-primary-contrast)',
       borderRadius: '50%',
       transform: checked ? 'scale(1)' : 'scale(0)',
       transition: 'transform 0.2s ease-in-out',
+      flexShrink: 0,
     };
 
     return (

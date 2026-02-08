@@ -64,9 +64,6 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
 
     const handleToDateChange = (date: Date | null) => {
       onToDateChange?.(date);
-      if (date !== null) {
-        setIsOpen(false);
-      }
     };
 
     const formattedValue = dateFormat(fromDate || null, toDate || null);

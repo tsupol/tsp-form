@@ -47,14 +47,14 @@ export function CustomFormPage() {
 
   return (
     <div className="page-content w-full">
-      <div className="grid gap-4 w-full max-w-[400px]">
+      <div className="grid gap-4 w-full max-w-[250px]">
         <form onSubmit={handleSubmit(onSubmit)} className="border border-line bg-surface p-card space-y-4 rounded-lg w-full">
           <h1 className="text-xl font-bold mb-4">Custom Form</h1>
           <div className="grid gap-1">
             <div className="flex flex-col">
               <label className="form-label" htmlFor="category">Category & Name</label>
               <div className="input-group">
-                <div className="w-[120px]">
+                <div className="w-[100px]">
                   <Controller
                     name="category"
                     control={control}
@@ -78,7 +78,7 @@ export function CustomFormPage() {
                 </div>
                 <div className="input-group-divider"/>
                 <Input
-                  className="flex-1"
+                  className="flex"
                   placeholder="Enter value..."
                   error={!!errors.name}
                   {...register('name', { required: 'Name is required' })}
@@ -107,6 +107,7 @@ export function CustomFormPage() {
                       placeholder="Select status..."
                       error={!!errors.status}
                       clearable
+                      searchable={false}
                     />
                   )}
                 />

@@ -34,6 +34,8 @@ interface SelectProps {
   size?: "sm" | "md" | "lg";
   chipDisplay?: boolean; // Show selected value as chip (default false for single, always true for multi)
   clearable?: boolean; // Show clear button when value is selected
+  searchable?: boolean; // Allow typing to filter options (default true)
+  showChevron?: boolean; // Show chevron icon (default true)
 }
 
 export function Select({
@@ -58,6 +60,8 @@ export function Select({
   size,
   chipDisplay = false,
   clearable = false,
+  searchable = true,
+  showChevron = true,
 }: SelectProps) {
   const sizeClass = size === "sm" ? "form-control-sm" : size === "lg" ? "form-control-lg" : undefined;
   const [isOpen, setIsOpen] = useState(false);
@@ -82,15 +86,17 @@ export function Select({
   }, [options, selectedValuesArray]);
 
   const availableOptions = useMemo(() => {
-    const filteredBySearch = options.filter(option =>
-      option.label.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredBySearch = searchable
+      ? options.filter(option =>
+          option.label.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : options;
 
     if (multiple) {
       return filteredBySearch.filter(option => !selectedValuesArray.includes(option.value));
     }
     return filteredBySearch;
-  }, [options, searchTerm, multiple, selectedValuesArray]);
+  }, [options, searchTerm, multiple, selectedValuesArray, searchable]);
 
   const handleSelect = useCallback((option: Option) => {
     if (disabled) return;
@@ -282,13 +288,15 @@ export function Select({
           "select-input control-placeholder-input",
           selectedOptions.length > 0 && !useChipDisplay && !isOpen ? "select-input-hidden" : "",
           selectedOptions.length > 0 && useChipDisplay ? "min-w-[50px]" : "w-full",
+          !searchable && "cursor-pointer",
         )}
         value={searchTerm}
-        onChange={handleInputChange}
+        onChange={searchable ? handleInputChange : undefined}
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         disabled={disabled}
-        onKeyDown={handleInputKeyDown}
+        onKeyDown={searchable ? handleInputKeyDown : undefined}
+        readOnly={!searchable}
       />
       {clearable && selectedValuesArray.length > 0 && !disabled ? (
         <div
@@ -298,7 +306,7 @@ export function Select({
         >
           ×
         </div>
-      ) : (
+      ) : showChevron ? (
         <div
           className="select-chevron"
           onClick={handleChevronClick}
@@ -308,7 +316,7 @@ export function Select({
             className={clsx("transition-transform duration-200", isOpen && "rotate-180", disabled && "text-gray-400")}
           />
         </div>
-      )}
+      ) : null}
     </div>
   );
 

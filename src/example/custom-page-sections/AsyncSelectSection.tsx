@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { Select, Option } from '../../components/Select';
+import { Search } from 'lucide-react';
 
 const MOCK_DATA: Option[] = [
   { value: '1', label: 'Alice Johnson' },
@@ -155,7 +156,7 @@ export function AsyncSelectSection() {
   return (
     <div className="grid gap-3">
       <h2 className="text-lg font-semibold">Async Search Select</h2>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Search User (min 3 chars)</label>
         <Select
           id="async-user"
@@ -170,9 +171,12 @@ export function AsyncSelectSection() {
           onSearchChange={handleSearchChange}
           loading={loading}
           placeholder="Type to search..."
+          showChevron={false}
+          clearable
+          startIcon={<Search size={16} />}
         />
       </div>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Edit Page (pre-fetched value)</label>
         <Select
           id="async-edit-user"
