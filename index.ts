@@ -8,6 +8,7 @@ export * from './src/components/CollapsiblePanel';
 export * from './src/components/DatePicker';
 export * from './src/components/DoubleDatePicker';
 export * from './src/components/FormControlError';
+export * from './src/components/FormErrorSignal';
 export * from './src/components/Input';
 export * from './src/components/InputDatePicker';
 export * from './src/components/InputDateRangePicker';
