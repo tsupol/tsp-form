@@ -2,7 +2,7 @@ import { forwardRef, useId, type InputHTMLAttributes } from 'react';
 import clsx from 'clsx';
 import "../styles/switch.css";
 
-export type SwitchProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> & {
+export type SwitchProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'size'> & {
   size?: "sm" | "md" | "lg";
 };
 

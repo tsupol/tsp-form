@@ -32,6 +32,8 @@ interface SelectProps {
   children?: ReactNode;
   error?: boolean;
   size?: "sm" | "md" | "lg";
+  chipDisplay?: boolean; // Show selected value as chip (default false for single, always true for multi)
+  clearable?: boolean; // Show clear button when value is selected
 }
 
 export function Select({
@@ -54,6 +56,8 @@ export function Select({
   children,
   error = false,
   size,
+  chipDisplay = false,
+  clearable = false,
 }: SelectProps) {
   const sizeClass = size === "sm" ? "form-control-sm" : size === "lg" ? "form-control-lg" : undefined;
   const [isOpen, setIsOpen] = useState(false);
@@ -129,6 +133,17 @@ export function Select({
     }
     inputRef.current?.focus();
   }, [multiple, selectedValuesArray, onChange, disabled]);
+
+  const handleClear = useCallback((e: MouseEvent) => {
+    e.stopPropagation();
+    if (disabled) return;
+    onChange(null);
+    setInternalSearchTerm('');
+  }, [disabled, onChange]);
+
+  // For single select: use chip display if chipDisplay is true, otherwise show as text
+  // For multi select: always use chip display
+  const useChipDisplay = multiple || chipDisplay;
 
   const handleWrapperClick = useCallback(() => {
     if (disabled) return;
@@ -214,44 +229,59 @@ export function Select({
         startIcon && "input-has-start-icon",
         disabled && "disabled",
         error && "form-field-error",
+        isOpen && "select-open",
         className
       )}
       onClick={handleWrapperClick}
       ref={selectRef}
     >
       {startIcon && <div className="input-icon input-icon-start">{startIcon}</div>}
-      {selectedOptions.map(option => (
-        <div
-          key={option.value}
-          className="selected-chip"
-        >
-          <div className="selected-chip-label">
-            {option.icon && <span className="select-option-icon">{option.icon}</span>}
-            {option.label}
+      {useChipDisplay ? (
+        // Chip display (always for multi, optional for single)
+        selectedOptions.map(option => (
+          <div
+            key={option.value}
+            className="selected-chip"
+          >
+            <div className="selected-chip-label">
+              {option.icon && <span className="select-option-icon">{option.icon}</span>}
+              {option.label}
+            </div>
+            {!disabled && (
+              <button
+                type="button"
+                className="selected-chip-close"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRemoveSelected(option.value);
+                }}
+                aria-label={`Remove ${option.label}`}
+              >
+                ×
+              </button>
+            )}
           </div>
-          {!disabled && (multiple || selectedOptions.length === 1) && (
-            <button
-              type="button"
-              className="selected-chip-close"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRemoveSelected(option.value);
-              }}
-              aria-label={`Remove ${option.label}`}
-            >
-              ×
-            </button>
-          )}
-        </div>
-      ))}
+        ))
+      ) : (
+        // Text display (for single select without chip)
+        // Show value when there's a selection and not actively searching
+        selectedOptions.length > 0 && !isOpen && (
+          <span className="select-value">
+            {selectedOptions[0].icon && <span className="select-option-icon">{selectedOptions[0].icon}</span>}
+            {selectedOptions[0].label}
+          </span>
+        )
+      )}
       <input
         id={id}
         ref={inputRef}
         type="text"
-        placeholder={displayPlaceholder ? placeholder : ''}
+        autoComplete="off"
+        placeholder={displayPlaceholder ? placeholder : (selectedOptions.length > 0 && !useChipDisplay ? selectedOptions[0].label : '')}
         className={clsx(
           "select-input control-placeholder-input",
-          selectedOptions.length > 0 ? "min-w-[50px]" : "w-full",
+          selectedOptions.length > 0 && !useChipDisplay && !isOpen ? "select-input-hidden" : "",
+          selectedOptions.length > 0 && useChipDisplay ? "min-w-[50px]" : "w-full",
         )}
         value={searchTerm}
         onChange={handleInputChange}
@@ -260,15 +290,25 @@ export function Select({
         disabled={disabled}
         onKeyDown={handleInputKeyDown}
       />
-      <div
-        className="select-chevron"
-        onClick={handleChevronClick}
-      >
-        <Chevron
-          size={16}
-          className={clsx("transition-transform duration-200", isOpen && "rotate-180", disabled && "text-gray-400")}
-        />
-      </div>
+      {clearable && selectedValuesArray.length > 0 && !disabled ? (
+        <div
+          className="select-clear"
+          onClick={handleClear}
+          aria-label="Clear selection"
+        >
+          ×
+        </div>
+      ) : (
+        <div
+          className="select-chevron"
+          onClick={handleChevronClick}
+        >
+          <Chevron
+            size={16}
+            className={clsx("transition-transform duration-200", isOpen && "rotate-180", disabled && "text-gray-400")}
+          />
+        </div>
+      )}
     </div>
   );
 

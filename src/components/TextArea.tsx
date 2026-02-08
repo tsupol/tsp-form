@@ -2,7 +2,7 @@ import { forwardRef, TextareaHTMLAttributes } from "react";
 import clsx from "clsx";
 import "../styles/form.css";
 
-export type TextAreaProps = TextareaHTMLAttributes<HTMLTextAreaElement> & {
+export type TextAreaProps = Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "size"> & {
   error?: boolean;
   size?: "sm" | "md" | "lg";
 };

@@ -38,15 +38,15 @@ export function FormSizesPage() {
         <section className="border border-line bg-surface p-card rounded-lg">
           <h2 className="text-lg font-semibold mb-4">Input</h2>
           <div className="grid gap-3">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Small</label>
               <Input size="sm" placeholder="Small input" />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Medium (default)</label>
               <Input placeholder="Medium input" />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Large</label>
               <Input size="lg" placeholder="Large input" />
             </div>
@@ -57,15 +57,15 @@ export function FormSizesPage() {
         <section className="border border-line bg-surface p-card rounded-lg">
           <h2 className="text-lg font-semibold mb-4">Input with Icon</h2>
           <div className="grid gap-3">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Small</label>
               <Input size="sm" placeholder="Search..." startIcon={<Search size={14} />} />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Medium (default)</label>
               <Input placeholder="Search..." startIcon={<Search size={16} />} />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Large</label>
               <Input size="lg" placeholder="Search..." startIcon={<Search size={20} />} />
             </div>
@@ -76,15 +76,15 @@ export function FormSizesPage() {
         <section className="border border-line bg-surface p-card rounded-lg">
           <h2 className="text-lg font-semibold mb-4">TextArea</h2>
           <div className="grid gap-3">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Small</label>
               <TextArea size="sm" placeholder="Small textarea" rows={2} />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Medium (default)</label>
               <TextArea placeholder="Medium textarea" rows={2} />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Large</label>
               <TextArea size="lg" placeholder="Large textarea" rows={2} />
             </div>
@@ -95,7 +95,7 @@ export function FormSizesPage() {
         <section className="border border-line bg-surface p-card rounded-lg w-[400px] overflow-hidden">
           <h2 className="text-lg font-semibold mb-4">Select with Icon</h2>
           <div className="grid gap-3">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Small</label>
               <Select
                 size="sm"
@@ -106,7 +106,7 @@ export function FormSizesPage() {
                 placeholder="Small select"
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Medium (default)</label>
               <Select
                 startIcon={<Search size={16} />}
@@ -116,7 +116,7 @@ export function FormSizesPage() {
                 placeholder="Medium select"
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Large</label>
               <Select
                 size="lg"
@@ -134,7 +134,7 @@ export function FormSizesPage() {
         <section className="border border-line bg-surface p-card rounded-lg w-[400px] overflow-hidden">
           <h2 className="text-lg font-semibold mb-4">Select</h2>
           <div className="grid gap-3">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Small</label>
               <Select
                 size="sm"
@@ -144,7 +144,7 @@ export function FormSizesPage() {
                 placeholder="Small select"
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Medium (default)</label>
               <Select
                 options={selectOptions}
@@ -153,7 +153,7 @@ export function FormSizesPage() {
                 placeholder="Medium select"
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Large</label>
               <Select
                 size="lg"
@@ -170,7 +170,7 @@ export function FormSizesPage() {
         <section className="border border-line bg-surface p-card rounded-lg">
           <h2 className="text-lg font-semibold mb-4">InputDatePicker</h2>
           <div className="grid gap-3">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Small</label>
               <InputDatePicker
                 size="sm"
@@ -180,7 +180,7 @@ export function FormSizesPage() {
                 endIcon={<Calendar size={14} />}
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Medium (default)</label>
               <InputDatePicker
                 value={dateMd}
@@ -189,7 +189,7 @@ export function FormSizesPage() {
                 endIcon={<Calendar size={16} />}
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Large</label>
               <InputDatePicker
                 size="lg"
@@ -206,7 +206,7 @@ export function FormSizesPage() {
         <section className="border border-line bg-surface p-card rounded-lg">
           <h2 className="text-lg font-semibold mb-4">InputDateRangePicker</h2>
           <div className="grid gap-3">
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Small</label>
               <InputDateRangePicker
                 size="sm"
@@ -218,7 +218,7 @@ export function FormSizesPage() {
                 endIcon={<Calendar size={14} />}
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Medium (default)</label>
               <InputDateRangePicker
                 fromDate={rangeFromMd}
@@ -229,7 +229,7 @@ export function FormSizesPage() {
                 endIcon={<Calendar size={16} />}
               />
             </div>
-            <div className="flex flex-col gap-1">
+            <div className="flex flex-col">
               <label className="form-label">Large</label>
               <InputDateRangePicker
                 size="lg"

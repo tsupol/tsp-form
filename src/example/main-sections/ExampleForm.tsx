@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { FormControlError } from '../../components/FormControlError';
 import { FormErrorMessage } from '../../components/FormErrorSignal';
 import { JsonPretty } from '../../components/JsonPretty';
 import { Select } from '../../components/Select';
@@ -17,7 +16,7 @@ import { Switch } from '../../components/Switch';
 import { Slider } from '../../components/Slider';
 import { InputDatePicker } from '../../components/InputDatePicker';
 import { InputDateRangePicker } from '../../components/InputDateRangePicker';
-import { Search, Mail, Eye, EyeOff, User, Calendar } from 'lucide-react';
+import { Search, Mail, Eye, EyeOff, Calendar } from 'lucide-react';
 
 type FormValues = {
   name: string;
@@ -100,42 +99,42 @@ export function ExampleForm() {
   // @ts-ignore
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3 p-card">
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="name">Name with Icon</label>
-        <FormControlError error={errors.name}>
-          <Input
-            id="name"
-            placeholder="Jane Doe"
-            {...register("name", {
-              required: 'Template name is required (min 3 characters)',
-              minLength: {
-                value: 3,
-                message: 'Template name must be at least 3 characters',
-              },
-            })}
-          />
-        </FormControlError>
+        <Input
+          id="name"
+          placeholder="Jane Doe"
+          error={!!errors.name}
+          {...register("name", {
+            required: 'Template name is required (min 3 characters)',
+            minLength: {
+              value: 3,
+              message: 'Template name must be at least 3 characters',
+            },
+          })}
+        />
+        <FormErrorMessage error={errors.name} />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="email">Email with Icon</label>
         <Input
           id="email"
           placeholder="jane@example.com"
           startIcon={<Mail size={18} />}
+          error={!!errors.email}
           {...register("email", {
-          required: "Email is required",
+            required: "Email is required",
             pattern: {
               value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
               message: "Enter a valid email",
             },
           })}
         />
-        {errors.email && <span className="form-error">{errors.email.message}</span>}
-        <div className="form-error">Live email: {email || "—"}</div>
+        <FormErrorMessage error={errors.email} />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="search">Search Input</label>
         <Input
           id="search"
@@ -145,7 +144,7 @@ export function ExampleForm() {
         />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="password">Password with Toggle</label>
         <Input
           id="password"
@@ -157,7 +156,7 @@ export function ExampleForm() {
         />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="age">Age</label>
         <Input
           id="age"
@@ -172,7 +171,7 @@ export function ExampleForm() {
         <FormErrorMessage error={errors.age} />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="quantity">Quantity (NumberSpinner - Extra Small)</label>
         <Controller
           name="quantity"
@@ -196,10 +195,10 @@ export function ExampleForm() {
             />
           )}
         />
-        {errors.quantity && <span className="form-error">{errors.quantity.message}</span>}
+        <FormErrorMessage error={errors.quantity} />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="price">Price (Diagonal Spinner - Large)</label>
         <Controller
           name="price"
@@ -220,7 +219,7 @@ export function ExampleForm() {
         />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Choose Color</label>
         <Controller
           name="color"
@@ -240,11 +239,11 @@ export function ExampleForm() {
             />
           )}
         />
-        {errors.color && <span className="form-error">{errors.color.message}</span>}
+        <FormErrorMessage error={errors.color} />
       </div>
 
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="volume">Volume (with value)</label>
         <Controller
           name="volume"
@@ -264,7 +263,7 @@ export function ExampleForm() {
         />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="brightness">Brightness (with min/max)</label>
         <Controller
           name="brightness"
@@ -320,23 +319,22 @@ export function ExampleForm() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label" htmlFor="note">Notes</label>
-        <FormControlError error={errors.note}>
-          <TextArea
-            id="note"
-            placeholder="Add your notes here..."
-            className="form-control"
-            rows={4}
-            {...register("note", {
-              required: "Note is required",
-              minLength: { value: 10, message: "Note must be at least 10 characters" }
-            })}
-          />
-        </FormControlError>
+        <TextArea
+          id="note"
+          placeholder="Add your notes here..."
+          rows={4}
+          error={!!errors.note}
+          {...register("note", {
+            required: "Note is required",
+            minLength: { value: 10, message: "Note must be at least 10 characters" }
+          })}
+        />
+        <FormErrorMessage error={errors.note} />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Birthday (with time)</label>
         <Controller
           name="birthday"
@@ -374,7 +372,7 @@ export function ExampleForm() {
         <FormErrorMessage error={errors.birthday} />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Event Period (with time)</label>
         <Controller
           name="eventPeriodStart"
@@ -399,11 +397,10 @@ export function ExampleForm() {
             />
           )}
         />
-        {errors.eventPeriodStart && <span className="form-error">{errors.eventPeriodStart.message}</span>}
-        {errors.eventPeriodEnd && <span className="form-error">{errors.eventPeriodEnd.message}</span>}
+        <FormErrorMessage error={errors.eventPeriodStart || errors.eventPeriodEnd} />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Flight Dates</label>
         <Controller
           name="flightFromDate"
@@ -425,11 +422,10 @@ export function ExampleForm() {
             />
           )}
         />
-        {errors.flightFromDate && <span className="form-error">{errors.flightFromDate.message}</span>}
-        {errors.flightToDate && <span className="form-error">{errors.flightToDate.message}</span>}
+        <FormErrorMessage error={errors.flightFromDate || errors.flightToDate} />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Vacation Period (InputDateRangePicker with time & default times 9:00-17:00)</label>
         <Controller
           name="vacationFromDate"
@@ -483,11 +479,10 @@ export function ExampleForm() {
             />
           )}
         />
-        {errors.vacationFromDate && <span className="form-error">{errors.vacationFromDate.message}</span>}
-        {errors.vacationToDate && <span className="form-error">{errors.vacationToDate.message}</span>}
+        <FormErrorMessage error={errors.vacationFromDate || errors.vacationToDate} />
       </div>
 
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Conference Dates (InputDateRangePicker - no time, with initial value)</label>
         <Controller
           name="conferenceFromDate"
@@ -512,8 +507,7 @@ export function ExampleForm() {
             />
           )}
         />
-        {errors.conferenceFromDate && <span className="form-error">{errors.conferenceFromDate.message}</span>}
-        {errors.conferenceToDate && <span className="form-error">{errors.conferenceToDate.message}</span>}
+        <FormErrorMessage error={errors.conferenceFromDate || errors.conferenceToDate} />
       </div>
 
       <EdibleSelect control={control} errors={errors}/>
@@ -559,36 +553,36 @@ const EdibleSelect = ({ control, errors }: { control: any, errors: any }) => {
 
   return (
     <>
-      <div className="grid gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Select one edible</label>
-        <Controller // Use Controller for react-hook-form integration
-          name="singleEdible" // Name of the field in your FormValues
+        <Controller
+          name="singleEdible"
           control={control}
-          rules={{ required: "Please select an edible" }} // Validation rule
+          rules={{ required: "Please select an edible" }}
           render={({ field: { onChange, value } }) => (
-            <FormControlError error={errors.singleEdible}>
-              <Select
-                id="fruit-select"
-                options={options}
-                value={value}
-                onChange={onChange} // Use react-hook-form's onChange
-                placeholder="Select a fruit"
-                className="w-full"
-                popoverProps={{
-                  className: 'overflow-y-auto w-full',
-                  maxHeight: '100px',
-                  maxWidth: '400px',
-                }}
-              />
-            </FormControlError>
+            <Select
+              id="fruit-select"
+              options={options}
+              value={value}
+              onChange={onChange}
+              placeholder="Select a fruit"
+              className="w-full"
+              error={!!errors.singleEdible}
+              popoverProps={{
+                className: 'overflow-y-auto w-full',
+                maxHeight: '100px',
+                maxWidth: '400px',
+              }}
+            />
           )}
         />
+        <FormErrorMessage error={errors.singleEdible} />
       </div>
 
-      <div className="grid gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Select at least 2 edibles</label>
-        <Controller // Use Controller for react-hook-form integration
-          name="multiEdibles" // Name of the field in your FormValues
+        <Controller
+          name="multiEdibles"
           control={control}
           rules={{
             validate: (value) => {
@@ -602,16 +596,17 @@ const EdibleSelect = ({ control, errors }: { control: any, errors: any }) => {
             <Select
               options={options}
               value={value}
-              onChange={onChange} // Use react-hook-form's onChange
+              onChange={onChange}
               multiple
               placeholder="Select multiple fruits"
+              error={!!errors.multiEdibles}
             />
           )}
         />
-        {errors.multiEdibles && <span className="form-error">{errors.multiEdibles.message}</span>} {/* Display error */}
+        <FormErrorMessage error={errors.multiEdibles} />
       </div>
 
-      <div className="grid gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Can't touch this</label>
         <Select
           options={options}

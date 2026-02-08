@@ -15,6 +15,16 @@ textarea.form-control,
     color: var(--color-control-text, var(--color-fg));
 }
 
+input.form-control:-webkit-autofill,
+input.form-control:-webkit-autofill:hover,
+input.form-control:-webkit-autofill:focus,
+input.form-control:-webkit-autofill:active {
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: var(--color-control-text, var(--color-fg));
+    transition: background-color 5000s ease-in-out 0s;
+    box-shadow: inset 0 0 0 1000px var(--color-control-bg, rgba(125, 125, 125, 0.5));
+}
+
 input.form-control::placeholder,
 textarea.form-control::placeholder,
 .form-control::placeholder,
@@ -74,7 +84,7 @@ textarea.form-control.form-control-lg,
 .form-control-lg textarea.form-control,
 .form-control-lg .form-control {
     padding: 0.625rem 1rem;
-    font-size: 1rem;
+    font-size: 0.875rem;
     line-height: 1.5;
 }
 
@@ -85,11 +95,14 @@ textarea.form-control.form-control-lg,
     letter-spacing: var(--text-control-label--letter-spacing, 0em);
     line-height: var(--text-control-label--line-height, 1.25);
     padding-left: var(--spacing-label-x);
+    margin-bottom: 0.25rem;
 }
 
 .form-error {
     color: var(--color-danger);
     font-size: 0.75rem;
+    padding-left: var(--spacing-label-x);
+    padding-top: 0.1rem;
 }
 
 /* Input with icons */
@@ -134,7 +147,7 @@ textarea.form-control.form-control-lg,
 
 .form-control.input-has-start-icon,
 input.form-control.input-has-start-icon {
-    padding-left: 2.25rem;
+    padding-left: 2.5rem;
 }
 
 .form-control.input-has-end-icon,
@@ -154,7 +167,7 @@ input.form-control.input-has-end-icon {
 .form-control-sm .form-control.input-has-start-icon,
 .form-control-sm input.form-control.input-has-start-icon,
 .form-control.form-control-sm.input-has-start-icon {
-    padding-left: 1.75rem;
+    padding-left: 2rem;
 }
 
 .form-control-sm .form-control.input-has-end-icon,
@@ -174,7 +187,7 @@ input.form-control.input-has-end-icon {
 .form-control-lg .form-control.input-has-start-icon,
 .form-control-lg input.form-control.input-has-start-icon,
 .form-control.form-control-lg.input-has-start-icon {
-    padding-left: 2.75rem;
+    padding-left: 3rem;
 }
 
 .form-control-lg .form-control.input-has-end-icon,

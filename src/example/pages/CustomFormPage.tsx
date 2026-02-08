@@ -46,15 +46,15 @@ export function CustomFormPage() {
   };
 
   return (
-    <div className="page-content">
-      <div className="grid gap-4">
-        <form onSubmit={handleSubmit(onSubmit)} className="border border-line bg-surface p-card space-y-4 rounded-lg w-full max-w-[600px]">
+    <div className="page-content w-full">
+      <div className="grid gap-4 w-full max-w-[400px]">
+        <form onSubmit={handleSubmit(onSubmit)} className="border border-line bg-surface p-card space-y-4 rounded-lg w-full">
           <h1 className="text-xl font-bold mb-4">Custom Form</h1>
-          <div className="grid gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="form-label">Category & Name</label>
+          <div className="grid gap-1">
+            <div className="flex flex-col">
+              <label className="form-label" htmlFor="category">Category & Name</label>
               <div className="input-group">
-                <div className="w-5/12">
+                <div className="w-[120px]">
                   <Controller
                     name="category"
                     control={control}
@@ -71,6 +71,7 @@ export function CustomFormPage() {
                         onChange={onChange}
                         placeholder="Select..."
                         error={!!errors.category}
+                        clearable
                       />
                     )}
                   />
@@ -83,12 +84,11 @@ export function CustomFormPage() {
                   {...register('name', { required: 'Name is required' })}
                 />
               </div>
-              <FormErrorMessage error={errors.category} />
-              <FormErrorMessage error={errors.name} />
+              <FormErrorMessage error={errors.category || errors.name} />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="form-label">Status</label>
-              <div className="w-5/12">
+            <div className="flex flex-col">
+              <label className="form-label" htmlFor="status">Status</label>
+              <div className="w-8/12">
                 <Controller
                   name="status"
                   control={control}
@@ -106,23 +106,25 @@ export function CustomFormPage() {
                       onChange={onChange}
                       placeholder="Select status..."
                       error={!!errors.status}
+                      clearable
                     />
                   )}
                 />
               </div>
               <FormErrorMessage error={errors.status} />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="form-label">Username</label>
+            <div className="flex flex-col">
+              <label className="form-label" htmlFor="username">Username</label>
               <Input
+                id="username"
                 placeholder="Enter username..."
                 error={!!errors.username}
                 {...register('username', { required: 'Username is required' })}
               />
               <FormErrorMessage error={errors.username} />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="form-label">Event Dates</label>
+            <div className="flex flex-col">
+              <span className="form-label">Event Dates</span>
               <Controller
                 name="eventFromDate"
                 control={control}
@@ -146,12 +148,12 @@ export function CustomFormPage() {
                   />
                 )}
               />
-              <FormErrorMessage error={errors.eventFromDate} />
-              <FormErrorMessage error={errors.eventToDate} />
+              <FormErrorMessage error={errors.eventFromDate || errors.eventToDate} />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="form-label">Description</label>
+            <div className="flex flex-col">
+              <label className="form-label" htmlFor="description">Description</label>
               <TextArea
+                id="description"
                 placeholder="Enter description..."
                 rows={3}
                 error={!!errors.description}
@@ -159,8 +161,8 @@ export function CustomFormPage() {
               />
               <FormErrorMessage error={errors.description} />
             </div>
-            <div className="flex flex-col gap-1">
-              <label className="form-label">Priority</label>
+            <div className="flex flex-col">
+              <span className="form-label">Priority</span>
               <Controller
                 name="priority"
                 control={control}
@@ -187,10 +189,10 @@ export function CustomFormPage() {
             </div>
           </div>
         </form>
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full max-w-[600px]">
+        <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full">
           <AsyncSelectSection/>
         </div>
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full max-w-[600px]">
+        <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full">
           <UnstyledSelectSection/>
         </div>
       </div>

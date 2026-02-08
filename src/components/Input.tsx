@@ -2,7 +2,7 @@ import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
 import clsx from "clsx";
 import "../styles/form.css";
 
-export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & {
   error?: boolean;
   size?: "sm" | "md" | "lg";
   startIcon?: ReactNode;

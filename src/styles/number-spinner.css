@@ -5,11 +5,12 @@
     width: fit-content;
 }
 
-.number-spinner-input {
+.number-spinner .number-spinner-input,
+.number-spinner input.number-spinner-input {
     border-radius: 0;
     text-align: center;
-    min-width: 80px;
-    width: 80px;
+    min-width: 4em;
+    width: 4em;
     /* Remove spinner arrows from number input */
     -moz-appearance: textfield;
 }
