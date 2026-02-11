@@ -1,7 +1,7 @@
 .btn {
     --color-text: var(--color-fg);
-    --color-bg: var(--color-surface-elevated);
-    --color-border: var(--color-surface-elevated);
+    --color-bg: var(--color-button-default-bg, var(--color-surface-elevated));
+    --color-border: var(--color-button-default-border, var(--color-surface-elevated));
     --color-bg-hover: var(--color-fg);
     --color-border-hover: var(--color-fg);
     --color-text-hover: var(--color-fg-contrast);

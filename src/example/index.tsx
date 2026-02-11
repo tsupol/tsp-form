@@ -12,11 +12,11 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload } from 'lucide-react';
+import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Check } from 'lucide-react';
 import { SideMenu } from '../components/SideMenu';
 import { PopOver } from '../components/PopOver';
 import { Link, useNavigate, Routes, Route } from 'react-router-dom';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { clsx } from 'clsx';
 import './example.css';
@@ -27,6 +27,40 @@ import { CarouselPage } from './pages/CarouselPage';
 import { SettingsModalPage } from './pages/SettingsModalPage';
 import { FormSizesPage } from './pages/FormSizesPage';
 import { ImageUploaderPage } from './pages/ImageUploaderPage';
+
+// Theme hook
+type Theme = 'light' | 'dark' | 'system';
+
+function useTheme() {
+  const [theme, setThemeState] = useState<Theme>(() => {
+    const stored = localStorage.getItem('theme') as Theme | null;
+    return stored || 'system';
+  });
+
+  const applyTheme = useCallback((t: Theme) => {
+    const isDark = t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  }, []);
+
+  const setTheme = useCallback((t: Theme) => {
+    setThemeState(t);
+    localStorage.setItem('theme', t);
+    applyTheme(t);
+  }, [applyTheme]);
+
+  useEffect(() => {
+    applyTheme(theme);
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => {
+      if (theme === 'system') applyTheme('system');
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, [theme, applyTheme]);
+
+  return { theme, setTheme };
+}
 
 // Menu item component for user menu
 function UserMenuItem({ icon, label, onClick, shortcut, danger }: {
@@ -99,9 +133,15 @@ function UserSubMenu({ icon, label, children }: { icon?: React.ReactNode; label:
 function UserMenu({ collapsed }: { collapsed: boolean }) {
   const [open, setOpen] = useState(false);
   const { addSnackbar } = useSnackbarContext();
+  const { theme, setTheme } = useTheme();
 
   const handleAction = (action: string) => {
     addSnackbar({ message: action });
+    setOpen(false);
+  };
+
+  const handleTheme = (t: Theme) => {
+    setTheme(t);
     setOpen(false);
   };
 
@@ -125,7 +165,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
           {!collapsed && (
             <>
               <div className="flex-1 text-left truncate">
-                <span className="text-sm">John Doe</span>
+                <span className="text-sm font-medium">John Doe</span>
               </div>
               <ChevronsUpDown size={14} className="opacity-50 shrink-0" />
             </>
@@ -137,8 +177,21 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
         <UserSubMenu icon={<Settings size={14} />} label="Settings">
           <UserMenuItem label="General" onClick={() => handleAction('Settings > General')} />
           <UserSubMenu label="Theme">
-            <UserMenuItem label="Light" onClick={() => handleAction('Theme > Light')} />
-            <UserMenuItem label="Dark" onClick={() => handleAction('Theme > Dark')} />
+            <UserMenuItem
+              icon={theme === 'light' ? <Check size={14} /> : undefined}
+              label="Light"
+              onClick={() => handleTheme('light')}
+            />
+            <UserMenuItem
+              icon={theme === 'dark' ? <Check size={14} /> : undefined}
+              label="Dark"
+              onClick={() => handleTheme('dark')}
+            />
+            <UserMenuItem
+              icon={theme === 'system' ? <Check size={14} /> : undefined}
+              label="System"
+              onClick={() => handleTheme('system')}
+            />
           </UserSubMenu>
         </UserSubMenu>
         <UserMenuItem
@@ -164,7 +217,6 @@ const SideNav = () => {
   const navigate = useNavigate();
   const customMenuItems = [
     { icon: <Home size="1rem"/>, label: "Dashboard", to: '/dashboard' },
-    { icon: <FileText size="1rem"/>, label: "Documents", to: '/docs' },
     { icon: <FileText size="1rem"/>, label: "Custom Form", to: '/custom-form' },
     { icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", to: '/form-sizes' },
     { icon: <MousePointerClick size="1rem"/>, label: "Context Menu", to: '/context-menu' },
@@ -210,7 +262,7 @@ const SideNav = () => {
               <div className={clsx('p-2 flex flex-col w-side-menu', menuCollapsed ? 'items-start' : '')}>
                 {customMenuItems.map((item, index) => {
                   return (
-                    <Link key={index} className="flex py-1 rounded-lg transition-all text-item-fg hover:bg-item-hover-bg gap-2" to={item.to}>
+                    <Link key={index} className="flex py-1 rounded-lg transition-all text-item-fg hover:bg-item-hover-bg gap-2 font-medium" to={item.to}>
                       <div className="flex justify-center items-center w-8 h-8">
                         {item.icon}
                       </div>
