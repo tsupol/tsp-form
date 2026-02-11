@@ -1,5 +1,5 @@
 .skeleton {
-    background: var(--color-surface-elevated);
+    background: var(--color-skeleton, var(--color-surface-elevated));
     border-radius: var(--radius-control);
     display: inline-block;
 }
