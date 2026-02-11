@@ -93,7 +93,7 @@ export function UnstyledSelectSection() {
   return (
     <div className="grid gap-3">
       <h2 className="text-lg font-semibold">Unstyled Select</h2>
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col">
         <label className="form-label">Pick a framework (min 3 chars)</label>
         <Select
           unstyled
