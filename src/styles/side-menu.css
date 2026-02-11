@@ -1,5 +1,5 @@
 .side-menu {
-    height: 100vh;
+    height: 100dvh;
     transition: all 0.3s ease;
     position: fixed;
     top: 0;

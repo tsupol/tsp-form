@@ -173,7 +173,7 @@ const SideNav = () => {
     { icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", to: '/nav-modal' },
   ];
   return (
-    <div className={clsx('h-screen flex-shrink-0', menuCollapsed ? 'md:w-side-menu-min' : 'md:w-side-menu')}>
+    <div className={clsx('h-dvh flex-shrink-0', menuCollapsed ? 'md:w-side-menu-min' : 'md:w-side-menu')}>
       <SideMenu
         isCollapsed={false}
         onToggleCollapse={(collapsed) => setMenuCollapsed(collapsed)}
