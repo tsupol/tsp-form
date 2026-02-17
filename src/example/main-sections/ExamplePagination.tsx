@@ -11,14 +11,32 @@ export function ExamplePagination() {
 
   return (
     <div className="grid gap-4">
-      <ContentPanel title="Basic Pagination">
+      <ContentPanel title="Sizes">
         <div className="border border-line bg-surface p-card space-y-4">
           <div>
-            <div className="text-sm text-fg-muted mb-2">Current page: {currentPage1}</div>
+            <div className="text-sm text-fg-muted mb-2">Small</div>
             <Pagination
               currentPage={currentPage1}
               totalPages={10}
               onPageChange={setCurrentPage1}
+              size="sm"
+            />
+          </div>
+          <div>
+            <div className="text-sm text-fg-muted mb-2">Medium (default)</div>
+            <Pagination
+              currentPage={currentPage1}
+              totalPages={10}
+              onPageChange={setCurrentPage1}
+            />
+          </div>
+          <div>
+            <div className="text-sm text-fg-muted mb-2">Large</div>
+            <Pagination
+              currentPage={currentPage1}
+              totalPages={10}
+              onPageChange={setCurrentPage1}
+              size="lg"
             />
           </div>
         </div>

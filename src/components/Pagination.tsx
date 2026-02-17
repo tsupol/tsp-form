@@ -7,6 +7,7 @@ export type PaginationProps = {
   totalPages: number;
   onPageChange: (page: number) => void;
   className?: string;
+  size?: 'sm' | 'md' | 'lg';
   siblingCount?: number;
   showFirstLast?: boolean;
   disabled?: boolean;
@@ -24,6 +25,7 @@ export const Pagination = ({
   totalPages,
   onPageChange,
   className,
+  size = 'md',
   siblingCount = 1,
   showFirstLast = true,
   disabled = false,
@@ -92,7 +94,7 @@ export const Pagination = ({
   if (totalPages < 2) return null;
 
   return (
-    <nav className={clsx('pagination', className)} aria-label="Pagination">
+    <nav className={clsx('pagination', `pagination-${size}`, className)} aria-label="Pagination">
       <ul className="pagination-list">
         {showFirstLast && (
           <li>

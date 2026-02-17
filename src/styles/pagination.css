@@ -16,14 +16,15 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 2rem;
-    height: 2rem;
-    padding: 0 0.5rem;
+    min-width: var(--height-control, 2.25rem);
+    height: var(--height-control, 2.25rem);
+    padding: 0 var(--spacing-control-x);
     border: 1px solid var(--color-line);
     background: var(--color-surface);
     color: var(--color-fg);
     border-radius: var(--radius-control);
-    font-size: var(--text-control);
+    font-size: var(--text-control, 0.875rem);
+    line-height: var(--text-control--line-height, 1.4);
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -55,11 +56,25 @@
 }
 
 .pagination-nav {
-    font-size: 1.125rem;
     font-weight: 600;
 }
 
 .pagination-page:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: 2px;
+}
+
+/* Size: sm */
+.pagination-sm .pagination-item {
+    min-width: var(--height-control-sm, 1.75rem);
+    height: var(--height-control-sm, 1.75rem);
+    padding: 0 var(--spacing-control-compact-x);
+    font-size: var(--text-control-sm, 0.75rem);
+}
+
+/* Size: lg */
+.pagination-lg .pagination-item {
+    min-width: var(--height-control-lg, 2.75rem);
+    height: var(--height-control-lg, 2.75rem);
+    padding: 0 var(--spacing-control-relaxed-x);
 }
