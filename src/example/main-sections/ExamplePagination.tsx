@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ContentPanel } from '../components/ContentPanel';
 import { Pagination } from '../../components/Pagination';
+import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
 export function ExamplePagination() {
   const [currentPage1, setCurrentPage1] = useState(1);
@@ -8,6 +9,7 @@ export function ExamplePagination() {
   const [currentPage3, setCurrentPage3] = useState(1);
   const [currentPage4, setCurrentPage4] = useState(10);
   const [currentPage5, setCurrentPage5] = useState(10);
+  const [currentPage6, setCurrentPage6] = useState(5);
 
   return (
     <div className="grid gap-4">
@@ -45,10 +47,10 @@ export function ExamplePagination() {
       <ContentPanel title="Large Pagination with Many Pages">
         <div className="border border-line bg-surface p-card space-y-4">
           <div>
-            <div className="text-sm text-fg-muted mb-2">Current page: {currentPage2} of 100</div>
+            <div className="text-sm text-fg-muted mb-2">Current page: {currentPage2} of 1234</div>
             <Pagination
               currentPage={currentPage2}
-              totalPages={100}
+              totalPages={1234}
               onPageChange={setCurrentPage2}
             />
           </div>
@@ -101,6 +103,25 @@ export function ExamplePagination() {
               totalPages={50}
               onPageChange={setCurrentPage5}
               siblingCount={2}
+            />
+          </div>
+        </div>
+      </ContentPanel>
+
+      <ContentPanel title="Custom Icons (Lucide)">
+        <div className="border border-line bg-surface p-card space-y-4">
+          <div>
+            <div className="text-sm text-fg-muted mb-2">Using Lucide icons</div>
+            <Pagination
+              currentPage={currentPage6}
+              totalPages={50}
+              onPageChange={setCurrentPage6}
+              icons={{
+                first: <ChevronsLeft size="1em" />,
+                previous: <ChevronLeft size="1em" />,
+                next: <ChevronRight size="1em" />,
+                last: <ChevronsRight size="1em" />,
+              }}
             />
           </div>
         </div>

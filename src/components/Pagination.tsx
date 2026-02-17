@@ -2,6 +2,39 @@ import { useMemo } from 'react';
 import clsx from 'clsx';
 import '../styles/pagination.css';
 
+const ChevronLeft = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="pagination-icon">
+    <polyline points="15 18 9 12 15 6" />
+  </svg>
+);
+
+const ChevronRight = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="pagination-icon">
+    <polyline points="9 6 15 12 9 18" />
+  </svg>
+);
+
+const ChevronsLeft = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="pagination-icon">
+    <polyline points="11 17 6 12 11 7" />
+    <polyline points="18 17 13 12 18 7" />
+  </svg>
+);
+
+const ChevronsRight = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="pagination-icon">
+    <polyline points="13 7 18 12 13 17" />
+    <polyline points="6 7 11 12 6 17" />
+  </svg>
+);
+
+export type PaginationIcons = {
+  first?: React.ReactNode;
+  previous?: React.ReactNode;
+  next?: React.ReactNode;
+  last?: React.ReactNode;
+};
+
 export type PaginationProps = {
   currentPage: number;
   totalPages: number;
@@ -11,6 +44,7 @@ export type PaginationProps = {
   siblingCount?: number;
   showFirstLast?: boolean;
   disabled?: boolean;
+  icons?: PaginationIcons;
 };
 
 const range = (start: number, end: number) => {
@@ -29,6 +63,7 @@ export const Pagination = ({
   siblingCount = 1,
   showFirstLast = true,
   disabled = false,
+  icons,
 }: PaginationProps) => {
   const paginationRange = useMemo(() => {
     const totalPageNumbers = siblingCount + 5; // siblingCount + firstPage + lastPage + currentPage + 2*DOTS
@@ -105,7 +140,7 @@ export const Pagination = ({
               disabled={disabled || currentPage === 1}
               aria-label="First page"
             >
-              ««
+              {icons?.first ?? <ChevronsLeft />}
             </button>
           </li>
         )}
@@ -118,7 +153,7 @@ export const Pagination = ({
             disabled={disabled || currentPage === 1}
             aria-label="Previous page"
           >
-            ‹
+            {icons?.previous ?? <ChevronLeft />}
           </button>
         </li>
 
@@ -160,7 +195,7 @@ export const Pagination = ({
             disabled={disabled || currentPage === totalPages}
             aria-label="Next page"
           >
-            ›
+            {icons?.next ?? <ChevronRight />}
           </button>
         </li>
 
@@ -173,7 +208,7 @@ export const Pagination = ({
               disabled={disabled || currentPage === totalPages}
               aria-label="Last page"
             >
-              »»
+              {icons?.last ?? <ChevronsRight />}
             </button>
           </li>
         )}

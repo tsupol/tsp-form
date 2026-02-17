@@ -128,6 +128,16 @@
     --color-item-active-bg: rgba(255, 255, 255, 0.1);
     --color-item-active-fg: var(--color-primary-contrast);
     --color-item-active-border: transparent;
+
+    /* pagination */
+    --color-pagination-border: transparent;
+    --color-pagination-bg: transparent;
+    --color-pagination-hover-bg: var(--color-surface-elevated);
+    --color-pagination-hover-border: transparent;
+    --color-pagination-active-bg: var(--color-button-default-bg);
+    --color-pagination-active-fg: var(--color-fg);
+    --color-pagination-active-border: var(--color-button-default-border);
+    --spacing-pagination-gap: 0.125rem;
 }
 
 /* Light theme - Claude style warm cream */
