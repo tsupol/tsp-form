@@ -7,10 +7,15 @@
 .modal-global-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: var(--color-modal-backdrop, rgba(0, 0, 0, 0.4));
+    backdrop-filter: blur(var(--blur-modal-backdrop, 4px));
     transition: opacity 150ms ease;
-    opacity: 1;
+    opacity: 0;
     pointer-events: auto;
+}
+
+.modal-global-backdrop[data-open="true"] {
+    opacity: 1;
 }
 
 /* Individual modal layers */

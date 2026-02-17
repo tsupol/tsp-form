@@ -41,7 +41,12 @@ export const ModalProvider = ({
   bodyClassName = "has-modal-open"
 }: ModalProviderProps) => {
   const [stack, setStack] = useState<ModalState[]>([]);
+  const [backdropClosing, setBackdropClosing] = useState(false);
+  const [backdropVisible, setBackdropVisible] = useState(false);
+  const prevHasModalsRef = useRef(false);
+  const backdropClosingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const backdropMountRef = useRef<HTMLElement | null>(null);
+  const backdropRef = useRef<HTMLDivElement | null>(null);
 
   // Create backdrop mount point
   useEffect(() => {
@@ -131,6 +136,63 @@ export const ModalProvider = ({
 
   const hasModals = stack.length > 0;
 
+  // Trigger backdrop enter animation on next frame
+  useEffect(() => {
+    if (hasModals) {
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setBackdropVisible(true);
+        });
+      });
+      return () => cancelAnimationFrame(raf);
+    } else {
+      setBackdropVisible(false);
+    }
+  }, [hasModals]);
+
+  // Detect when all modals close to trigger backdrop exit animation
+  useEffect(() => {
+    if (prevHasModalsRef.current && !hasModals) {
+      setBackdropClosing(true);
+    }
+    prevHasModalsRef.current = hasModals;
+  }, [hasModals]);
+
+  // Handle backdrop exit animation completion
+  useEffect(() => {
+    if (!backdropClosing) return;
+
+    const backdrop = backdropRef.current;
+
+    const finish = () => {
+      if (backdropClosingTimeoutRef.current) {
+        clearTimeout(backdropClosingTimeoutRef.current);
+        backdropClosingTimeoutRef.current = null;
+      }
+      setBackdropClosing(false);
+    };
+
+    if (backdrop) {
+      const handleTransitionEnd = (e: TransitionEvent) => {
+        if (e.target === backdrop) {
+          finish();
+        }
+      };
+      backdrop.addEventListener('transitionend', handleTransitionEnd);
+      backdropClosingTimeoutRef.current = setTimeout(finish, 200);
+
+      return () => {
+        backdrop.removeEventListener('transitionend', handleTransitionEnd);
+        if (backdropClosingTimeoutRef.current) {
+          clearTimeout(backdropClosingTimeoutRef.current);
+          backdropClosingTimeoutRef.current = null;
+        }
+      };
+    } else {
+      setBackdropClosing(false);
+    }
+  }, [backdropClosing]);
+
   // Handle body class and scroll lock
   useEffect(() => {
     if (typeof document === "undefined") return;
@@ -211,9 +273,11 @@ export const ModalProvider = ({
       {children}
 
       {/* Single global backdrop */}
-      {backdropMountRef.current && hasModals && createPortal(
+      {backdropMountRef.current && (hasModals || backdropClosing) && createPortal(
         <div
+          ref={backdropRef}
           className="modal-global-backdrop"
+          data-open={backdropVisible ? 'true' : 'false'}
           onClick={handleBackdropClick}
           aria-hidden="true"
         />,

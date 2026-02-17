@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useRef, type ReactNode, useCallback, useId } from 'react';
+import { CSSProperties, useEffect, useRef, useState, type ReactNode, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
 import "../styles/modal.css";
 import { useModal } from '../context/ModalContext';
@@ -34,9 +34,14 @@ export const Modal = ({
   const modalId = id ?? autoId;
   const modalHook = useModal(modalId);
   const { isOpen, isTop, zIndex } = modalHook;
+  const [closing, setClosing] = useState(false);
+  const [visible, setVisible] = useState(false);
   const mountNodeRef = useRef<HTMLElement | null>(null);
   const prevOpenRef = useRef<boolean>(open);
+  const prevIsOpenRef = useRef<boolean>(false);
   const mouseDownTargetRef = useRef<EventTarget | null>(null);
+  const panelRef = useRef<HTMLDivElement | null>(null);
+  const closingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Create mount node
   useEffect(() => {
@@ -67,6 +72,67 @@ export const Modal = ({
       }
     }
   }, [open, isOpen, modalHook.open, modalHook.close]);
+
+  // Trigger enter animation: flip visible on next frame so browser paints base state first
+  useEffect(() => {
+    if (isOpen) {
+      const raf = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          setVisible(true);
+        });
+      });
+      return () => cancelAnimationFrame(raf);
+    } else {
+      setVisible(false);
+    }
+  }, [isOpen]);
+
+  // Detect isOpen going from true → false to trigger closing animation
+  useEffect(() => {
+    if (prevIsOpenRef.current && !isOpen) {
+      setClosing(true);
+    }
+    prevIsOpenRef.current = isOpen;
+  }, [isOpen]);
+
+  // Handle exit animation completion
+  useEffect(() => {
+    if (!closing) return;
+
+    const panel = panelRef.current;
+
+    const finish = () => {
+      if (closingTimeoutRef.current) {
+        clearTimeout(closingTimeoutRef.current);
+        closingTimeoutRef.current = null;
+      }
+      setClosing(false);
+    };
+
+    // Listen for transitionend on the panel
+    if (panel) {
+      const handleTransitionEnd = (e: TransitionEvent) => {
+        if (e.target === panel) {
+          finish();
+        }
+      };
+      panel.addEventListener('transitionend', handleTransitionEnd);
+
+      // Safety timeout in case transitionend doesn't fire
+      closingTimeoutRef.current = setTimeout(finish, 200);
+
+      return () => {
+        panel.removeEventListener('transitionend', handleTransitionEnd);
+        if (closingTimeoutRef.current) {
+          clearTimeout(closingTimeoutRef.current);
+          closingTimeoutRef.current = null;
+        }
+      };
+    } else {
+      // No panel ref, just unmount immediately
+      setClosing(false);
+    }
+  }, [closing]);
 
   // Handle escape key for this specific modal
   const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
@@ -102,7 +168,8 @@ export const Modal = ({
     event.stopPropagation();
   }, []);
 
-  if (!mountNodeRef.current || !isOpen) return null;
+  const shouldRender = isOpen || closing;
+  if (!mountNodeRef.current || !shouldRender) return null;
 
   const panelStyle: CSSProperties = {
     width,
@@ -116,7 +183,7 @@ export const Modal = ({
     <div
       className="modal-layer"
       style={{ zIndex }}
-      data-open="true"
+      data-open={visible ? 'true' : 'false'}
       data-top={isTop ? 'true' : 'false'}
       data-modal-id={modalId}
       onKeyDown={handleKeyDown}
@@ -124,6 +191,7 @@ export const Modal = ({
       onClick={handleLayerClick}
     >
       <div
+        ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-label={ariaLabel}
