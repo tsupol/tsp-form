@@ -1,0 +1,147 @@
+.side-menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-menu-item-gap, 2px);
+    padding: var(--spacing-menu-item-pad, 0.5rem);
+}
+
+/* Single item row */
+.side-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: var(--spacing-menu-item-y, 0.375rem) var(--spacing-menu-item-x, 0.5rem);
+    border-radius: var(--radius-control);
+    background: var(--color-item-bg);
+    color: var(--color-item-fg);
+    border: 1px solid var(--color-item-border);
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    font-size: var(--text-control);
+    font-weight: var(--text-control--font-weight);
+    line-height: var(--text-control--line-height);
+    letter-spacing: var(--text-control--letter-spacing);
+    white-space: nowrap;
+    user-select: none;
+    width: 100%;
+    text-align: left;
+}
+
+.side-menu-item:hover {
+    background: var(--color-item-hover-bg);
+    color: var(--color-item-hover-fg);
+    border-color: var(--color-item-hover-border);
+}
+
+.side-menu-item.active {
+    background: var(--color-item-active-bg);
+    color: var(--color-item-active-fg);
+    border-color: var(--color-item-active-border);
+}
+
+.side-menu-item.disabled {
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+/* Collapsed: container matches minimized sidebar width, items shrink to icon */
+.side-menu-items.collapsed {
+    width: var(--spacing-side-menu-min);
+    align-items: center;
+}
+
+.side-menu-items.collapsed .side-menu-item {
+    width: auto;
+    justify-content: center;
+}
+
+
+/* Icon container — fixed width for alignment */
+.side-menu-item-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--spacing-menu-icon-size, 1.5rem);
+    height: var(--spacing-menu-icon-size, 1.5rem);
+    flex-shrink: 0;
+}
+
+/* Label — grows, truncates */
+.side-menu-item-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Chevron indicator for items with children */
+.side-menu-item-chevron {
+    flex-shrink: 0;
+    opacity: 0.5;
+}
+
+/* Flyout popover content */
+.side-menu-flyout {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-menu-item-gap, 2px);
+    padding: var(--spacing-menu-flyout-pad, 0.375rem);
+    min-width: var(--spacing-menu-flyout-min-width, 180px);
+    max-width: var(--spacing-menu-flyout-max-width, 280px);
+}
+
+/* Separator — thin divider line */
+.side-menu-separator {
+    border: none;
+    border-top: 1px solid var(--color-line);
+    margin: var(--spacing-menu-item-gap, 2px) var(--spacing-menu-item-x, 0.5rem);
+}
+
+/* Group label — muted uppercase text, degrades to line when collapsed */
+.side-menu-group-label {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem var(--spacing-menu-item-x, 0.5rem) 0.125rem;
+    min-height: 0;
+}
+
+.side-menu-group-text {
+    font-size: var(--text-2xs, 0.625rem);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: none;
+}
+
+/* Collapsed: group label becomes a separator line, preserving vertical space */
+.side-menu-items.collapsed .side-menu-group-label {
+    height: 1px;
+    padding: 0;
+    background: var(--color-line);
+    margin: 0.875rem 0.375rem;
+    align-self: stretch;
+}
+
+/* Accordion container (mobile) — grid row animation */
+.side-menu-accordion {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.25s ease;
+}
+
+.side-menu-accordion.open {
+    grid-template-rows: 1fr;
+}
+
+/* Indent nested accordion children */
+.side-menu-accordion-inner {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-menu-item-gap, 2px);
+    padding-left: var(--spacing-menu-indent, 1rem);
+    overflow: hidden;
+    min-height: 0;
+}

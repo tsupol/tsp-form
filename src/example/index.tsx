@@ -1,5 +1,4 @@
 import { createRoot } from 'react-dom/client';
-import { CollapsiblePanel } from '../components/CollapsiblePanel';
 import { ExampleButtons } from './main-sections/ExampleButtons';
 import { ExampleForm } from './main-sections/ExampleForm';
 import { ExamplePopOver } from './main-sections/ExamplePopover';
@@ -12,10 +11,11 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Check } from 'lucide-react';
+import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Check, Layers, Box, ToggleLeft, Type, MessageSquare, Columns3, GalleryHorizontalEnd, Clock, Eye, BarChart3 } from 'lucide-react';
 import { SideMenu } from '../components/SideMenu';
+import { SideMenuItems, type SideMenuItemData } from '../components/SideMenuItems';
 import { PopOver } from '../components/PopOver';
-import { Link, useNavigate, Routes, Route } from 'react-router-dom';
+import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { clsx } from 'clsx';
@@ -150,7 +150,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
       isOpen={open}
       onClose={() => setOpen(false)}
       placement="top"
-      align="start"
+      align="center"
       offset={4}
       openDelay={0}
       triggerClassName="w-full"
@@ -173,7 +173,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
         </button>
       }
     >
-      <div className="py-1 w-[260px]">
+      <div className="py-1 w-[calc(var(--spacing-side-menu)-1rem)]">
         <UserSubMenu icon={<Settings size={14} />} label="Settings">
           <UserMenuItem label="General" onClick={() => handleAction('Settings > General')} />
           <UserSubMenu label="Theme">
@@ -211,26 +211,90 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
   );
 }
 
+// Flat list of all menu items with paths for active key lookup
+const menuItemsList = [
+  { key: 'dashboard', path: '/' },
+  { key: 'buttons', path: '/buttons' },
+  { key: 'form', path: '/form' },
+  { key: 'form-modal', path: '/form-modal' },
+  { key: 'popover', path: '/popover' },
+  { key: 'modal', path: '/modal' },
+  { key: 'tabs', path: '/tabs' },
+  { key: 'skeleton', path: '/skeleton' },
+  { key: 'tooltip', path: '/tooltip' },
+  { key: 'progress-bar', path: '/progress-bar' },
+  { key: 'pagination', path: '/pagination' },
+  { key: 'prose', path: '/prose' },
+  { key: 'custom-form', path: '/custom-form' },
+  { key: 'form-sizes', path: '/form-sizes' },
+  { key: 'context-menu', path: '/context-menu' },
+  { key: 'carousel', path: '/carousel' },
+  { key: 'image-uploader', path: '/image-uploader' },
+  { key: 'nav-modal', path: '/nav-modal' },
+];
+
 const SideNav = () => {
 
   const [menuCollapsed, setMenuCollapsed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
-  const customMenuItems = [
-    { icon: <Home size="1rem"/>, label: "Dashboard", to: '/dashboard' },
-    { icon: <FileText size="1rem"/>, label: "Custom Form", to: '/custom-form' },
-    { icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", to: '/form-sizes' },
-    { icon: <MousePointerClick size="1rem"/>, label: "Context Menu", to: '/context-menu' },
-    { icon: <Image size="1rem"/>, label: "Carousel", to: '/carousel' },
-    { icon: <Upload size="1rem"/>, label: "Image Uploader", to: '/image-uploader' },
-    { icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", to: '/nav-modal' },
+  const location = useLocation();
+
+  // Derive active key from current path
+  const activeKey = (() => {
+    const path = location.pathname;
+    const match = menuItemsList.find(i => i.path === path);
+    return match?.key ?? 'dashboard';
+  })();
+
+  const menuItems: SideMenuItemData[] = [
+    { key: 'dashboard', icon: <Home size="1rem"/>, label: "Dashboard", path: '/' },
+    {
+      key: 'components', icon: <Layers size="1rem"/>, label: "Components",
+      children: [
+        { key: 'buttons', icon: <Box size="1rem"/>, label: "Buttons", path: '/buttons' },
+        { key: 'form', icon: <FileText size="1rem"/>, label: "Form", path: '/form' },
+        { key: 'form-modal', icon: <FileText size="1rem"/>, label: "Form Modal", path: '/form-modal' },
+        { key: 'popover', icon: <MessageSquare size="1rem"/>, label: "PopOver", path: '/popover' },
+        { key: 'modal', icon: <Columns3 size="1rem"/>, label: "Modal", path: '/modal' },
+        { key: 'tabs', icon: <GalleryHorizontalEnd size="1rem"/>, label: "Tabs", path: '/tabs' },
+        {
+          key: 'feedback', icon: <Eye size="1rem"/>, label: "Feedback",
+          children: [
+            { key: 'skeleton', icon: <Clock size="1rem"/>, label: "Skeleton", path: '/skeleton' },
+            { key: 'tooltip', icon: <MessageSquare size="1rem"/>, label: "Tooltip", path: '/tooltip' },
+            { key: 'progress-bar', icon: <BarChart3 size="1rem"/>, label: "Progress Bar", path: '/progress-bar' },
+          ],
+        },
+        { key: 'pagination', icon: <ToggleLeft size="1rem"/>, label: "Pagination", path: '/pagination' },
+        { key: 'prose', icon: <Type size="1rem"/>, label: "Prose", path: '/prose' },
+      ],
+    },
+    { key: 'context-menu', icon: <MousePointerClick size="1rem"/>, label: "Context Menu", path: '/context-menu' },
+    { key: 'carousel', icon: <Image size="1rem"/>, label: "Carousel", path: '/carousel' },
+    { type: 'group', key: 'grp-examples', label: "Examples" },
+    { key: 'custom-form', icon: <FileText size="1rem"/>, label: "Custom Form", path: '/custom-form' },
+    { key: 'form-sizes', icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", path: '/form-sizes' },
+    { key: 'image-uploader', icon: <Upload size="1rem"/>, label: "Image Uploader", path: '/image-uploader' },
+    { key: 'nav-modal', icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", path: '/nav-modal' },
   ];
+
+  const handleSelect = (key: string, path?: string) => {
+    if (path) navigate(path);
+  };
+
+  const handleCloseMobile = () => {
+    setMenuCollapsed(true);
+  };
+
   return (
     <div className={clsx('h-dvh flex-shrink-0', menuCollapsed ? 'md:w-side-menu-min' : 'md:w-side-menu')}>
       <SideMenu
-        isCollapsed={false}
+        isCollapsed={menuCollapsed}
         onToggleCollapse={(collapsed) => setMenuCollapsed(collapsed)}
         linkFn={(to) => navigate(to)}
-        className="bg-surface-shallow border-r border-line"
+        autoCloseMobileOnClick={false}
+        className=""
         mobileToggleRenderer={(handleToggle) => (
           <button
             className="hover:bg-surface-hover w-8 h-8 shrink-0 cursor-pointer rounded-lg transition-all flex justify-center items-center"
@@ -240,41 +304,37 @@ const SideNav = () => {
             <ArrowRightFromLine size={18} />
           </button>
         )}
-        titleRenderer={(collapsed, handleToggle, isMobile) => (
-          <div key="title" className="flex items-center pointer-events-auto w-side-menu p-2 transition-all" style={{ transform: collapsed && !isMobile ? 'translateX(calc(-1 * var(--spacing-side-menu) + var(--spacing-side-menu-min)))' : 'translateX(0)' }}>
-            <div className="flex items-center flex-1 cursor-pointer pl-2"
-                 style={{ opacity: collapsed ? 0 : 1, transition: 'opacity 0.3s ease' }}
-                 onClick={() => handleToggle()}>
-              <span className="font-semibold">TSP Form</span>
+        titleRenderer={(collapsed, handleToggle, mobile) => {
+          // Capture mobile state from SideMenu's titleRenderer
+          if (mobile !== isMobile) setTimeout(() => setIsMobile(mobile), 0);
+          return (
+            <div key="title" className="flex items-center pointer-events-auto w-side-menu p-2 transition-all" style={{ transform: collapsed && !mobile ? 'translateX(calc(-1 * var(--spacing-side-menu) + var(--spacing-side-menu-min)))' : 'translateX(0)' }}>
+              <div className="flex items-center flex-1 cursor-pointer pl-2"
+                   style={{ opacity: collapsed ? 0 : 1, transition: 'opacity 0.3s ease' }}
+                   onClick={() => handleToggle()}>
+                <span className="font-semibold">TSP Form</span>
+              </div>
+              <button
+                className="hover:bg-surface w-8 h-8 shrink-0 cursor-pointer rounded-lg transition-all flex justify-center items-center"
+                aria-label={collapsed ? "Expand menu" : "Collapse menu"}
+                onClick={() => handleToggle()}
+              >
+                {collapsed ? <ArrowRightFromLine size={18} /> : <ArrowLeftFromLine size={18} />}
+              </button>
             </div>
-            <button
-              className="hover:bg-surface w-8 h-8 shrink-0 cursor-pointer rounded-lg transition-all flex justify-center items-center"
-              aria-label={collapsed ? "Expand menu" : "Collapse menu"}
-              onClick={() => handleToggle()}
-            >
-              {collapsed ? <ArrowRightFromLine size={18} /> : <ArrowLeftFromLine size={18} />}
-            </button>
-          </div>
-        )}
+          );
+        }}
         items={(
           <div className="flex flex-col w-full h-full min-h-0 pointer-events-auto">
             <div className="side-menu-content better-scroll">
-              <div className={clsx('p-2 flex flex-col w-side-menu', menuCollapsed ? 'items-start' : '')}>
-                {customMenuItems.map((item, index) => {
-                  return (
-                    <Link key={index} className="flex py-1 rounded-lg transition-all text-item-fg hover:bg-item-hover-bg gap-2 font-medium" to={item.to}>
-                      <div className="flex justify-center items-center w-8 h-8">
-                        {item.icon}
-                      </div>
-                      {!menuCollapsed && (
-                        <div className="flex items-center">
-                          {item.label}
-                        </div>
-                      )}
-                    </Link>
-                  );
-                })}
-              </div>
+                <SideMenuItems
+                  items={menuItems}
+                  activeItem={activeKey}
+                  collapsed={menuCollapsed}
+                  isMobile={isMobile}
+                  onSelect={handleSelect}
+                  onCloseMobile={handleCloseMobile}
+                />
             </div>
             <div className={clsx('border-t border-line py-2 pointer-events-auto', menuCollapsed ? 'px-0' : 'px-2')}>
               <UserMenu collapsed={menuCollapsed} />
@@ -296,6 +356,17 @@ const App = () => {
             <SideNav/>
             <div className="p-4 w-full">
               <Routes>
+                <Route path="/buttons" element={<div className="page-content"><ExampleButtons/></div>}/>
+                <Route path="/form" element={<div className="page-content"><ExampleForm/></div>}/>
+                <Route path="/form-modal" element={<div className="page-content"><ExampleFormModal/></div>}/>
+                <Route path="/popover" element={<div className="page-content"><ExamplePopOver/></div>}/>
+                <Route path="/modal" element={<div className="page-content"><ExampleModal/></div>}/>
+                <Route path="/tabs" element={<div className="page-content"><ExampleTabs/></div>}/>
+                <Route path="/skeleton" element={<div className="page-content"><ExampleSkeleton/></div>}/>
+                <Route path="/tooltip" element={<div className="page-content"><ExampleTooltip/></div>}/>
+                <Route path="/progress-bar" element={<div className="page-content"><ExampleProgressBar/></div>}/>
+                <Route path="/pagination" element={<div className="page-content"><ExamplePagination/></div>}/>
+                <Route path="/prose" element={<div className="page-content"><ExampleProse/></div>}/>
                 <Route path="/custom-form" element={<CustomFormPage/>}/>
                 <Route path="/form-sizes" element={<FormSizesPage/>}/>
                 <Route path="/context-menu" element={<ContextMenuPage/>}/>
@@ -303,44 +374,10 @@ const App = () => {
                 <Route path="/image-uploader" element={<ImageUploaderPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>
                 <Route path="*" element={
-                  <>
-                    <h1 className="">Components</h1>
-                    <div className="grid gap-4">
-                      <CollapsiblePanel title="Modal">
-                        <ExampleFormModal/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="Modal">
-                        <ExampleModal/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="Form">
-                        <ExampleForm/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="PopOver">
-                        <ExamplePopOver/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="Responsive Tabs">
-                        <ExampleTabs/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="Buttons">
-                        <ExampleButtons/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="Skeleton">
-                        <ExampleSkeleton/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="Pagination">
-                        <ExamplePagination/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="Tooltip">
-                        <ExampleTooltip/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="Progress Bar">
-                        <ExampleProgressBar/>
-                      </CollapsiblePanel>
-                      <CollapsiblePanel title="Prose">
-                        <ExampleProse/>
-                      </CollapsiblePanel>
-                    </div>
-                  </>
+                  <div className="page-content">
+                    <h1 className="text-xl font-bold mb-4">Dashboard</h1>
+                    <p className="text-muted">Select a component from the sidebar to view its example.</p>
+                  </div>
                 }/>
               </Routes>
             </div>

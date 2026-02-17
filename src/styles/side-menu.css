@@ -9,6 +9,8 @@
     flex-direction: column;
     pointer-events: none;
     min-height: 0;
+    background: var(--color-side-menu-bg, var(--color-surface-shallow));
+    border-right: var(--spacing-line) solid var(--color-line);
 }
 
 .side-menu.expanded {

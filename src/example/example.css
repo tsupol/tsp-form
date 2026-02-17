@@ -115,8 +115,9 @@
     /* side menu */
     --spacing-side-menu: 280px;
     --spacing-side-menu-min: 3.075rem;
+    --color-side-menu-bg: #111111;
 
-    --color-item-bg: #1F1E1D;
+    --color-item-bg: transparent;
     --color-item-fg: #aaaaaa;
     --color-item-border: var(--color-item-bg);
 
@@ -124,9 +125,9 @@
     --color-item-hover-fg: var(--color-item-fg);
     --color-item-hover-border: var(--color-item-hover-bg);
 
-    --color-item-active-bg: var(--color-primary);
+    --color-item-active-bg: rgba(255, 255, 255, 0.1);
     --color-item-active-fg: var(--color-primary-contrast);
-    --color-item-active-border: var(--color-primary);
+    --color-item-active-border: transparent;
 }
 
 /* Light theme - Claude style warm cream */
@@ -154,6 +155,8 @@
     --color-button-default-border: rgba(0, 0, 0, 0.15);
 
     /* side menu */
+    --color-side-menu-bg: #f5f4f3;
+
     --color-item-bg: transparent;
     --color-item-fg: #555555;
     --color-item-border: transparent;

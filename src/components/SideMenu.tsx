@@ -6,6 +6,7 @@ interface SideMenuProps {
   isCollapsed?: boolean;
   className?: string;
   mobileBreakpoint?: number;
+  autoCloseMobileOnClick?: boolean;
   linkFn?: (to: string) => void;
   title?: ReactNode;
   items: ReactNode;
@@ -21,6 +22,7 @@ export const SideMenu = ({
   titleRenderer,
   mobileToggleRenderer,
   mobileBreakpoint = 768,
+  autoCloseMobileOnClick = true,
   items = [],
   linkFn = (to: string) => {},
   title = "Menu",
@@ -29,6 +31,11 @@ export const SideMenu = ({
   const [isMobile, setIsMobile] = useState(window.innerWidth < mobileBreakpoint);
   const [toggleVisible, setToggleVisible] = useState(true);
   const lastScrollY = useRef(0);
+
+  // Sync with external isCollapsed prop
+  useEffect(() => {
+    setCollapsed(isCollapsed);
+  }, [isCollapsed]);
 
   const handleToggle = () => {
     const newState = !collapsed;
@@ -101,7 +108,7 @@ export const SideMenu = ({
       )}
       <nav className={clsx('side-menu', collapsed ? 'collapsed' : 'expanded', isMobile ? 'mobile' : '', className)}>
         {titleRenderer(collapsed, handleToggle, isMobile)}
-        <div className="side-menu-content-wrapper" onClick={isMobile ? handleClose : undefined}>
+        <div className="side-menu-content-wrapper" onClick={isMobile && autoCloseMobileOnClick ? handleClose : undefined}>
           {items}
         </div>
       </nav>
