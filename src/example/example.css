@@ -30,7 +30,7 @@
     --color-bg: #151515;
     --color-bg-contrast: #ffffff;
 
-    --color-line: rgba(222, 220, 209, 0.12);
+    --color-line: rgba(222, 220, 209, 0.13);
     --color-link: #0070f3;
 
     --color-surface: #1e1e1e;
@@ -107,7 +107,8 @@
 
     /* default button */
     --color-button-default-bg: #252525;
-    --color-button-default-border: #404040;
+    --color-button-default-border: #606060;
+    --color-button-outline-border: #606060;
 
     /* added */
     --spacing-nav: 3rem;
@@ -128,6 +129,17 @@
     --color-item-active-bg: rgba(255, 255, 255, 0.1);
     --color-item-active-fg: var(--color-primary-contrast);
     --color-item-active-border: transparent;
+
+    /* snackbar */
+    --color-snackbar-bg: var(--color-surface-elevated);
+    --color-snackbar-fg: var(--color-fg);
+    --radius-snackbar: 0.375rem;
+    --text-snackbar: 0.875rem;
+    --border-snackbar: 0 0 0 3px;
+    --color-snackbar-info-border: var(--color-info);
+    --color-snackbar-success-border: var(--color-success);
+    --color-snackbar-error-border: var(--color-danger);
+    --color-snackbar-warning-border: var(--color-warning);
 
     /* pagination */
     --color-pagination-border: transparent;
@@ -162,7 +174,8 @@
 
     /* default button */
     --color-button-default-bg: #ffffff;
-    --color-button-default-border: rgba(0, 0, 0, 0.15);
+    --color-button-default-border: rgba(0, 0, 0, 0.2);
+    --color-button-outline-border: rgba(0, 0, 0, 0.2);
 
     /* side menu */
     --color-side-menu-bg: #f5f4f3;
@@ -178,6 +191,14 @@
     --color-item-active-bg: #E5E4DE;
     --color-item-active-fg: #333333;
     --color-item-active-border: #E5E4DE;
+
+    /* snackbar */
+    --color-snackbar-bg: #ffffff;
+    --color-snackbar-fg: #1a1a1a;
+    --color-snackbar-info-border: var(--color-info);
+    --color-snackbar-success-border: var(--color-success);
+    --color-snackbar-error-border: var(--color-danger);
+    --color-snackbar-warning-border: var(--color-warning);
 
     /* skeleton */
     --color-skeleton: #E0DFDA;
@@ -216,6 +237,8 @@ body {
 
 .page-content {
     padding: 2rem 0 0 0;
+    max-width: 50rem;
+    margin: 0 auto;
 }
 
 @media (min-width: 768px) {

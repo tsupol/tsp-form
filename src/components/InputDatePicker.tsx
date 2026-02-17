@@ -16,11 +16,14 @@ export type InputDatePickerProps = Omit<InputProps, 'value' | 'onChange' | 'endI
 
 const defaultDateFormat = (date: Date | null): string => {
   if (!date) return '';
-  return date.toLocaleDateString('en-US', {
+  const showTime = date.getHours() !== 0 || date.getMinutes() !== 0;
+  const opts: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
-  });
+    ...(showTime && { hour: 'numeric', minute: '2-digit' }),
+  };
+  return date.toLocaleString('en-US', opts);
 };
 
 export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps>(

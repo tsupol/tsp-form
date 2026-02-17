@@ -12,9 +12,29 @@ export interface Option {
   icon?: ReactNode;
 }
 
+export interface OptionGroup {
+  type: 'group';
+  label: string;
+}
+
+export interface OptionSeparator {
+  type: 'separator';
+}
+
+export type SelectItem = Option | OptionGroup | OptionSeparator;
+
+function isOption(item: SelectItem): item is Option {
+  return !('type' in item);
+}
+
+function isGroup(item: SelectItem): item is OptionGroup {
+  return 'type' in item && item.type === 'group';
+}
+
+
 interface SelectProps {
   id?: string;
-  options: Option[];
+  options: SelectItem[];
   value: string | string[] | null;
   onChange: (value: string | string[] | null) => void;
   multiple?: boolean;
@@ -36,6 +56,8 @@ interface SelectProps {
   clearable?: boolean; // Show clear button when value is selected
   searchable?: boolean; // Allow typing to filter options (default true)
   showChevron?: boolean; // Show chevron icon (default true)
+  maxSelect?: number; // Maximum number of selectable items in multi mode
+  renderOption?: (option: Option, state: { selected: boolean }) => ReactNode; // Custom option renderer
 }
 
 export function Select({
@@ -62,6 +84,8 @@ export function Select({
   clearable = false,
   searchable = true,
   showChevron = true,
+  maxSelect,
+  renderOption,
 }: SelectProps) {
   const sizeClass = size === "sm" ? "form-control-sm" : size === "lg" ? "form-control-lg" : undefined;
   const [isOpen, setIsOpen] = useState(false);
@@ -81,21 +105,55 @@ export function Select({
     return Array.isArray(value) ? value : [value];
   }, [value]);
 
+  // Extract only selectable Option items
+  const optionItems = useMemo(() => options.filter(isOption), [options]);
+
   const selectedOptions = useMemo(() => {
-    return options.filter(option => selectedValuesArray.includes(option.value));
-  }, [options, selectedValuesArray]);
+    return optionItems.filter(option => selectedValuesArray.includes(option.value));
+  }, [optionItems, selectedValuesArray]);
 
-  const availableOptions = useMemo(() => {
-    const filteredBySearch = searchable
-      ? options.filter(option =>
-          option.label.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      : options;
+  // Build dropdown items: filter options but keep groups/separators contextually
+  const availableItems = useMemo(() => {
+    const result: SelectItem[] = [];
+    let lastWasGroupOrSep = false;
 
-    if (multiple) {
-      return filteredBySearch.filter(option => !selectedValuesArray.includes(option.value));
+    for (const item of options) {
+      if (!isOption(item)) {
+        // Buffer group/separator — only add if followed by a visible option
+        result.push(item);
+        lastWasGroupOrSep = true;
+        continue;
+      }
+
+      // Filter by search
+      if (searchable && !item.label.toLowerCase().includes(searchTerm.toLowerCase())) continue;
+      // Filter already selected in multi mode
+      if (multiple && selectedValuesArray.includes(item.value)) continue;
+
+      lastWasGroupOrSep = false;
+      result.push(item);
     }
-    return filteredBySearch;
+
+    // Remove trailing groups/separators with no options after them
+    while (result.length > 0 && !isOption(result[result.length - 1])) {
+      result.pop();
+    }
+
+    // Remove leading separators and non-options that have no options following them
+    const cleaned: SelectItem[] = [];
+    for (let i = 0; i < result.length; i++) {
+      const item = result[i];
+      if (!isOption(item)) {
+        // Check if any option exists after this item
+        const hasOptionAfter = result.slice(i + 1).some(isOption);
+        if (!hasOptionAfter) continue;
+        // Skip leading separators (but allow leading groups)
+        if (cleaned.length === 0 && !isGroup(item)) continue;
+      }
+      cleaned.push(item);
+    }
+
+    return cleaned;
   }, [options, searchTerm, multiple, selectedValuesArray, searchable]);
 
   const handleSelect = useCallback((option: Option) => {
@@ -108,6 +166,7 @@ export function Select({
       if (isAlreadySelected) {
         newValue = selectedValuesArray.filter(val => val !== option.value);
       } else {
+        if (maxSelect && selectedValuesArray.length >= maxSelect) return;
         newValue = [...selectedValuesArray, option.value];
       }
       if (newValue.length === 0) {
@@ -127,7 +186,7 @@ export function Select({
       inputRef.current?.focus();
       setInternalSearchTerm('');
     }
-  }, [multiple, selectedValuesArray, onChange, actualCloseOnSelect, disabled]);
+  }, [multiple, selectedValuesArray, onChange, actualCloseOnSelect, disabled, maxSelect]);
 
   const handleRemoveSelected = useCallback((optionValue: string) => {
     if (disabled) return;
@@ -236,6 +295,7 @@ export function Select({
         disabled && "disabled",
         error && "form-field-error",
         isOpen && "select-open",
+        useChipDisplay && selectedOptions.length > 0 && "select-has-chips",
         className
       )}
       onClick={handleWrapperClick}
@@ -251,7 +311,7 @@ export function Select({
           >
             <div className="selected-chip-label">
               {option.icon && <span className="select-option-icon">{option.icon}</span>}
-              {option.label}
+              <span className="selected-chip-text">{option.label}</span>
             </div>
             {!disabled && (
               <button
@@ -343,20 +403,30 @@ export function Select({
               <Skeleton width="40%" />
             </div>
           )
-        ) : availableOptions.length > 0 ? (
-          availableOptions.map(option => (
-            <div
-              key={option.value}
-              className={clsx(
-                'select-popover-item',
-                selectedValuesArray.includes(option.value) && 'selected',
-              )}
-              onClick={() => handleSelect(option)}
-            >
-              {option.icon && <span className="select-option-icon">{option.icon}</span>}
-              {option.label}
-            </div>
-          ))
+        ) : availableItems.length > 0 ? (
+          availableItems.map((item, index) => {
+            if (!isOption(item)) {
+              return isGroup(item)
+                ? <div key={`group-${index}`} className="select-group-label">{item.label}</div>
+                : <div key={`sep-${index}`} className="select-separator" />;
+            }
+            const isSelected = selectedValuesArray.includes(item.value);
+            return (
+              <div
+                key={item.value}
+                className={clsx(
+                  'select-popover-item',
+                  isSelected && 'selected',
+                )}
+                onClick={() => handleSelect(item)}
+              >
+                {renderOption
+                  ? renderOption(item, { selected: isSelected })
+                  : (<>{item.icon && <span className="select-option-icon">{item.icon}</span>}{item.label}</>)
+                }
+              </div>
+            );
+          })
         ) : (
           <div className="px-4 py-2 text-sm text-gray-500">No options found.</div>
         )}

@@ -17,16 +17,23 @@ export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 
   size?: "sm" | "md" | "lg";
 };
 
+const hasTime = (date: Date | null) =>
+  date !== null && (date.getHours() !== 0 || date.getMinutes() !== 0);
+
 const defaultDateRangeFormat = (fromDate: Date | null, toDate: Date | null): string => {
   if (!fromDate && !toDate) return '';
 
+  const showTime = hasTime(fromDate) || hasTime(toDate);
+
   const formatDate = (date: Date | null) => {
     if (!date) return '';
-    return date.toLocaleDateString('en-US', {
+    const opts: Intl.DateTimeFormatOptions = {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
-    });
+      ...(showTime && { hour: 'numeric', minute: '2-digit' }),
+    };
+    return date.toLocaleString('en-US', opts);
   };
 
   const from = formatDate(fromDate);

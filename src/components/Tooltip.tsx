@@ -29,7 +29,10 @@ export const Tooltip = ({
     if (!triggerRef.current || !tooltipRef.current) return;
 
     const triggerRect = triggerRef.current.getBoundingClientRect();
-    const tooltipRect = tooltipRef.current.getBoundingClientRect();
+    // Use offsetWidth/offsetHeight for tooltip size — getBoundingClientRect is affected
+    // by the scale() animation and returns smaller dimensions during fade-in
+    const tooltipWidth = tooltipRef.current.offsetWidth;
+    const tooltipHeight = tooltipRef.current.offsetHeight;
 
     const gap = 8;
     const viewportWidth = window.innerWidth;
@@ -44,13 +47,13 @@ export const Tooltip = ({
     // Determine best placement
     let finalPlacement = placement;
 
-    if (placement === 'top' && spaceAbove < tooltipRect.height + gap && spaceBelow > spaceAbove) {
+    if (placement === 'top' && spaceAbove < tooltipHeight + gap && spaceBelow > spaceAbove) {
       finalPlacement = 'bottom';
-    } else if (placement === 'bottom' && spaceBelow < tooltipRect.height + gap && spaceAbove > spaceBelow) {
+    } else if (placement === 'bottom' && spaceBelow < tooltipHeight + gap && spaceAbove > spaceBelow) {
       finalPlacement = 'top';
-    } else if (placement === 'left' && spaceLeft < tooltipRect.width + gap && spaceRight > spaceLeft) {
+    } else if (placement === 'left' && spaceLeft < tooltipWidth + gap && spaceRight > spaceLeft) {
       finalPlacement = 'right';
-    } else if (placement === 'right' && spaceRight < tooltipRect.width + gap && spaceLeft > spaceRight) {
+    } else if (placement === 'right' && spaceRight < tooltipWidth + gap && spaceLeft > spaceRight) {
       finalPlacement = 'left';
     }
 
@@ -59,35 +62,36 @@ export const Tooltip = ({
 
     switch (finalPlacement) {
       case 'top':
-        top = triggerRect.top - tooltipRect.height - gap;
-        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
+        top = triggerRect.top - tooltipHeight - gap;
+        left = triggerRect.left + (triggerRect.width - tooltipWidth) / 2;
         break;
       case 'bottom':
         top = triggerRect.bottom + gap;
-        left = triggerRect.left + (triggerRect.width - tooltipRect.width) / 2;
+        left = triggerRect.left + (triggerRect.width - tooltipWidth) / 2;
         break;
       case 'left':
-        top = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
-        left = triggerRect.left - tooltipRect.width - gap;
+        top = triggerRect.top + (triggerRect.height - tooltipHeight) / 2;
+        left = triggerRect.left - tooltipWidth - gap;
         break;
       case 'right':
-        top = triggerRect.top + (triggerRect.height - tooltipRect.height) / 2;
+        top = triggerRect.top + (triggerRect.height - tooltipHeight) / 2;
         left = triggerRect.right + gap;
         break;
     }
 
     // Keep tooltip within viewport
-    if (left + tooltipRect.width > viewportWidth - gap) {
-      left = viewportWidth - tooltipRect.width - gap;
+    // Only clamp cross-axis — main axis is handled by flip logic above
+    if (finalPlacement === 'top' || finalPlacement === 'bottom') {
+      if (left + tooltipWidth > viewportWidth - gap) {
+        left = viewportWidth - tooltipWidth - gap;
+      }
+      if (left < gap) left = gap;
     }
-    if (left < gap) {
-      left = gap;
-    }
-    if (top + tooltipRect.height > viewportHeight - gap) {
-      top = viewportHeight - tooltipRect.height - gap;
-    }
-    if (top < gap) {
-      top = gap;
+    if (finalPlacement === 'left' || finalPlacement === 'right') {
+      if (top + tooltipHeight > viewportHeight - gap) {
+        top = viewportHeight - tooltipHeight - gap;
+      }
+      if (top < gap) top = gap;
     }
 
     setPosition({ top, left });

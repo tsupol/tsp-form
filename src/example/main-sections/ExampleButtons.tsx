@@ -4,147 +4,90 @@ import { Button } from '../../components/Button';
 export function ExampleButtons() {
   return (
     <div className="grid gap-4">
-      <ContentPanel title="CSS Buttons">
-        <div className="flex gap-2 border border-line bg-surface p-card">
-          <button className="btn">
-            Button
-          </button>
-          <button className="btn btn-primary">
-            Button Primary
-          </button>
-          <button className="btn btn-secondary">
-            Button Secondary
-          </button>
-          <button className="btn btn-secondary disabled">
-            Button Secondary
-          </button>
-        </div>
-        <div className="flex gap-2 border border-line bg-surface p-card">
-          <button className="btn btn-outline-default">
-            Button
-          </button>
-          <button className="btn btn-outline-primary">
-            Button Primary
-          </button>
-          <button className="btn btn-outline-secondary">
-            Outline Secondary
-          </button>
-          <button className="btn btn-outline-secondary disabled">
-            Outline Secondary
-          </button>
-        </div>
-        <div className="flex gap-2 border border-line bg-surface p-card">
-          <button className="btn btn-ghost-default">
-            Ghost
-          </button>
-          <button className="btn btn-ghost-primary">
-            Ghost Primary
-          </button>
-          <button className="btn btn-ghost-secondary">
-            Ghost Secondary
-          </button>
-          <button className="btn btn-ghost-secondary disabled">
-            Ghost Secondary
-          </button>
-        </div>
-        <div className="flex gap-2 border border-line bg-surface p-card">
-          <button className="btn btn-lg">
-            Large
-          </button>
-          <button className="btn btn-sm">
-            Small
-          </button>
-          <button className="btn btn-outline-default btn-lg">
-            Large
-          </button>
-          <div>
-            <button className="btn btn-outline-secondary btn-sm">
-              Small
-            </button>
-          </div>
-        </div>
-      </ContentPanel>
-      <ContentPanel title="React Buttons">
-        <div className="flex gap-2 border border-line bg-surface p-card">
-          <Button>
-            Button
-          </Button>
-          <Button color="primary">
-            Button Primary
-          </Button>
-          <Button color="secondary">
-            Button Secondary
-          </Button>
-          <Button color="secondary" disabled>
-            Button Secondary
-          </Button>
-        </div>
-        <div className="flex gap-2 border border-line bg-surface p-card">
-          <Button variant="outline">
-            Button
-          </Button>
-          <Button variant="outline" color="primary">
-            Button Primary
-          </Button>
-          <Button variant="outline" color="secondary">
-            Outline Secondary
-          </Button>
-          <Button variant="outline" color="secondary" disabled>
-            Outline Secondary
-          </Button>
-        </div>
-        <div className="flex gap-2 border border-line bg-surface p-card">
-          <Button variant="ghost">
-            Ghost
-          </Button>
-          <Button variant="ghost" color="primary">
-            Ghost Primary
-          </Button>
-          <Button variant="ghost" color="secondary">
-            Ghost Secondary
-          </Button>
-          <Button variant="ghost" color="secondary" disabled>
-            Ghost Secondary
-          </Button>
-        </div>
-        <div className="flex gap-2 border border-line bg-surface p-card">
-          <Button size="lg">
-            Large
-          </Button>
-          <Button size="sm">
-            Small
-          </Button>
-          <Button variant="outline" size="lg">
-            Large
-          </Button>
-          <div>
-            <Button variant="outline" size="lg">
-              L
-            </Button>
-          </div>
-          <div>
-            <Button variant="outline" color="secondary" size="md">
-              Medium
-            </Button>
-          </div>
-          <div>
-            <Button variant="outline" color="secondary" size="md">
-              M
-            </Button>
-          </div>
-          <div>
-            <Button variant="outline" color="secondary" size="sm">
-              Small
-            </Button>
-          </div>
-          <div>
-            <Button variant="outline" color="secondary" size="sm">
-              S
-            </Button>
-          </div>
-        </div>
 
+      {/* Solid */}
+      <ContentPanel title="Solid">
+        <div className="flex gap-2 flex-wrap border border-line bg-surface p-card">
+          <Button>Default</Button>
+          <Button color="primary">Primary</Button>
+          <Button color="secondary">Secondary</Button>
+          <Button color="danger">Danger</Button>
+          <Button color="success">Success</Button>
+          <Button disabled>Disabled</Button>
+        </div>
+        <details>
+          <summary className="text-sm cursor-pointer opacity-60 py-1">CSS classes</summary>
+          <div className="flex gap-2 flex-wrap border border-line bg-surface p-card mt-1">
+            <button className="btn">Default</button>
+            <button className="btn btn-primary">Primary</button>
+            <button className="btn btn-secondary">Secondary</button>
+            <button className="btn btn-danger">Danger</button>
+            <button className="btn btn-success">Success</button>
+            <button className="btn disabled">Disabled</button>
+          </div>
+        </details>
       </ContentPanel>
+
+      {/* Outline */}
+      <ContentPanel title="Outline">
+        <div className="flex gap-2 flex-wrap border border-line bg-surface p-card">
+          <Button variant="outline">Default</Button>
+          <Button variant="outline" color="primary">Primary</Button>
+          <Button variant="outline" color="secondary">Secondary</Button>
+          <Button variant="outline" color="danger">Danger</Button>
+          <Button variant="outline" color="success">Success</Button>
+          <Button variant="outline" disabled>Disabled</Button>
+        </div>
+        <details>
+          <summary className="text-sm cursor-pointer opacity-60 py-1">CSS classes</summary>
+          <div className="flex gap-2 flex-wrap border border-line bg-surface p-card mt-1">
+            <button className="btn btn-outline-default">Default</button>
+            <button className="btn btn-outline-primary">Primary</button>
+            <button className="btn btn-outline-secondary">Secondary</button>
+            <button className="btn btn-outline-danger">Danger</button>
+            <button className="btn btn-outline-success">Success</button>
+            <button className="btn btn-outline-default disabled">Disabled</button>
+          </div>
+        </details>
+      </ContentPanel>
+
+      {/* Ghost */}
+      <ContentPanel title="Ghost">
+        <div className="flex gap-2 flex-wrap border border-line bg-surface p-card">
+          <Button variant="ghost">Default</Button>
+          <Button variant="ghost" color="primary">Primary</Button>
+          <Button variant="ghost" color="secondary">Secondary</Button>
+          <Button variant="ghost" color="danger">Danger</Button>
+          <Button variant="ghost" color="success">Success</Button>
+          <Button variant="ghost" disabled>Disabled</Button>
+        </div>
+        <details>
+          <summary className="text-sm cursor-pointer opacity-60 py-1">CSS classes</summary>
+          <div className="flex gap-2 flex-wrap border border-line bg-surface p-card mt-1">
+            <button className="btn btn-ghost-default">Default</button>
+            <button className="btn btn-ghost-primary">Primary</button>
+            <button className="btn btn-ghost-secondary">Secondary</button>
+            <button className="btn btn-ghost-danger">Danger</button>
+            <button className="btn btn-ghost-success">Success</button>
+            <button className="btn btn-ghost-default disabled">Disabled</button>
+          </div>
+        </details>
+      </ContentPanel>
+
+      {/* Sizes */}
+      <ContentPanel title="Sizes">
+        <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+          <Button size="sm">Small</Button>
+          <Button size="md">Medium</Button>
+          <Button size="lg">Large</Button>
+        </div>
+        <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+          <Button variant="outline" size="sm">Small</Button>
+          <Button variant="outline" size="md">Medium</Button>
+          <Button variant="outline" size="lg">Large</Button>
+        </div>
+      </ContentPanel>
+
     </div>
   );
 }

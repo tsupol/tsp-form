@@ -5,13 +5,14 @@ import { ExamplePopOver } from './main-sections/ExamplePopover';
 import { ExampleTabs } from './main-sections/ExampleTabs';
 import { ExampleProse } from './main-sections/ExampleProse';
 import { ExampleModal } from './main-sections/ExampleModal';
+import { ExampleSnackbar } from './main-sections/ExampleSnackbar';
 import { ExampleSkeleton } from './main-sections/ExampleSkeleton';
 import { ExamplePagination } from './main-sections/ExamplePagination';
 import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Check, Layers, Box, ToggleLeft, Type, MessageSquare, Columns3, GalleryHorizontalEnd, Clock, Eye, BarChart3 } from 'lucide-react';
+import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Check, Layers, Box, ToggleLeft, Type, MessageSquare, Columns3, GalleryHorizontalEnd, Clock, Eye, BarChart3, CalendarDays } from 'lucide-react';
 import { SideMenu } from '../components/SideMenu';
 import { SideMenuItems, type SideMenuItemData } from '../components/SideMenuItems';
 import { PopOver } from '../components/PopOver';
@@ -27,6 +28,8 @@ import { CarouselPage } from './pages/CarouselPage';
 import { SettingsModalPage } from './pages/SettingsModalPage';
 import { FormSizesPage } from './pages/FormSizesPage';
 import { ImageUploaderPage } from './pages/ImageUploaderPage';
+import { SelectPage } from './pages/SelectPage';
+import { DatePickerPage } from './pages/DatePickerPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -219,12 +222,15 @@ const menuItemsList = [
   { key: 'form-modal', path: '/form-modal' },
   { key: 'popover', path: '/popover' },
   { key: 'modal', path: '/modal' },
+  { key: 'snackbar', path: '/snackbar' },
   { key: 'tabs', path: '/tabs' },
   { key: 'skeleton', path: '/skeleton' },
   { key: 'tooltip', path: '/tooltip' },
   { key: 'progress-bar', path: '/progress-bar' },
   { key: 'pagination', path: '/pagination' },
   { key: 'prose', path: '/prose' },
+  { key: 'select', path: '/select' },
+  { key: 'date-picker', path: '/date-picker' },
   { key: 'custom-form', path: '/custom-form' },
   { key: 'form-sizes', path: '/form-sizes' },
   { key: 'context-menu', path: '/context-menu' },
@@ -257,6 +263,7 @@ const SideNav = () => {
         { key: 'form-modal', icon: <FileText size="1rem"/>, label: "Form Modal", path: '/form-modal' },
         { key: 'popover', icon: <MessageSquare size="1rem"/>, label: "PopOver", path: '/popover' },
         { key: 'modal', icon: <Columns3 size="1rem"/>, label: "Modal", path: '/modal' },
+        { key: 'snackbar', icon: <MessageSquare size="1rem"/>, label: "Snackbar", path: '/snackbar' },
         { key: 'tabs', icon: <GalleryHorizontalEnd size="1rem"/>, label: "Tabs", path: '/tabs' },
         {
           key: 'feedback', icon: <Eye size="1rem"/>, label: "Feedback",
@@ -266,6 +273,8 @@ const SideNav = () => {
             { key: 'progress-bar', icon: <BarChart3 size="1rem"/>, label: "Progress Bar", path: '/progress-bar' },
           ],
         },
+        { key: 'select', icon: <ChevronsUpDown size="1rem"/>, label: "Select", path: '/select' },
+        { key: 'date-picker', icon: <CalendarDays size="1rem"/>, label: "Date Picker", path: '/date-picker' },
         { key: 'pagination', icon: <ToggleLeft size="1rem"/>, label: "Pagination", path: '/pagination' },
         { key: 'prose', icon: <Type size="1rem"/>, label: "Prose", path: '/prose' },
       ],
@@ -361,12 +370,15 @@ const App = () => {
                 <Route path="/form-modal" element={<div className="page-content"><ExampleFormModal/></div>}/>
                 <Route path="/popover" element={<div className="page-content"><ExamplePopOver/></div>}/>
                 <Route path="/modal" element={<div className="page-content"><ExampleModal/></div>}/>
+                <Route path="/snackbar" element={<div className="page-content"><ExampleSnackbar/></div>}/>
                 <Route path="/tabs" element={<div className="page-content"><ExampleTabs/></div>}/>
                 <Route path="/skeleton" element={<div className="page-content"><ExampleSkeleton/></div>}/>
                 <Route path="/tooltip" element={<div className="page-content"><ExampleTooltip/></div>}/>
                 <Route path="/progress-bar" element={<div className="page-content"><ExampleProgressBar/></div>}/>
                 <Route path="/pagination" element={<div className="page-content"><ExamplePagination/></div>}/>
                 <Route path="/prose" element={<div className="page-content"><ExampleProse/></div>}/>
+                <Route path="/select" element={<SelectPage/>}/>
+                <Route path="/date-picker" element={<DatePickerPage/>}/>
                 <Route path="/custom-form" element={<CustomFormPage/>}/>
                 <Route path="/form-sizes" element={<FormSizesPage/>}/>
                 <Route path="/context-menu" element={<ContextMenuPage/>}/>

@@ -373,59 +373,6 @@ export function ExampleForm() {
       </div>
 
       <div className="flex flex-col">
-        <label className="form-label">Event Period (with time)</label>
-        <Controller
-          name="eventPeriodStart"
-          control={control}
-          rules={{ required: 'From date is required' }}
-          render={({ field: { onChange: onFromDateChange, value: fromDate } }) => (
-            <Controller
-              name="eventPeriodEnd"
-              control={control}
-              rules={{ required: 'To date is required' }}
-              render={({ field: { onChange: onToDateChange, value: toDate } }) => (
-                <DatePicker
-                  mode="range"
-                  selectedDate={fromDate}
-                  onChange={onFromDateChange}
-                  onToDateChange={onToDateChange}
-                  toDate={toDate}
-                  showTime={true}
-                  timeFormat="24h"
-                />
-              )}
-            />
-          )}
-        />
-        <FormErrorMessage error={errors.eventPeriodStart || errors.eventPeriodEnd} />
-      </div>
-
-      <div className="flex flex-col">
-        <label className="form-label">Flight Dates</label>
-        <Controller
-          name="flightFromDate"
-          control={control}
-          rules={{ required: 'From date is required' }}
-          render={({ field: { onChange: onFromDateChange, value: fromDate } }) => (
-            <Controller
-              name="flightToDate"
-              control={control}
-              rules={{ required: 'To date is required' }}
-              render={({ field: { onChange: onToDateChange, value: toDate } }) => (
-                <DoubleDatePicker
-                  fromDate={fromDate}
-                  toDate={toDate}
-                  onChange={onFromDateChange}
-                  onToDateChange={onToDateChange}
-                />
-              )}
-            />
-          )}
-        />
-        <FormErrorMessage error={errors.flightFromDate || errors.flightToDate} />
-      </div>
-
-      <div className="flex flex-col">
         <label className="form-label">Vacation Period (InputDateRangePicker with time & default times 9:00-17:00)</label>
         <Controller
           name="vacationFromDate"

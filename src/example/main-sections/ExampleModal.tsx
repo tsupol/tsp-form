@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useSnackbarContext } from '../../context/SnackbarContext'; // Import the useSnackbar hook
+import { useSnackbarContext } from '../../context/SnackbarContext';
 import { Modal, ModalWrapper } from '../../components/Modal';
 import { Button } from '../../components/Button';
 
@@ -9,90 +9,26 @@ export const ExampleModal = () => {
   const [openB, setOpenB] = useState(false);
   const { addSnackbar } = useSnackbarContext();
 
-  const getRandomWord = () => {
-    const list = ['Apple', 'Banana', 'Orange', 'Grape', 'Peach'];
-    return list[Math.floor(Math.random() * list.length)] + list[Math.floor(Math.random() * list.length)];
-  };
-
-  const getRandomSnackbarType = () => {
-    const list = ['success', 'error', 'warning', 'info'];
-    return list[Math.floor(Math.random() * list.length)] as any;
-  };
-
-  const handleOpenA = () => {
-    setOpenA(true);
-  };
-
-  const handleCloseA = () => {
-    setOpenA(false);
-  };
-
-  const handleOpenB = () => {
-    setOpenB(true);
-  };
-
-  const handleCloseB = () => {
-    setOpenB(false);
-  };
-
   return (
     <div className="page-content">
       <div className="flex gap-2">
-        <Button variant="outline" onClick={handleOpenA}>Open A</Button>
+        <Button variant="outline" onClick={() => setOpenA(true)}>Open A</Button>
         <Button variant="outline" onClick={() => setShowForm(true)}>Open C</Button>
-        <Button onClick={() => addSnackbar({
-          message: getRandomWord(),
-          type: getRandomSnackbarType(),
-          duration: 5000,
-          position: 'top-right',
-        })}>
-          Show Snackbar Top Right
-        </Button>
-        <Button onClick={() => addSnackbar({
-          message: getRandomWord(),
-          type: getRandomSnackbarType(),
-          duration: 5000,
-          position: 'bottom-right',
-        })}>
-          Show Snackbar Bottom Right
-        </Button>
-        <Button onClick={() => addSnackbar({
-          message: getRandomWord(),
-          type: getRandomSnackbarType(),
-          position: 'bottom-center',
-        })}>
-          Show Snackbar Bottom Center
-        </Button>
-        <Button onClick={() => addSnackbar({
-          message: (
-            <span>
-              Something happened.{' '}
-              <button style={{ textDecoration: 'underline', background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0 }} onClick={() => setOpenA(true)}>
-                Open Modal
-              </button>
-            </span>
-          ),
-          type: 'info',
-          duration: 5000,
-          position: 'bottom-right',
-        })}>
-          Snackbar with Action
-        </Button>
       </div>
 
-      <Modal open={openA} onClose={handleCloseA} maxWidth="400px" ariaLabel="Modal A">
+      <Modal open={openA} onClose={() => setOpenA(false)} maxWidth="400px" ariaLabel="Modal A">
         <h2>Modal A</h2>
         <p>First modal</p>
         <div className="flex gap-2">
-          <Button onClick={handleOpenB}>Open B</Button>
-          <Button onClick={handleCloseA}>Close A</Button>
+          <Button onClick={() => setOpenB(true)}>Open B</Button>
+          <Button onClick={() => setOpenA(false)}>Close A</Button>
         </div>
       </Modal>
 
-      <Modal id="modal-b" open={openB} onClose={handleCloseB} maxWidth="300px" ariaLabel="Modal B">
+      <Modal id="modal-b" open={openB} onClose={() => setOpenB(false)} maxWidth="300px" ariaLabel="Modal B">
         <h2>Modal B</h2>
         <p>Second modal on top</p>
-        <Button onClick={handleCloseB}>Close B</Button>
+        <Button onClick={() => setOpenB(false)}>Close B</Button>
       </Modal>
 
       <ModalWrapper
@@ -103,9 +39,9 @@ export const ExampleModal = () => {
         footer={
           <div>
             <button onClick={() => setShowForm(false)}>Cancel</button>
-            <button onClick={()=> addSnackbar({
-              message: getRandomWord(),
-              type: getRandomSnackbarType(),
+            <button onClick={() => addSnackbar({
+              message: 'Saved!',
+              type: 'success',
               position: 'bottom-center',
             })}>Save</button>
           </div>

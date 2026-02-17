@@ -81,7 +81,7 @@
 .btn-outline-default {
     --color-text: var(--color-fg);
     --color-bg: transparent;
-    --color-border: var(--color-line);
+    --color-border: var(--color-button-outline-border, var(--color-line));
 }
 
 .btn-outline-primary {
