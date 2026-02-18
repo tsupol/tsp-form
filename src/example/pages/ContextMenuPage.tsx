@@ -1,67 +1,11 @@
-import { useState, useCallback, useRef, MouseEvent, ReactNode } from 'react';
+import { useState, useCallback, MouseEvent } from 'react';
 import { PopOver } from '../../components/PopOver';
-import { Chevron } from '../../components/Chevron';
+import { MenuItem, MenuSeparator, SubMenu } from '../../components/Menu';
 import { Scissors, Copy, ClipboardPaste, Plus, Type, Image, Shapes, Square, Circle, Triangle, Table, PaintBucket, Bold, Italic, AlignLeft, AlignCenter, AlignRight, MousePointer2, Trash2, Command } from 'lucide-react';
 
 interface MenuPosition {
   x: number;
   y: number;
-}
-
-function MenuItem({ icon, label, rightIcon, onClick, danger }: { icon?: ReactNode; label: string; rightIcon?: ReactNode; onClick?: () => void; danger?: boolean }) {
-  return (
-    <button
-      className={`w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer flex items-center gap-3 ${danger ? 'text-danger' : ''}`}
-      onClick={onClick}
-    >
-      {icon && <span className="w-4 h-4 flex items-center justify-center opacity-70">{icon}</span>}
-      <span className="flex-1">{label}</span>
-      {rightIcon && <span className="w-4 h-4 flex items-center justify-center opacity-70">{rightIcon}</span>}
-    </button>
-  );
-}
-
-function SubMenu({ icon, label, children }: { icon?: ReactNode; label: string; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const closeTimer = useRef<ReturnType<typeof setTimeout>>();
-
-  const scheduleClose = () => {
-    closeTimer.current = setTimeout(() => setOpen(false), 150);
-  };
-
-  const cancelClose = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-  };
-
-  return (
-    <PopOver
-      isOpen={open}
-      onClose={() => setOpen(false)}
-      placement="right"
-      align="start"
-      offset={0}
-      openDelay={0}
-      trigger={
-        <button
-          className="w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer flex items-center gap-3"
-          onMouseEnter={() => { cancelClose(); setOpen(true); }}
-          onMouseLeave={() => scheduleClose()}
-        >
-          {icon && <span className="w-4 h-4 flex items-center justify-center opacity-70">{icon}</span>}
-          <span className="flex-1">{label}</span>
-          <Chevron direction="right" size={16} />
-        </button>
-      }
-    >
-      <div
-        className="py-1 min-w-[160px]"
-        onMouseEnter={() => cancelClose()}
-        onMouseLeave={() => scheduleClose()}
-      >
-        {children}
-      </div>
-    </PopOver>
-  );
 }
 
 export function ContextMenuPage() {
@@ -116,7 +60,7 @@ export function ContextMenuPage() {
               <MenuItem icon={<Copy size={16} />} label="Copy" onClick={() => handleAction('Copy')}/>
               <MenuItem icon={<ClipboardPaste size={16} />} label="Paste" onClick={() => handleAction('Paste')}/>
 
-              <hr className="my-1 border-line"/>
+              <MenuSeparator />
 
               <SubMenu icon={<Plus size={16} />} label="Insert">
                 <MenuItem icon={<Type size={16} />} label="Text" onClick={() => handleAction('Insert > Text')}/>
@@ -139,7 +83,7 @@ export function ContextMenuPage() {
                 </SubMenu>
               </SubMenu>
 
-              <hr className="my-1 border-line"/>
+              <MenuSeparator />
 
               <MenuItem icon={<MousePointer2 size={16} />} label="Select All" onClick={() => handleAction('Select All')}/>
               <MenuItem icon={<Trash2 size={16} />} label="Delete" onClick={() => handleAction('Delete')} danger/>

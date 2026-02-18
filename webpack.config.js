@@ -69,7 +69,7 @@ export default (env) => {
 				clean: false, // Don't clean - preserve TypeScript declarations
 			},
 			externalsType: 'module',
-			externals: ['react', 'react-dom', 'react-router-dom', 'clsx', 'tailwindcss', 'postcss', 'postcss-loader', '@tailwindcss/postcss', 'react-hook-form', 'lucide-react'],
+			externals: ['react', 'react-dom', 'react-router-dom', 'clsx', 'tailwindcss', 'postcss', 'postcss-loader', '@tailwindcss/postcss', 'react-hook-form', 'lucide-react', '@tanstack/react-table'],
 			optimization: {
 				minimize: true,
 			},

@@ -52,7 +52,7 @@ interface SelectProps {
   searchTerm?: string;
   children?: ReactNode;
   error?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: "xs" | "sm" | "md" | "lg";
   chipDisplay?: boolean; // Show selected value as chip (default false for single, always true for multi)
   clearable?: boolean; // Show clear button when value is selected
   searchable?: boolean; // Allow typing to filter options (default true)
@@ -90,7 +90,7 @@ export function Select({
   showSelectedInList = false,
   renderOption,
 }: SelectProps) {
-  const sizeClass = size === "sm" ? "form-control-sm" : size === "lg" ? "form-control-lg" : undefined;
+  const sizeClass = size === "xs" ? "form-control-xs" : size === "sm" ? "form-control-sm" : size === "lg" ? "form-control-lg" : undefined;
   const [isOpen, setIsOpen] = useState(false);
   const [internalSearchTerm, setInternalSearchTerm] = useState('');
   const searchTerm = controlledSearchTerm ?? internalSearchTerm;

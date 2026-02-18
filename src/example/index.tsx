@@ -12,12 +12,14 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, ChevronRight, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Check, Layers, Box, ToggleLeft, Type, MessageSquare, Columns3, GalleryHorizontalEnd, Clock, Eye, BarChart3, CalendarDays } from 'lucide-react';
+import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Layers, Box, ToggleLeft, Type, MessageSquare, Columns3, GalleryHorizontalEnd, Clock, Eye, BarChart3, CalendarDays, Table2 } from 'lucide-react';
 import { SideMenu } from '../components/SideMenu';
 import { SideMenuItems, type SideMenuItemData } from '../components/SideMenuItems';
 import { PopOver } from '../components/PopOver';
+import { MenuItem, MenuSeparator, SubMenu } from '../components/Menu';
+import { Checkmark } from '../components/Checkmark';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { clsx } from 'clsx';
 import './example.css';
@@ -30,6 +32,7 @@ import { FormSizesPage } from './pages/FormSizesPage';
 import { ImageUploaderPage } from './pages/ImageUploaderPage';
 import { SelectPage } from './pages/SelectPage';
 import { DatePickerPage } from './pages/DatePickerPage';
+import { TablePage } from './pages/TablePage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -63,73 +66,6 @@ function useTheme() {
   }, [theme, applyTheme]);
 
   return { theme, setTheme };
-}
-
-// Menu item component for user menu
-function UserMenuItem({ icon, label, onClick, shortcut, danger }: {
-  icon?: React.ReactNode;
-  label: string;
-  onClick?: () => void;
-  shortcut?: string;
-  danger?: boolean;
-}) {
-  return (
-    <button
-      className={clsx(
-        'w-full text-left px-3 py-1.5 text-sm hover:bg-surface-hover transition-colors cursor-pointer flex items-center gap-2',
-        danger ? 'text-danger' : ''
-      )}
-      onClick={onClick}
-    >
-      {icon && <span className="w-4 h-4 flex items-center justify-center opacity-70">{icon}</span>}
-      <span className="flex-1">{label}</span>
-      {shortcut && <span className="text-xs opacity-50">{shortcut}</span>}
-    </button>
-  );
-}
-
-// Submenu component with hover
-function UserSubMenu({ icon, label, children }: { icon?: React.ReactNode; label: string; children: React.ReactNode }) {
-  const [open, setOpen] = useState(false);
-  const closeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
-
-  const scheduleClose = () => {
-    closeTimer.current = setTimeout(() => setOpen(false), 150);
-  };
-
-  const cancelClose = () => {
-    if (closeTimer.current) clearTimeout(closeTimer.current);
-  };
-
-  return (
-    <PopOver
-      isOpen={open}
-      onClose={() => setOpen(false)}
-      placement="right"
-      align="start"
-      offset={0}
-      openDelay={0}
-      trigger={
-        <button
-          className="w-full text-left px-3 py-1.5 text-sm hover:bg-surface-hover transition-colors cursor-pointer flex items-center gap-2"
-          onMouseEnter={() => { cancelClose(); setOpen(true); }}
-          onMouseLeave={() => scheduleClose()}
-        >
-          {icon && <span className="w-4 h-4 flex items-center justify-center opacity-70">{icon}</span>}
-          <span className="flex-1">{label}</span>
-          <ChevronRight size={14} className="opacity-50" />
-        </button>
-      }
-    >
-      <div
-        className="py-1 min-w-[180px]"
-        onMouseEnter={() => cancelClose()}
-        onMouseLeave={() => scheduleClose()}
-      >
-        {children}
-      </div>
-    </PopOver>
-  );
 }
 
 // User menu component (Claude Desktop style)
@@ -177,33 +113,33 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
       }
     >
       <div className="py-1 w-[calc(var(--spacing-side-menu)-1rem)]">
-        <UserSubMenu icon={<Settings size={14} />} label="Settings">
-          <UserMenuItem label="General" onClick={() => handleAction('Settings > General')} />
-          <UserSubMenu label="Theme">
-            <UserMenuItem
-              icon={theme === 'light' ? <Check size={14} /> : undefined}
+        <SubMenu icon={<Settings size={14} />} label="Settings">
+          <MenuItem label="General" onClick={() => handleAction('Settings > General')} />
+          <SubMenu label="Theme">
+            <MenuItem
+              rightIcon={theme === 'light' ? <Checkmark width={14} height={14} /> : undefined}
               label="Light"
               onClick={() => handleTheme('light')}
             />
-            <UserMenuItem
-              icon={theme === 'dark' ? <Check size={14} /> : undefined}
+            <MenuItem
+              rightIcon={theme === 'dark' ? <Checkmark width={14} height={14} /> : undefined}
               label="Dark"
               onClick={() => handleTheme('dark')}
             />
-            <UserMenuItem
-              icon={theme === 'system' ? <Check size={14} /> : undefined}
+            <MenuItem
+              rightIcon={theme === 'system' ? <Checkmark width={14} height={14} /> : undefined}
               label="System"
               onClick={() => handleTheme('system')}
             />
-          </UserSubMenu>
-        </UserSubMenu>
-        <UserMenuItem
+          </SubMenu>
+        </SubMenu>
+        <MenuItem
           icon={<HelpCircle size={14} />}
           label="Help"
           onClick={() => handleAction('Help')}
         />
-        <hr className="border-line my-1" />
-        <UserMenuItem
+        <MenuSeparator />
+        <MenuItem
           icon={<LogOut size={14} />}
           label="Sign out"
           onClick={() => handleAction('Sign out')}
@@ -237,6 +173,7 @@ const menuItemsList = [
   { key: 'carousel', path: '/carousel' },
   { key: 'image-uploader', path: '/image-uploader' },
   { key: 'nav-modal', path: '/nav-modal' },
+  { key: 'table', path: '/table' },
 ];
 
 const SideNav = () => {
@@ -276,6 +213,7 @@ const SideNav = () => {
         { key: 'select', icon: <ChevronsUpDown size="1rem"/>, label: "Select", path: '/select' },
         { key: 'date-picker', icon: <CalendarDays size="1rem"/>, label: "Date Picker", path: '/date-picker' },
         { key: 'pagination', icon: <ToggleLeft size="1rem"/>, label: "Pagination", path: '/pagination' },
+        { key: 'table', icon: <Table2 size="1rem"/>, label: "Table", path: '/table' },
         { key: 'prose', icon: <Type size="1rem"/>, label: "Prose", path: '/prose' },
       ],
     },
@@ -385,6 +323,7 @@ const App = () => {
                 <Route path="/carousel" element={<CarouselPage/>}/>
                 <Route path="/image-uploader" element={<ImageUploaderPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>
+                <Route path="/table" element={<TablePage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="text-xl font-bold mb-4">Dashboard</h1>

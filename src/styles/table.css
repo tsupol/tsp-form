@@ -1,0 +1,75 @@
+.table-container {
+    position: relative;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    caption-side: bottom;
+    border-collapse: collapse;
+    font-size: var(--text-table, var(--text-base));
+    color: var(--color-table-fg, var(--color-fg));
+}
+
+.table-header {
+    background: var(--color-table-header-bg, transparent);
+}
+
+.table-header .table-row {
+    border-bottom: 2px solid var(--color-table-border, var(--color-line));
+}
+
+.table-body .table-row {
+    border-bottom: 1px solid var(--color-table-border, var(--color-line));
+    transition: background-color 0.15s ease;
+}
+
+.table-body .table-row:last-child {
+    border-bottom: none;
+}
+
+.table-body .table-row:hover {
+    background: var(--color-table-row-hover, var(--color-surface-hover));
+}
+
+.table-body .table-row[data-state="selected"] {
+    background: var(--color-table-row-selected, var(--color-primary-light));
+}
+
+.table-footer {
+    background: var(--color-table-footer-bg, transparent);
+    border-top: 2px solid var(--color-table-border, var(--color-line));
+    font-weight: 500;
+}
+
+.table-head {
+    height: var(--height-table-head, 2.5rem);
+    padding: var(--spacing-table-cell-y, 0.5rem) var(--spacing-table-cell-x, 0.75rem);
+    text-align: left;
+    vertical-align: middle;
+    font-size: var(--text-table-head, 0.75rem);
+    font-weight: 600;
+    color: var(--color-table-head-fg, var(--color-control-label));
+    white-space: nowrap;
+}
+
+.table-cell {
+    padding: var(--spacing-table-cell-y, 0.5rem) var(--spacing-table-cell-x, 0.75rem);
+    vertical-align: middle;
+}
+
+.table-caption {
+    margin-top: 0.5rem;
+    font-size: var(--text-table-caption, 0.8125rem);
+    color: var(--color-table-head-fg, var(--color-control-label));
+}
+
+/* Striped variant */
+.table-striped .table-body .table-row:nth-child(even) {
+    background: var(--color-table-stripe, var(--color-surface));
+}
+
+.table-striped .table-body .table-row:nth-child(even):hover {
+    background: var(--color-table-row-hover, var(--color-surface-hover));
+}
