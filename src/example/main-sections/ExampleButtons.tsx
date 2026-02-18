@@ -133,6 +133,42 @@ export function ExampleButtons() {
         </div>
       </ContentPanel>
 
+      {/* Button Group */}
+      <ContentPanel title="Button Group">
+        <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+          <div className="btn-group">
+            <Button variant="outline">Left</Button>
+            <Button variant="outline">Center</Button>
+            <Button variant="outline">Right</Button>
+          </div>
+        </div>
+        <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+          <div className="btn-group">
+            <Button color="primary">One</Button>
+            <Button color="primary">Two</Button>
+            <Button color="primary">Three</Button>
+          </div>
+          <div className="btn-group">
+            <Button variant="outline" color="danger">Delete</Button>
+            <Button variant="outline" color="danger" size="icon"><Trash2 /></Button>
+          </div>
+        </div>
+        <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+          <div className="btn-group">
+            <Button variant="outline" size="sm">Small</Button>
+            <Button variant="outline" size="sm">Group</Button>
+          </div>
+          <div className="btn-group">
+            <Button variant="outline">Medium</Button>
+            <Button variant="outline">Group</Button>
+          </div>
+          <div className="btn-group">
+            <Button variant="outline" size="lg">Large</Button>
+            <Button variant="outline" size="lg">Group</Button>
+          </div>
+        </div>
+      </ContentPanel>
+
     </div>
   );
 }
