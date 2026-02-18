@@ -33,6 +33,7 @@ import { ImageUploaderPage } from './pages/ImageUploaderPage';
 import { SelectPage } from './pages/SelectPage';
 import { DatePickerPage } from './pages/DatePickerPage';
 import { TablePage } from './pages/TablePage';
+import { ButtonGroupPage } from './pages/ButtonGroupPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -174,6 +175,7 @@ const menuItemsList = [
   { key: 'image-uploader', path: '/image-uploader' },
   { key: 'nav-modal', path: '/nav-modal' },
   { key: 'table', path: '/table' },
+  { key: 'button-group', path: '/button-group' },
 ];
 
 const SideNav = () => {
@@ -196,6 +198,7 @@ const SideNav = () => {
       key: 'components', icon: <Layers size="1rem"/>, label: "Components",
       children: [
         { key: 'buttons', icon: <Box size="1rem"/>, label: "Buttons", path: '/buttons' },
+        { key: 'button-group', icon: <Box size="1rem"/>, label: "Button Group", path: '/button-group' },
         { key: 'form', icon: <FileText size="1rem"/>, label: "Form", path: '/form' },
         { key: 'form-modal', icon: <FileText size="1rem"/>, label: "Form Modal", path: '/form-modal' },
         { key: 'popover', icon: <MessageSquare size="1rem"/>, label: "PopOver", path: '/popover' },
@@ -324,6 +327,7 @@ const App = () => {
                 <Route path="/image-uploader" element={<ImageUploaderPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>
                 <Route path="/table" element={<TablePage/>}/>
+                <Route path="/button-group" element={<ButtonGroupPage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="text-xl font-bold mb-4">Dashboard</h1>

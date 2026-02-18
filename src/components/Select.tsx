@@ -462,6 +462,7 @@ export function Select({
         setInternalSearchTerm('');
       }}
       trigger={triggerContent}
+      triggerRef={selectRef}
       placement="bottom"
       align="end" // Default popover alignment set to 'end'
       // Spread all popoverProps and merge className and style

@@ -12,6 +12,7 @@ interface PopOverProps {
   align?: 'start' | 'center' | 'end';
   className?: string;
   triggerClassName?: string;
+  triggerRef?: React.RefObject<HTMLElement | null>; // external ref — skips wrapper div when provided
   width?: string;
   minWidth?: string;
   maxWidth?: string;
@@ -30,6 +31,7 @@ export function PopOver({
   align = 'start',
   className = '',
   triggerClassName = '',
+  triggerRef: externalTriggerRef,
   width = 'auto',
   minWidth = '200px',
   maxWidth = '400px',
@@ -38,7 +40,8 @@ export function PopOver({
   offset = 8,
   zIndex,
 }: PopOverProps) {
-  const triggerRef = useRef<HTMLDivElement>(null);
+  const internalTriggerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = externalTriggerRef ?? internalTriggerRef;
   const popoverRef = useRef<HTMLDivElement>(null);
   const mountNodeRef = useRef<HTMLElement | null>(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
@@ -341,9 +344,11 @@ export function PopOver({
 
   return (
     <>
-      <div ref={triggerRef} className={triggerClassName}>
-        {trigger}
-      </div>
+      {externalTriggerRef ? trigger : (
+        <div ref={internalTriggerRef} className={triggerClassName}>
+          {trigger}
+        </div>
+      )}
       {popoverContent}
     </>
   );
