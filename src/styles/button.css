@@ -10,7 +10,7 @@
     line-height: var(--text-control--line-height, 1.4);
     min-height: var(--height-control, 2.25rem);
     min-width: var(--height-control, 2.25rem);
-    border-radius: var(--radius-control);
+    border-radius: var(--radius-button, var(--radius-control));
     border: 1px solid var(--color-border);
     cursor: pointer;
     background: var(--color-bg);
@@ -19,8 +19,30 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    gap: 0.5rem;
     font-weight: var(--font-weight-button);
 }
+
+/* Auto-size SVGs inside buttons */
+.btn svg {
+    pointer-events: none;
+    flex-shrink: 0;
+    width: 1rem;
+    height: 1rem;
+}
+
+
+/* Tighter horizontal padding when button contains an SVG */
+.btn:has(> svg) { padding: 0 calc(var(--spacing-control-x) * 0.75); }
+.btn-xs:has(> svg) { padding: 0 calc(var(--spacing-control-compact-x) * 0.5); }
+.btn-sm:has(> svg) { padding: 0 calc(var(--spacing-control-compact-x) * 0.75); }
+.btn-lg:has(> svg) { padding: 0 calc(var(--spacing-control-relaxed-x) * 0.75); }
+
+/* Icon-only buttons must have no padding even with SVG children */
+.btn-icon:has(> svg),
+.btn-icon-xs:has(> svg),
+.btn-icon-sm:has(> svg),
+.btn-icon-lg:has(> svg) { padding: 0; }
 
 @media (hover: hover) and (pointer: fine) {
     .btn:hover {
@@ -41,17 +63,84 @@
     pointer-events: none;
 }
 
+.btn-xs {
+    padding: 0 calc(var(--spacing-control-compact-x) * 0.75);
+    font-size: var(--text-control-xs, 0.625rem);
+    min-height: var(--height-control-xs, 1.375rem);
+    min-width: var(--height-control-xs, 1.375rem);
+    gap: 0.25rem;
+}
+
+.btn-xs svg {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
 .btn-sm {
     padding: 0 var(--spacing-control-compact-x);
     font-size: var(--text-control-sm, 0.75rem);
     min-height: var(--height-control-sm, 1.75rem);
     min-width: var(--height-control-sm, 1.75rem);
+    gap: 0.375rem;
+}
+
+.btn-sm svg {
+    width: 0.875rem;
+    height: 0.875rem;
 }
 
 .btn-lg {
     padding: 0 var(--spacing-control-relaxed-x);
     min-height: var(--height-control-lg, 2.75rem);
     min-width: var(--height-control-lg, 2.75rem);
+}
+
+/* Icon-only variants — square buttons with no padding */
+.btn-icon {
+    width: var(--height-control, 2.25rem);
+    height: var(--height-control, 2.25rem);
+    min-width: unset;
+    min-height: unset;
+    padding: 0;
+}
+
+.btn-icon-xs {
+    width: var(--height-control-xs, 1.375rem);
+    height: var(--height-control-xs, 1.375rem);
+    min-width: unset;
+    min-height: unset;
+    padding: 0;
+}
+
+.btn-icon-xs svg {
+    width: 0.75rem;
+    height: 0.75rem;
+}
+
+.btn-icon-sm {
+    width: var(--height-control-sm, 1.75rem);
+    height: var(--height-control-sm, 1.75rem);
+    min-width: unset;
+    min-height: unset;
+    padding: 0;
+}
+
+.btn-icon-sm svg {
+    width: 0.875rem;
+    height: 0.875rem;
+}
+
+.btn-icon-lg {
+    width: var(--height-control-lg, 2.75rem);
+    height: var(--height-control-lg, 2.75rem);
+    min-width: unset;
+    min-height: unset;
+    padding: 0;
+}
+
+.btn-icon-lg svg {
+    width: 1.25rem;
+    height: 1.25rem;
 }
 
 .btn-primary {

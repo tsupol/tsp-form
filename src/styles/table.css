@@ -34,7 +34,7 @@
 }
 
 .table-body .table-row[data-state="selected"] {
-    background: var(--color-table-row-selected, var(--color-primary-light));
+    background: var(--color-table-row-selected, color-mix(in srgb, var(--color-primary) 6%, transparent));
 }
 
 .table-footer {

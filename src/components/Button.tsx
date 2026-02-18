@@ -11,7 +11,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 function getClassName(variant: string, color: string, size: string, disabled?: boolean, className?: string, ) {
-  const classes = ['btn', `btn-${size}`, className];
+  const classes = ['btn', size !== 'md' ? `btn-${size}` : '', className];
   switch (variant) {
     case 'solid':
       classes.push(`btn-${color}`);
