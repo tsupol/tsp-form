@@ -16,7 +16,7 @@
 }
 
 .select.select-has-chips {
-    padding-left: 0.25rem;
+    padding-left: 0.375rem;
 }
 
 .form-control-sm.select {
@@ -231,7 +231,7 @@
     align-items: center;
     gap: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.2s ease-in-out;
+    transition: background-color 0.05s ease-in-out;
     font-size: var(--text-option, 0.875rem);
     line-height: var(--text-option--line-height, 1.25rem);
     padding: var(--spacing-option-y) var(--spacing-option-x);
@@ -261,13 +261,19 @@
     padding: var(--spacing-option-y) var(--spacing-option-x);
 }
 
-.select-popover-item:hover {
-    background-color: var(--color-surface-hover);
+.select-popover-item:hover,
+.select-popover-item.highlighted {
+    background-color: var(--color-select-highlight, var(--color-surface-hover));
 }
 
 .select-popover-item.selected {
-    background-color: var(--color-surface-hover);
     font-weight: 600;
+}
+
+.select-check {
+    margin-left: auto;
+    flex-shrink: 0;
+    opacity: 0.6;
 }
 
 .select-group-label {

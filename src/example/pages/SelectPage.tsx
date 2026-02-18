@@ -83,6 +83,7 @@ export function SelectPage() {
   const [customRating, setCustomRating] = useState<string | null>(null);
   const [customMultiUser, setCustomMultiUser] = useState<string[] | null>(null);
   const [grouped, setGrouped] = useState<string | null>(null);
+  const [multiShowSelected, setMultiShowSelected] = useState<string[] | null>(null);
 
   return (
     <div className="page-content">
@@ -127,6 +128,23 @@ export function SelectPage() {
               onChange={(v) => setMulti(v as string[])}
               multiple
               placeholder="Select fruits..."
+            />
+          </div>
+        </div>
+
+        {/* Multi select - show selected in list */}
+        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
+          <h2 className="text-lg font-bold">Multi Select (Show Selected in List)</h2>
+          <p className="text-sm opacity-60">Selected items stay in the dropdown with a highlight instead of being removed.</p>
+          <div className="flex flex-col gap-1">
+            <label className="form-label">Pick languages</label>
+            <Select
+              options={languageOptions}
+              value={multiShowSelected}
+              onChange={(v) => setMultiShowSelected(v as string[])}
+              multiple
+              showSelectedInList
+              placeholder="Select languages..."
             />
           </div>
         </div>

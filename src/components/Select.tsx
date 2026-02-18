@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback, useMemo, type ComponentProps,
 import { PopOver } from './PopOver';
 import { Chevron } from './Chevron';
 import { Skeleton } from './Skeleton';
+import { Checkmark } from './Checkmark';
 import clsx from 'clsx';
 import '../styles/form.css';
 import '../styles/select.css';
@@ -57,6 +58,7 @@ interface SelectProps {
   searchable?: boolean; // Allow typing to filter options (default true)
   showChevron?: boolean; // Show chevron icon (default true)
   maxSelect?: number; // Maximum number of selectable items in multi mode
+  showSelectedInList?: boolean; // Show selected items in dropdown with highlight instead of removing them (default false)
   renderOption?: (option: Option, state: { selected: boolean }) => ReactNode; // Custom option renderer
 }
 
@@ -85,14 +87,17 @@ export function Select({
   searchable = true,
   showChevron = true,
   maxSelect,
+  showSelectedInList = false,
   renderOption,
 }: SelectProps) {
   const sizeClass = size === "sm" ? "form-control-sm" : size === "lg" ? "form-control-lg" : undefined;
   const [isOpen, setIsOpen] = useState(false);
   const [internalSearchTerm, setInternalSearchTerm] = useState('');
   const searchTerm = controlledSearchTerm ?? internalSearchTerm;
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLDivElement>(null); // Ref for the main select container
+  const listRef = useRef<HTMLDivElement>(null);
 
   // Determine the actual closeOnSelect behavior
   const actualCloseOnSelect = closeOnSelect !== undefined ? closeOnSelect : !multiple;
@@ -128,7 +133,7 @@ export function Select({
       // Filter by search
       if (searchable && !item.label.toLowerCase().includes(searchTerm.toLowerCase())) continue;
       // Filter already selected in multi mode
-      if (multiple && selectedValuesArray.includes(item.value)) continue;
+      if (multiple && !showSelectedInList && selectedValuesArray.includes(item.value)) continue;
 
       lastWasGroupOrSep = false;
       result.push(item);
@@ -155,6 +160,37 @@ export function Select({
 
     return cleaned;
   }, [options, searchTerm, multiple, selectedValuesArray, searchable]);
+
+  // Flat list of selectable options (matching availableItems filtering)
+  const selectableOptions = useMemo(
+    () => availableItems.filter(isOption),
+    [availableItems]
+  );
+
+  // Reset highlight when dropdown opens or search changes
+  useEffect(() => {
+    if (isOpen) {
+      setHighlightedIndex(-1);
+    }
+  }, [isOpen, searchTerm]);
+
+  // Scroll highlighted item into view
+  useEffect(() => {
+    if (highlightedIndex < 0 || !listRef.current) return;
+    const items = listRef.current.querySelectorAll('.select-popover-item');
+    // Map highlightedIndex (index into selectableOptions) to the DOM element
+    let domIndex = 0;
+    let count = 0;
+    for (let i = 0; i < availableItems.length; i++) {
+      if (isOption(availableItems[i])) {
+        if (count === highlightedIndex) { domIndex = i; break; }
+        count++;
+      }
+    }
+    // domIndex is in availableItems space; find the matching child element
+    const el = listRef.current.children[domIndex] as HTMLElement | undefined;
+    el?.scrollIntoView({ block: 'nearest' });
+  }, [highlightedIndex, availableItems]);
 
   const handleSelect = useCallback((option: Option) => {
     if (disabled) return;
@@ -196,8 +232,10 @@ export function Select({
     } else {
       onChange(null);
     }
-    inputRef.current?.focus();
-  }, [multiple, selectedValuesArray, onChange, disabled]);
+    if (isOpen) {
+      inputRef.current?.focus();
+    }
+  }, [multiple, selectedValuesArray, onChange, disabled, isOpen]);
 
   const handleClear = useCallback((e: MouseEvent) => {
     e.stopPropagation();
@@ -243,14 +281,49 @@ export function Select({
 
   const handleInputBlur = useCallback(() => {
     setInternalSearchTerm('');
+    setIsOpen(false);
   }, []);
 
   const handleInputKeyDown = useCallback((e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Backspace' && searchTerm === '' && selectedValuesArray.length > 0) {
       e.preventDefault();
       handleRemoveSelected(selectedValuesArray[selectedValuesArray.length - 1]);
+      return;
     }
-  }, [searchTerm, selectedValuesArray, handleRemoveSelected]);
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (!isOpen) {
+        setIsOpen(true);
+        setHighlightedIndex(0);
+        return;
+      }
+      setHighlightedIndex(prev =>
+        prev < selectableOptions.length - 1 ? prev + 1 : 0
+      );
+      return;
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (!isOpen) {
+        setIsOpen(true);
+        setHighlightedIndex(selectableOptions.length - 1);
+        return;
+      }
+      setHighlightedIndex(prev =>
+        prev > 0 ? prev - 1 : selectableOptions.length - 1
+      );
+      return;
+    }
+
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      if (isOpen && highlightedIndex >= 0 && highlightedIndex < selectableOptions.length) {
+        handleSelect(selectableOptions[highlightedIndex]);
+      }
+    }
+  }, [searchTerm, selectedValuesArray, handleRemoveSelected, isOpen, selectableOptions, highlightedIndex, handleSelect]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -317,6 +390,7 @@ export function Select({
               <button
                 type="button"
                 className="selected-chip-close"
+                onMouseDown={(e) => e.preventDefault()}
                 onClick={(e) => {
                   e.stopPropagation();
                   handleRemoveSelected(option.value);
@@ -355,7 +429,7 @@ export function Select({
         onFocus={handleInputFocus}
         onBlur={handleInputBlur}
         disabled={disabled}
-        onKeyDown={searchable ? handleInputKeyDown : undefined}
+        onKeyDown={handleInputKeyDown}
         readOnly={!searchable}
       />
       {clearable && selectedValuesArray.length > 0 && !disabled ? (
@@ -394,7 +468,7 @@ export function Select({
       width={selectTriggerWidth + 'px'}
       {...popoverProps}
     >
-      <div className="select-popover">
+      <div className="select-popover" ref={listRef} onMouseDown={e => e.preventDefault()}>
         {loading ? (
           loadingContent ?? (
             <div className="select-loading">
@@ -411,19 +485,23 @@ export function Select({
                 : <div key={`sep-${index}`} className="select-separator" />;
             }
             const isSelected = selectedValuesArray.includes(item.value);
+            const optionIndex = selectableOptions.indexOf(item);
             return (
               <div
                 key={item.value}
                 className={clsx(
                   'select-popover-item',
                   isSelected && 'selected',
+                  optionIndex === highlightedIndex && 'highlighted',
                 )}
                 onClick={() => handleSelect(item)}
+                onMouseEnter={() => setHighlightedIndex(optionIndex)}
               >
                 {renderOption
                   ? renderOption(item, { selected: isSelected })
                   : (<>{item.icon && <span className="select-option-icon">{item.icon}</span>}{item.label}</>)
                 }
+                {showSelectedInList && isSelected && <Checkmark width={16} height={16} className="select-check" />}
               </div>
             );
           })

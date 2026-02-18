@@ -37,6 +37,7 @@
     --color-surface-hover: #2a2a2a;
     --color-surface-shallow: #111111;
     --color-surface-elevated: #303030;
+    --color-select-highlight: #2a2a2a;
 
     --spacing-line: 1px;
 
@@ -107,8 +108,8 @@
 
     /* default button */
     --color-button-default-bg: #252525;
-    --color-button-default-border: #606060;
-    --color-button-outline-border: #606060;
+    --color-button-default-border: #484848;
+    --color-button-outline-border: #484848;;
 
     /* added */
     --spacing-nav: 3rem;
@@ -165,6 +166,7 @@
     --color-surface-hover: #f0efe9;
     --color-surface-shallow: #f5f4f3;
     --color-surface-elevated: #ffffff;
+    --color-select-highlight: #f0efe9;
 
     --color-scrollbar-track: rgba(0, 0, 0, 0.05);
     --color-scrollbar-thumb: rgba(0, 0, 0, 0.15);
