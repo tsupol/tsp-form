@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSnackbarContext } from '../../context/SnackbarContext';
 import { Modal } from '../../components/Modal';
 import { Button } from '../../components/Button';
@@ -7,6 +7,10 @@ export const ExampleModal = () => {
   const [openA, setOpenA] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [openB, setOpenB] = useState(false);
+
+  useEffect(() => { console.log('openA:', openA); }, [openA]);
+  useEffect(() => { console.log('openB:', openB); }, [openB]);
+  useEffect(() => { console.log('showForm:', showForm); }, [showForm]);
   const { addSnackbar } = useSnackbarContext();
 
   return (
