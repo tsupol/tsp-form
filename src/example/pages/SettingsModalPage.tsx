@@ -308,8 +308,8 @@ export function SettingsModalPage() {
   return (
     <div className="page-content">
       <div className="grid gap-4">
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full max-w-[700px]">
-          <h1 className="text-xl font-bold mb-2">iOS-Style Navigation Modal</h1>
+        <div className="card space-y-4 w-full max-w-[700px]">
+          <h1 className="heading-1 mb-2">iOS-Style Navigation Modal</h1>
           <p className="text-sm text-muted mb-4">
             A modal with sliding page navigation, similar to iOS settings. Click items with chevrons to navigate deeper, use back button to return.
           </p>

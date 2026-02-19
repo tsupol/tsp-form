@@ -1,12 +1,12 @@
-import { ContentPanel } from '../components/ContentPanel';
 import { Tooltip } from '../../components/Tooltip';
 import { Button } from '../../components/Button';
 
 export function ExampleTooltip() {
   return (
-    <div className="grid gap-4">
-      <ContentPanel title="Basic Placements">
-        <div className="border border-line bg-surface p-card">
+    <div className="page-content grid gap-4">
+      <section>
+        <h3 className="heading-3 mb-3">Basic Placements</h3>
+        <div className="card">
           <div className="flex flex-wrap gap-8 justify-center items-center min-h-[200px]">
             <Tooltip content="This appears on top" placement="top">
               <Button variant="outline">Top</Button>
@@ -25,10 +25,11 @@ export function ExampleTooltip() {
             </Tooltip>
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="With Different Content">
-        <div className="border border-line bg-surface p-card">
+      <section>
+        <h3 className="heading-3 mb-3">With Different Content</h3>
+        <div className="card">
           <div className="flex flex-wrap gap-4">
             <Tooltip content="Simple text tooltip">
               <Button color="primary">Hover me</Button>
@@ -51,10 +52,11 @@ export function ExampleTooltip() {
             </Tooltip>
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="Hover Delay">
-        <div className="border border-line bg-surface p-card">
+      <section>
+        <h3 className="heading-3 mb-3">Hover Delay</h3>
+        <div className="card">
           <div className="flex flex-wrap gap-4">
             <Tooltip content="No delay" delay={0}>
               <Button variant="outline">Instant</Button>
@@ -69,10 +71,11 @@ export function ExampleTooltip() {
             </Tooltip>
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="Disabled State">
-        <div className="border border-line bg-surface p-card">
+      <section>
+        <h3 className="heading-3 mb-3">Disabled State</h3>
+        <div className="card">
           <div className="flex flex-wrap gap-4">
             <Tooltip content="This tooltip is enabled">
               <Button variant="outline">Enabled tooltip</Button>
@@ -83,10 +86,11 @@ export function ExampleTooltip() {
             </Tooltip>
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="On Text Elements">
-        <div className="border border-line bg-surface p-card space-y-4">
+      <section>
+        <h3 className="heading-3 mb-3">On Text Elements</h3>
+        <div className="card space-y-4">
           <p>
             You can add tooltips to{' '}
             <Tooltip content="This is a tooltip on inline text">
@@ -116,11 +120,12 @@ export function ExampleTooltip() {
             </Tooltip>
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="Auto-positioning">
-        <div className="border border-line bg-surface p-card">
-          <p className="text-sm text-fg-muted mb-4">
+      <section>
+        <h3 className="heading-3 mb-3">Auto-positioning</h3>
+        <div className="card">
+          <p className="text-sm text-muted mb-4">
             Tooltips automatically flip to the opposite side if there's not enough space.
             Try scrolling or moving these near the viewport edges:
           </p>
@@ -139,7 +144,7 @@ export function ExampleTooltip() {
             </Tooltip>
           </div>
         </div>
-      </ContentPanel>
+      </section>
     </div>
   );
 }

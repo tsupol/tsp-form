@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { ContentPanel } from '../components/ContentPanel';
 import { Pagination } from '../../components/Pagination';
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
 
@@ -12,11 +11,12 @@ export function ExamplePagination() {
   const [currentPage6, setCurrentPage6] = useState(5);
 
   return (
-    <div className="grid gap-4">
-      <ContentPanel title="Sizes">
-        <div className="border border-line bg-surface p-card space-y-4">
+    <div className="page-content grid gap-4">
+      <section>
+        <h3 className="heading-3 mb-3">Sizes</h3>
+        <div className="card space-y-4">
           <div>
-            <div className="text-sm text-fg-muted mb-2">Extra Small</div>
+            <div className="text-sm text-muted mb-2">Extra Small</div>
             <Pagination
               currentPage={currentPage1}
               totalPages={10}
@@ -25,7 +25,7 @@ export function ExamplePagination() {
             />
           </div>
           <div>
-            <div className="text-sm text-fg-muted mb-2">Small</div>
+            <div className="text-sm text-muted mb-2">Small</div>
             <Pagination
               currentPage={currentPage1}
               totalPages={10}
@@ -34,7 +34,7 @@ export function ExamplePagination() {
             />
           </div>
           <div>
-            <div className="text-sm text-fg-muted mb-2">Medium (default)</div>
+            <div className="text-sm text-muted mb-2">Medium (default)</div>
             <Pagination
               currentPage={currentPage1}
               totalPages={10}
@@ -42,7 +42,7 @@ export function ExamplePagination() {
             />
           </div>
           <div>
-            <div className="text-sm text-fg-muted mb-2">Large</div>
+            <div className="text-sm text-muted mb-2">Large</div>
             <Pagination
               currentPage={currentPage1}
               totalPages={10}
@@ -51,12 +51,13 @@ export function ExamplePagination() {
             />
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="Large Pagination with Many Pages">
-        <div className="border border-line bg-surface p-card space-y-4">
+      <section>
+        <h3 className="heading-3 mb-3">Large Pagination with Many Pages</h3>
+        <div className="card space-y-4">
           <div>
-            <div className="text-sm text-fg-muted mb-2">Current page: {currentPage2} of 1234</div>
+            <div className="text-sm text-muted mb-2">Current page: {currentPage2} of 1234</div>
             <Pagination
               currentPage={currentPage2}
               totalPages={1234}
@@ -64,12 +65,13 @@ export function ExamplePagination() {
             />
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="Without First/Last Buttons">
-        <div className="border border-line bg-surface p-card space-y-4">
+      <section>
+        <h3 className="heading-3 mb-3">Without First/Last Buttons</h3>
+        <div className="card space-y-4">
           <div>
-            <div className="text-sm text-fg-muted mb-2">Current page: {currentPage3}</div>
+            <div className="text-sm text-muted mb-2">Current page: {currentPage3}</div>
             <Pagination
               currentPage={currentPage3}
               totalPages={20}
@@ -78,12 +80,13 @@ export function ExamplePagination() {
             />
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="Disabled State">
-        <div className="border border-line bg-surface p-card space-y-4">
+      <section>
+        <h3 className="heading-3 mb-3">Disabled State</h3>
+        <div className="card space-y-4">
           <div>
-            <div className="text-sm text-fg-muted mb-2">Disabled pagination</div>
+            <div className="text-sm text-muted mb-2">Disabled pagination</div>
             <Pagination
               currentPage={3}
               totalPages={10}
@@ -92,12 +95,13 @@ export function ExamplePagination() {
             />
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="Different Sibling Counts">
-        <div className="border border-line bg-surface p-card space-y-4">
+      <section>
+        <h3 className="heading-3 mb-3">Different Sibling Counts</h3>
+        <div className="card space-y-4">
           <div>
-            <div className="text-sm text-fg-muted mb-2">Sibling count: 0 (minimal) - Current page: {currentPage4}</div>
+            <div className="text-sm text-muted mb-2">Sibling count: 0 (minimal) - Current page: {currentPage4}</div>
             <Pagination
               currentPage={currentPage4}
               totalPages={50}
@@ -106,7 +110,7 @@ export function ExamplePagination() {
             />
           </div>
           <div>
-            <div className="text-sm text-fg-muted mb-2">Sibling count: 2 (more pages visible) - Current page: {currentPage5}</div>
+            <div className="text-sm text-muted mb-2">Sibling count: 2 (more pages visible) - Current page: {currentPage5}</div>
             <Pagination
               currentPage={currentPage5}
               totalPages={50}
@@ -115,12 +119,13 @@ export function ExamplePagination() {
             />
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="Custom Icons (Lucide)">
-        <div className="border border-line bg-surface p-card space-y-4">
+      <section>
+        <h3 className="heading-3 mb-3">Custom Icons (Lucide)</h3>
+        <div className="card space-y-4">
           <div>
-            <div className="text-sm text-fg-muted mb-2">Using Lucide icons</div>
+            <div className="text-sm text-muted mb-2">Using Lucide icons</div>
             <Pagination
               currentPage={currentPage6}
               totalPages={50}
@@ -134,10 +139,11 @@ export function ExamplePagination() {
             />
           </div>
         </div>
-      </ContentPanel>
+      </section>
 
-      <ContentPanel title="Example with Content">
-        <div className="border border-line bg-surface p-card space-y-4">
+      <section>
+        <h3 className="heading-3 mb-3">Example with Content</h3>
+        <div className="card space-y-4">
           <div className="space-y-2">
             {Array.from({ length: 5 }, (_, i) => (
               <div
@@ -154,7 +160,7 @@ export function ExamplePagination() {
             onPageChange={setCurrentPage1}
           />
         </div>
-      </ContentPanel>
+      </section>
     </div>
   );
 }

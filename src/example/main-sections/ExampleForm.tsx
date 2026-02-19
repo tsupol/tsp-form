@@ -6,7 +6,7 @@ import { Select } from '../../components/Select';
 import { Button } from '../../components/Button';
 import { LabeledCheckbox } from '../../components/LabeledCheckbox';
 import { Input } from '../../components/Input';
-import "../styles/utils.css";
+
 import { TextArea } from '../../components/TextArea';
 import { RadioGroup } from '../../components/RadioGroup';
 import { DatePicker } from '../../components/DatePicker';
@@ -98,7 +98,7 @@ export function ExampleForm() {
   // @ts-ignore
   // @ts-ignore
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="grid gap-3 p-card">
+    <form onSubmit={handleSubmit(onSubmit)} className="page-content grid gap-3">
       <div className="flex flex-col">
         <label className="form-label" htmlFor="name">Name with Icon</label>
         <Input

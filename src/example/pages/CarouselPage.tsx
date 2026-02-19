@@ -42,10 +42,12 @@ export function CarouselPage() {
   return (
     <div className="page-content">
       <div className="grid gap-6 max-w-[800px]">
+        <h1 className="heading-1">Carousel</h1>
+
         {/* Basic Carousel */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
-          <h2 className="text-xl font-bold">Basic Carousel</h2>
-          <p className="text-sm opacity-60">
+        <div className="card space-y-4">
+          <h2 className="heading-3">Basic Carousel</h2>
+          <p className="text-sm text-muted">
             A simple carousel with default settings. Drag to swipe or use arrows/dots.
           </p>
           <div className="h-64">
@@ -64,9 +66,9 @@ export function CarouselPage() {
         </div>
 
         {/* Configurable Carousel */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
-          <h2 className="text-xl font-bold">Configurable Carousel</h2>
-          <p className="text-sm opacity-60">
+        <div className="card space-y-4">
+          <h2 className="heading-3">Configurable Carousel</h2>
+          <p className="text-sm text-muted">
             Toggle options to see different carousel behaviors.
           </p>
 
@@ -148,9 +150,9 @@ export function CarouselPage() {
         </div>
 
         {/* Controlled Mode */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
-          <h2 className="text-xl font-bold">Controlled Mode</h2>
-          <p className="text-sm opacity-60">
+        <div className="card space-y-4">
+          <h2 className="heading-3">Controlled Mode</h2>
+          <p className="text-sm text-muted">
             Use external state to control the active slide.
           </p>
 
@@ -188,15 +190,15 @@ export function CarouselPage() {
             </Carousel>
           </div>
 
-          <p className="text-sm opacity-60">
+          <p className="text-sm text-muted">
             Current index: <span className="font-mono font-bold">{controlledIndex}</span>
           </p>
         </div>
 
         {/* Custom Arrows */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
-          <h2 className="text-xl font-bold">Custom Arrows</h2>
-          <p className="text-sm opacity-60">
+        <div className="card space-y-4">
+          <h2 className="heading-3">Custom Arrows</h2>
+          <p className="text-sm text-muted">
             Provide custom content for the prev/next arrows.
           </p>
 
@@ -212,7 +214,7 @@ export function CarouselPage() {
               {sampleImages.slice(0, 3).map((img, i) => (
                 <div
                   key={i}
-                  className="flex items-center justify-center h-full text-white text-xl font-bold"
+                  className="flex items-center justify-center h-full text-white heading-3"
                   style={{ background: img.bg }}
                 >
                   {img.label}
@@ -223,9 +225,9 @@ export function CarouselPage() {
         </div>
 
         {/* Image Content Example - Cover */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
-          <h2 className="text-xl font-bold">Images with objectFit="cover"</h2>
-          <p className="text-sm opacity-60">
+        <div className="card space-y-4">
+          <h2 className="heading-3">Images with objectFit="cover"</h2>
+          <p className="text-sm text-muted">
             Images fill the slide and may be cropped (default).
           </p>
 
@@ -248,9 +250,9 @@ export function CarouselPage() {
         </div>
 
         {/* Image Content Example - Contain */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
-          <h2 className="text-xl font-bold">Images with objectFit="contain"</h2>
-          <p className="text-sm opacity-60">
+        <div className="card space-y-4">
+          <h2 className="heading-3">Images with objectFit="contain"</h2>
+          <p className="text-sm text-muted">
             Images fit entirely within the slide, may have letterboxing.
           </p>
 
@@ -273,9 +275,9 @@ export function CarouselPage() {
         </div>
 
         {/* Thumbnail Navigation - Bottom, scrollable (align right) */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
-          <h2 className="text-xl font-bold">Thumbnails (Bottom, Scroll Right)</h2>
-          <p className="text-sm opacity-60">
+        <div className="card space-y-4">
+          <h2 className="heading-3">Thumbnails (Bottom, Scroll Right)</h2>
+          <p className="text-sm text-muted">
             Thumbnails at bottom, aligned right, horizontally scrollable.
           </p>
 
@@ -310,9 +312,9 @@ export function CarouselPage() {
         </div>
 
         {/* Thumbnail Navigation - Bottom, wrapped (align left) */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
-          <h2 className="text-xl font-bold">Thumbnails (Bottom, Wrap Left)</h2>
-          <p className="text-sm opacity-60">
+        <div className="card space-y-4">
+          <h2 className="heading-3">Thumbnails (Bottom, Wrap Left)</h2>
+          <p className="text-sm text-muted">
             Thumbnails at bottom, aligned left, wrapping to multiple rows.
           </p>
 

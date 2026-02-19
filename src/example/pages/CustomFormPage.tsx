@@ -48,8 +48,8 @@ export function CustomFormPage() {
   return (
     <div className="page-content w-full">
       <div className="grid gap-4 w-full max-w-[250px]">
-        <form onSubmit={handleSubmit(onSubmit)} className="border border-line bg-surface p-card space-y-4 rounded-lg w-full">
-          <h1 className="text-xl font-bold mb-4">Custom Form</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="card space-y-4 w-full">
+          <h1 className="heading-1">Custom Form</h1>
           <div className="grid gap-1">
             <div className="flex flex-col">
               <label className="form-label" htmlFor="category">Category & Name</label>
@@ -190,10 +190,10 @@ export function CustomFormPage() {
             </div>
           </div>
         </form>
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full">
+        <div className="card space-y-4 w-full">
           <AsyncSelectSection/>
         </div>
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg w-full">
+        <div className="card space-y-4 w-full">
           <UnstyledSelectSection/>
         </div>
       </div>

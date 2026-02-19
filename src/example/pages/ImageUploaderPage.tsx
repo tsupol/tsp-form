@@ -114,10 +114,12 @@ export function ImageUploaderPage() {
   return (
     <div className="page-content">
       <div className="grid gap-6 max-w-[800px]">
+        <h1 className="heading-1">Image Uploader</h1>
+
         {/* Settings */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
-          <h2 className="text-xl font-bold">Image Uploader</h2>
-          <p className="text-sm opacity-60">
+        <div className="card space-y-4">
+          <h2 className="heading-3">Settings</h2>
+          <p className="text-sm text-muted">
             Upload images with client-side resizing, cropping, and format conversion.
           </p>
 
@@ -219,7 +221,7 @@ export function ImageUploaderPage() {
         </div>
 
         {/* Uploader */}
-        <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
+        <div className="card space-y-4">
           <h3 className="font-semibold">Upload Area</h3>
           <ImageUploader
             onUpload={handleUpload}
@@ -231,7 +233,7 @@ export function ImageUploaderPage() {
 
         {/* Preview */}
         {images.length > 0 && (
-          <div className="border border-line bg-surface p-card space-y-4 rounded-lg">
+          <div className="card space-y-4">
             <div className="flex justify-between items-center">
               <h3 className="font-semibold">Uploaded Images ({images.length})</h3>
               <button

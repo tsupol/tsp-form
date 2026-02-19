@@ -12,7 +12,7 @@ export const ExampleSnackbar = () => {
       <div className="grid gap-6 max-w-[600px]">
 
         {/* Types */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
+        <div className="card space-y-3 rounded-lg">
           <h2 className="text-lg font-bold">Types</h2>
           <div className="flex gap-2 flex-wrap">
             <Button variant="outline" onClick={() => addSnackbar({ message: 'This is an info message.', type: 'info', duration: 5000 })}>
@@ -31,7 +31,7 @@ export const ExampleSnackbar = () => {
         </div>
 
         {/* Positions */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
+        <div className="card space-y-3 rounded-lg">
           <h2 className="text-lg font-bold">Positions</h2>
           <div className="flex gap-2 flex-wrap">
             <Button variant="outline" onClick={() => addSnackbar({ message: 'Top right', type: 'info', duration: 3000, position: 'top-right' })}>
@@ -50,7 +50,7 @@ export const ExampleSnackbar = () => {
         </div>
 
         {/* With action */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
+        <div className="card space-y-3 rounded-lg">
           <h2 className="text-lg font-bold">With Action</h2>
           <Button variant="outline" onClick={() => addSnackbar({
             message: (

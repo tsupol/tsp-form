@@ -90,8 +90,8 @@ export function SelectPage() {
       <div className="grid gap-6 max-w-[600px]">
 
         {/* Basic */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Basic Select</h2>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Basic Select</h2>
           <div className="flex flex-col gap-1">
             <label className="form-label">Pick a fruit</label>
             <Select
@@ -104,8 +104,8 @@ export function SelectPage() {
         </div>
 
         {/* Grouped */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Grouped Options</h2>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Grouped Options</h2>
           <div className="flex flex-col gap-1">
             <label className="form-label">Pick a food</label>
             <Select
@@ -118,8 +118,8 @@ export function SelectPage() {
         </div>
 
         {/* Multi select */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Multi Select</h2>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Multi Select</h2>
           <div className="flex flex-col gap-1">
             <label className="form-label">Pick fruits</label>
             <Select
@@ -133,9 +133,9 @@ export function SelectPage() {
         </div>
 
         {/* Multi select - show selected in list */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Multi Select (Show Selected in List)</h2>
-          <p className="text-sm opacity-60">Selected items stay in the dropdown with a highlight instead of being removed.</p>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Multi Select (Show Selected in List)</h2>
+          <p className="text-sm text-muted">Selected items stay in the dropdown with a highlight instead of being removed.</p>
           <div className="flex flex-col gap-1">
             <label className="form-label">Pick languages</label>
             <Select
@@ -150,9 +150,9 @@ export function SelectPage() {
         </div>
 
         {/* Long labels - truncation */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Chip Truncation</h2>
-          <p className="text-sm opacity-60">Long labels are truncated in chips. Customize max width with <code>--max-width-select-chip</code>.</p>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Chip Truncation</h2>
+          <p className="text-sm text-muted">Long labels are truncated in chips. Customize max width with <code>--max-width-select-chip</code>.</p>
           <div className="flex flex-col gap-1">
             <label className="form-label">Default max width (10rem)</label>
             <Select
@@ -177,9 +177,9 @@ export function SelectPage() {
         </div>
 
         {/* Max select */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Max Select (3)</h2>
-          <p className="text-sm opacity-60">Cannot select more than 3 items.</p>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Max Select (3)</h2>
+          <p className="text-sm text-muted">Cannot select more than 3 items.</p>
           <div className="flex flex-col gap-1">
             <label className="form-label">Pick up to 3 languages</label>
             <Select
@@ -194,8 +194,8 @@ export function SelectPage() {
         </div>
 
         {/* Chip display single + clearable */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Chip Display & Clearable</h2>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Chip Display & Clearable</h2>
           <div className="flex flex-col gap-1">
             <label className="form-label">Single with chip display</label>
             <Select
@@ -219,8 +219,8 @@ export function SelectPage() {
         </div>
 
         {/* Sizes */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Sizes</h2>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Sizes</h2>
           <div className="flex flex-col gap-1">
             <label className="form-label">Small</label>
             <Select
@@ -244,8 +244,8 @@ export function SelectPage() {
         </div>
 
         {/* Disabled */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Disabled</h2>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Disabled</h2>
           <div className="flex flex-col gap-1">
             <label className="form-label">Can't touch this</label>
             <Select
@@ -258,9 +258,9 @@ export function SelectPage() {
         </div>
 
         {/* Custom renderOption - user list */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">Custom Option Rendering</h2>
-          <p className="text-sm opacity-60">Use <code>renderOption</code> to fully customize how dropdown items look.</p>
+        <div className="card space-y-3">
+          <h2 className="heading-3">Custom Option Rendering</h2>
+          <p className="text-sm text-muted">Use <code>renderOption</code> to fully customize how dropdown items look.</p>
 
           <div className="flex flex-col gap-1">
             <label className="form-label">User picker</label>

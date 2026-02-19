@@ -39,11 +39,11 @@ export function FormSizesPage() {
   return (
     <div className="page-content">
       <div className="grid gap-6 max-w-[800px]">
-        <h1 className="text-2xl font-bold">Form Control Sizes</h1>
+        <h1 className="heading-1">Form Control Sizes</h1>
 
         {/* Input */}
-        <section className="border border-line bg-surface p-card rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">Input</h2>
+        <section className="card">
+          <h2 className="heading-3 mb-4">Input</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
               <label className="form-label">Small</label>
@@ -61,8 +61,8 @@ export function FormSizesPage() {
         </section>
 
         {/* Input with Icon */}
-        <section className="border border-line bg-surface p-card rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">Input with Icon</h2>
+        <section className="card">
+          <h2 className="heading-3 mb-4">Input with Icon</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
               <label className="form-label">Small</label>
@@ -80,8 +80,8 @@ export function FormSizesPage() {
         </section>
 
         {/* TextArea */}
-        <section className="border border-line bg-surface p-card rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">TextArea</h2>
+        <section className="card">
+          <h2 className="heading-3 mb-4">TextArea</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
               <label className="form-label">Small</label>
@@ -99,8 +99,8 @@ export function FormSizesPage() {
         </section>
 
         {/* Select */}
-        <section className="border border-line bg-surface p-card rounded-lg w-[400px] overflow-hidden">
-          <h2 className="text-lg font-semibold mb-4">Select with Icon</h2>
+        <section className="card w-[400px] overflow-hidden">
+          <h2 className="heading-3 mb-4">Select with Icon</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
               <label className="form-label">Small</label>
@@ -138,8 +138,8 @@ export function FormSizesPage() {
         </section>
 
         {/* Select without Icon */}
-        <section className="border border-line bg-surface p-card rounded-lg w-[400px] overflow-hidden">
-          <h2 className="text-lg font-semibold mb-4">Select</h2>
+        <section className="card w-[400px] overflow-hidden">
+          <h2 className="heading-3 mb-4">Select</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
               <label className="form-label">Small</label>
@@ -174,8 +174,8 @@ export function FormSizesPage() {
         </section>
 
         {/* InputDatePicker */}
-        <section className="border border-line bg-surface p-card rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">InputDatePicker</h2>
+        <section className="card">
+          <h2 className="heading-3 mb-4">InputDatePicker</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
               <label className="form-label">Small</label>
@@ -210,8 +210,8 @@ export function FormSizesPage() {
         </section>
 
         {/* InputDateRangePicker */}
-        <section className="border border-line bg-surface p-card rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">InputDateRangePicker</h2>
+        <section className="card">
+          <h2 className="heading-3 mb-4">InputDateRangePicker</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
               <label className="form-label">Small</label>
@@ -252,8 +252,8 @@ export function FormSizesPage() {
         </section>
 
         {/* NumberSpinner */}
-        <section className="border border-line bg-surface p-card rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">NumberSpinner</h2>
+        <section className="card">
+          <h2 className="heading-3 mb-4">NumberSpinner</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
               <label className="form-label">Small</label>
@@ -289,8 +289,8 @@ export function FormSizesPage() {
         </section>
 
         {/* NumberSpinner Diagonal */}
-        <section className="border border-line bg-surface p-card rounded-lg">
-          <h2 className="text-lg font-semibold mb-4">NumberSpinner (Diagonal)</h2>
+        <section className="card">
+          <h2 className="heading-3 mb-4">NumberSpinner (Diagonal)</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
               <label className="form-label">Small</label>

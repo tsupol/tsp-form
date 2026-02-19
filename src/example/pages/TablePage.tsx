@@ -125,13 +125,13 @@ export const TablePage = () => {
   const [globalFilter, setGlobalFilter] = useState('');
 
   return (
-    <div className="page-content" style={{ maxWidth: '64rem' }}>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '2rem' }}>Table & DataTable</h1>
+    <div className="page-content max-w-[64rem]">
+      <h1 className="heading-1 mb-8">Table & DataTable</h1>
 
       {/* ── Section 1: Basic Table ── */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem' }}>Basic Table</h2>
-        <p style={{ marginBottom: '1rem', opacity: 0.7 }}>
+      <section className="mb-12">
+        <h2 className="heading-3 mb-4">Basic Table</h2>
+        <p className="text-muted mb-4">
           Presentational Table primitives wrapping native HTML table elements.
         </p>
         <Table>
@@ -164,9 +164,9 @@ export const TablePage = () => {
       </section>
 
       {/* ── Section 2: DataTable (columns mode) ── */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem' }}>DataTable — Columns Mode</h2>
-        <p style={{ marginBottom: '1rem', opacity: 0.7 }}>
+      <section className="mb-12">
+        <h2 className="heading-3 mb-4">DataTable — Columns Mode</h2>
+        <p className="text-muted mb-4">
           Full-featured data table with sorting, filtering, pagination, and row selection.
         </p>
         <DataTable
@@ -195,9 +195,9 @@ export const TablePage = () => {
       </section>
 
       {/* ── Section 3: DataTable (freeform mode) ── */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem' }}>DataTable — Freeform Mode</h2>
-        <p style={{ marginBottom: '1rem', opacity: 0.7 }}>
+      <section className="mb-12">
+        <h2 className="heading-3 mb-4">DataTable — Freeform Mode</h2>
+        <p className="text-muted mb-4">
           Card-style rows using <code>renderRow</code> with div-based layout.
         </p>
         <DataTable
@@ -248,8 +248,8 @@ export const TablePage = () => {
       </section>
 
       {/* ── Section 4: Striped variant ── */}
-      <section style={{ marginBottom: '3rem' }}>
-        <h2 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '1rem' }}>Striped Table</h2>
+      <section className="mb-12">
+        <h2 className="heading-3 mb-4">Striped Table</h2>
         <DataTable
           data={payments.slice(0, 8)}
           columns={[

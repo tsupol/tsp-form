@@ -7,7 +7,7 @@ import { InputDateRangePicker } from '../../components/InputDateRangePicker';
 import { FormControlError } from '../../components/FormControlError';
 import { JsonPretty } from '../../components/JsonPretty';
 import { Calendar } from 'lucide-react';
-import "../styles/utils.css";
+
 
 type FormValues = {
   category: string;
@@ -90,8 +90,8 @@ export function ExampleFormModal() {
   ), [handleCloseModal, isSubmitting]);
 
   return (
-    <div className="p-card">
-      <h1 className="text-2xl font-bold mb-4">Form Modal Example</h1>
+    <div className="page-content">
+      <h1 className="heading-1 mb-4">Form Modal Example</h1>
 
       <Button
         variant="primary"

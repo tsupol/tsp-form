@@ -36,10 +36,11 @@ export function DatePickerPage() {
   return (
     <div className="page-content">
       <div className="grid gap-6 max-w-[700px]">
+        <h1 className="heading-1">Date Picker</h1>
 
         {/* InputDatePicker */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">InputDatePicker</h2>
+        <div className="card space-y-3">
+          <h2 className="heading-3">InputDatePicker</h2>
           <div className="flex flex-col gap-1">
             <label className="form-label">Basic</label>
             <InputDatePicker
@@ -78,8 +79,8 @@ export function DatePickerPage() {
         </div>
 
         {/* InputDateRangePicker */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">InputDateRangePicker</h2>
+        <div className="card space-y-3">
+          <h2 className="heading-3">InputDateRangePicker</h2>
           <div className="flex flex-col gap-1">
             <label className="form-label">Basic range</label>
             <InputDateRangePicker
@@ -122,9 +123,9 @@ export function DatePickerPage() {
         </div>
 
         {/* Pure DatePicker */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">DatePicker (building block)</h2>
-          <p className="text-sm opacity-60">Inline calendar — no input, no popover. Used internally by InputDatePicker.</p>
+        <div className="card space-y-3">
+          <h2 className="heading-3">DatePicker (building block)</h2>
+          <p className="text-sm text-muted">Inline calendar — no input, no popover. Used internally by InputDatePicker.</p>
           <div className="flex flex-wrap gap-6">
             <div className="flex flex-col gap-1">
               <label className="form-label">Single</label>
@@ -132,7 +133,7 @@ export function DatePickerPage() {
                 selectedDate={pureDate}
                 onChange={setPureDate}
               />
-              {pureDate && <span className="text-sm opacity-60">{pureDate.toLocaleDateString()}</span>}
+              {pureDate && <span className="text-sm text-muted">{pureDate.toLocaleDateString()}</span>}
             </div>
             <div className="flex flex-col gap-1">
               <label className="form-label">Range</label>
@@ -148,9 +149,9 @@ export function DatePickerPage() {
         </div>
 
         {/* Pure DoubleDatePicker */}
-        <div className="border border-line bg-surface p-card space-y-3 rounded-lg">
-          <h2 className="text-lg font-bold">DoubleDatePicker (building block)</h2>
-          <p className="text-sm opacity-60">Side-by-side calendars for range selection.</p>
+        <div className="card space-y-3">
+          <h2 className="heading-3">DoubleDatePicker (building block)</h2>
+          <p className="text-sm text-muted">Side-by-side calendars for range selection.</p>
           <DoubleDatePicker
             fromDate={doubleFrom}
             toDate={doubleTo}

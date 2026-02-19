@@ -3,7 +3,7 @@ import { ExampleButtons } from './main-sections/ExampleButtons';
 import { ExampleForm } from './main-sections/ExampleForm';
 import { ExamplePopOver } from './main-sections/ExamplePopover';
 import { ExampleTabs } from './main-sections/ExampleTabs';
-import { ExampleProse } from './main-sections/ExampleProse';
+import { ExampleTypography } from './main-sections/ExampleProse';
 import { ExampleModal } from './main-sections/ExampleModal';
 import { ExampleSnackbar } from './main-sections/ExampleSnackbar';
 import { ExampleSkeleton } from './main-sections/ExampleSkeleton';
@@ -23,6 +23,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { clsx } from 'clsx';
 import './example.css';
+import './styles/typography.css';
+import './styles/layout.css';
 import { ExampleFormModal } from './main-sections/ExampleFormModal';
 import { CustomFormPage } from './pages/CustomFormPage';
 import { ContextMenuPage } from './pages/ContextMenuPage';
@@ -166,7 +168,7 @@ const menuItemsList = [
   { key: 'tooltip', path: '/tooltip' },
   { key: 'progress-bar', path: '/progress-bar' },
   { key: 'pagination', path: '/pagination' },
-  { key: 'prose', path: '/prose' },
+  { key: 'typography', path: '/typography' },
   { key: 'select', path: '/select' },
   { key: 'date-picker', path: '/date-picker' },
   { key: 'custom-form', path: '/custom-form' },
@@ -220,7 +222,7 @@ const SideNav = () => {
         { key: 'date-picker', icon: <CalendarDays size="1rem"/>, label: "Date Picker", path: '/date-picker' },
         { key: 'pagination', icon: <ToggleLeft size="1rem"/>, label: "Pagination", path: '/pagination' },
         { key: 'table', icon: <Table2 size="1rem"/>, label: "Table", path: '/table' },
-        { key: 'prose', icon: <Type size="1rem"/>, label: "Prose", path: '/prose' },
+        { key: 'typography', icon: <Type size="1rem"/>, label: "Typography", path: '/typography' },
       ],
     },
     { key: 'context-menu', icon: <MousePointerClick size="1rem"/>, label: "Context Menu", path: '/context-menu' },
@@ -307,20 +309,20 @@ const App = () => {
         <BrowserRouter>
           <div className="flex">
             <SideNav/>
-            <div className="p-4 w-full">
+            <div className="w-full overflow-y-auto">
               <Routes>
-                <Route path="/buttons" element={<div className="page-content"><ExampleButtons/></div>}/>
-                <Route path="/form" element={<div className="page-content"><ExampleForm/></div>}/>
-                <Route path="/form-modal" element={<div className="page-content"><ExampleFormModal/></div>}/>
-                <Route path="/popover" element={<div className="page-content"><ExamplePopOver/></div>}/>
-                <Route path="/modal" element={<div className="page-content"><ExampleModal/></div>}/>
-                <Route path="/snackbar" element={<div className="page-content"><ExampleSnackbar/></div>}/>
-                <Route path="/tabs" element={<div className="page-content"><ExampleTabs/></div>}/>
-                <Route path="/skeleton" element={<div className="page-content"><ExampleSkeleton/></div>}/>
-                <Route path="/tooltip" element={<div className="page-content"><ExampleTooltip/></div>}/>
-                <Route path="/progress-bar" element={<div className="page-content"><ExampleProgressBar/></div>}/>
-                <Route path="/pagination" element={<div className="page-content"><ExamplePagination/></div>}/>
-                <Route path="/prose" element={<div className="page-content"><ExampleProse/></div>}/>
+                <Route path="/buttons" element={<ExampleButtons/>}/>
+                <Route path="/form" element={<ExampleForm/>}/>
+                <Route path="/form-modal" element={<ExampleFormModal/>}/>
+                <Route path="/popover" element={<ExamplePopOver/>}/>
+                <Route path="/modal" element={<ExampleModal/>}/>
+                <Route path="/snackbar" element={<ExampleSnackbar/>}/>
+                <Route path="/tabs" element={<ExampleTabs/>}/>
+                <Route path="/skeleton" element={<ExampleSkeleton/>}/>
+                <Route path="/tooltip" element={<ExampleTooltip/>}/>
+                <Route path="/progress-bar" element={<ExampleProgressBar/>}/>
+                <Route path="/pagination" element={<ExamplePagination/>}/>
+                <Route path="/typography" element={<ExampleTypography/>}/>
                 <Route path="/select" element={<SelectPage/>}/>
                 <Route path="/date-picker" element={<DatePickerPage/>}/>
                 <Route path="/custom-form" element={<CustomFormPage/>}/>
@@ -334,7 +336,7 @@ const App = () => {
                 <Route path="/button-group" element={<ButtonGroupPage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
-                    <h1 className="text-xl font-bold mb-4">Dashboard</h1>
+                    <h1 className="heading-1 mb-4">Dashboard</h1>
                     <p className="text-muted">Select a component from the sidebar to view its example.</p>
                   </div>
                 }/>

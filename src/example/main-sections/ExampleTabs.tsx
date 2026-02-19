@@ -15,7 +15,7 @@ export const ExampleTabs = () => {
     },
   ];
 
-  return <>
+  return <div className="page-content">
     <div>todo</div>
-  </>
+  </div>
 }

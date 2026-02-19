@@ -26,7 +26,7 @@ export function ExamplePopOver() {
   const [submenuOpen, setSubmenuOpen] = useState(false);
 
   return (
-    <div className="grid p-card">
+    <div className="page-content grid">
       <div className="grid gap-6">
         {/* Basic Placements */}
         <div>

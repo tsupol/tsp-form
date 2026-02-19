@@ -108,7 +108,7 @@
     --text-control-label: 0.875rem;
     --text-control-label--letter-spacing: 0em;
     --text-control-label--line-height: 1.5;
-    --text-control-label--font-weight: 600;
+    --text-control-label--font-weight: 500;
 
     --text-title: 1.25rem;
     --text-title--letter-spacing: -0.025em;
@@ -155,6 +155,36 @@
     --color-snackbar-success-border: var(--color-success);
     --color-snackbar-error-border: var(--color-danger);
     --color-snackbar-warning-border: var(--color-warning);
+
+    /* ── Typography scale ────────────────────────────────────────────── */
+
+    --text-h1: 1.5rem;
+    --text-h1--line-height: 1.25;
+    --text-h1--font-weight: 700;
+    --text-h1--letter-spacing: -0.025em;
+
+    --text-h2: 1.25rem;
+    --text-h2--line-height: 1.25;
+    --text-h2--font-weight: 600;
+    --text-h2--letter-spacing: -0.025em;
+
+    --text-h3: 1.125rem;
+    --text-h3--line-height: 1.3;
+    --text-h3--font-weight: 600;
+    --text-h3--letter-spacing: -0.015em;
+
+    --text-h4: 1rem;
+    --text-h4--line-height: 1.4;
+    --text-h4--font-weight: 600;
+
+    --text-small: 0.8125rem;
+    --text-small--line-height: 1.5;
+
+    /* Muted text — used by library components (slider, image-uploader) */
+    --color-fg-muted: #8b8d98;
+
+    /* Section spacing */
+    --spacing-section: 2rem;
 
     /* pagination */
     --color-pagination-border: transparent;
@@ -210,6 +240,7 @@
     --color-control-bg: #ffffff;
     --color-control-placeholder: #80838d;
     --color-control-label: #60646c;
+    --color-fg-muted: #60646c;
 
     /* default button */
     --color-button-default-bg: #ffffff;
@@ -253,7 +284,7 @@ html {
 /* Phone */
 @media only screen and (max-width: 430px) and (-webkit-min-device-pixel-ratio: 2) {
     html {
-        font-size: 20px;
+        font-size: 18px;
     }
 }
 
@@ -272,13 +303,13 @@ body {
 }
 
 .page-content {
-    padding: 2rem 0 0 0;
+    padding: 3rem 1rem 1rem 1rem;
     max-width: 50rem;
     margin: 0 auto;
 }
 
 @media (min-width: 768px) {
     .page-content {
-        padding: 1rem 2rem;
+        padding: 2rem;
     }
 }

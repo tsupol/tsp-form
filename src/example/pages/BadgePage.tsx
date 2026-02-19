@@ -1,4 +1,3 @@
-import { ContentPanel } from '../components/ContentPanel';
 import { Badge } from '../../components/Badge';
 import { Check, X, AlertTriangle, Info, Star, Zap } from 'lucide-react';
 
@@ -9,37 +8,42 @@ export function BadgePage() {
   return (
     <div className="page-content">
       <div className="grid gap-4">
+        <h1 className="heading-1">Badge</h1>
 
         {/* Solid variant */}
-        <ContentPanel title="Solid (default)">
-          <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+        <section>
+          <h3 className="heading-3 mb-3">Solid (default)</h3>
+          <div className="flex gap-2 flex-wrap items-center card">
             {colors.map((c) => (
               <Badge key={c} color={c}>{c}</Badge>
             ))}
           </div>
-        </ContentPanel>
+        </section>
 
         {/* Outline variant */}
-        <ContentPanel title="Outline">
-          <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+        <section>
+          <h3 className="heading-3 mb-3">Outline</h3>
+          <div className="flex gap-2 flex-wrap items-center card">
             {colors.map((c) => (
               <Badge key={c} color={c} variant="outline">{c}</Badge>
             ))}
           </div>
-        </ContentPanel>
+        </section>
 
         {/* Sizes */}
-        <ContentPanel title="Sizes">
-          <div className="flex gap-2 flex-wrap items-end border border-line bg-surface p-card">
+        <section>
+          <h3 className="heading-3 mb-3">Sizes</h3>
+          <div className="flex gap-2 flex-wrap items-end card">
             {sizes.map((s) => (
               <Badge key={s} color="primary" size={s}>{s}</Badge>
             ))}
           </div>
-        </ContentPanel>
+        </section>
 
         {/* With icons */}
-        <ContentPanel title="With Icons">
-          <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+        <section>
+          <h3 className="heading-3 mb-3">With Icons</h3>
+          <div className="flex gap-2 flex-wrap items-center card">
             <Badge color="success"><Check /> Approved</Badge>
             <Badge color="danger"><X /> Rejected</Badge>
             <Badge color="warning"><AlertTriangle /> Warning</Badge>
@@ -47,56 +51,60 @@ export function BadgePage() {
             <Badge color="primary">Featured <Star /></Badge>
             <Badge color="secondary"><Zap /> New</Badge>
           </div>
-          <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+          <div className="flex gap-2 flex-wrap items-center card">
             <Badge color="success" variant="outline"><Check /> Approved</Badge>
             <Badge color="danger" variant="outline"><X /> Rejected</Badge>
             <Badge color="warning" variant="outline"><AlertTriangle /> Warning</Badge>
             <Badge color="primary" variant="outline">Featured <Star /></Badge>
           </div>
-        </ContentPanel>
+        </section>
 
         {/* Icon sizes */}
-        <ContentPanel title="Icons at Different Sizes">
-          <div className="flex gap-2 flex-wrap items-end border border-line bg-surface p-card">
+        <section>
+          <h3 className="heading-3 mb-3">Icons at Different Sizes</h3>
+          <div className="flex gap-2 flex-wrap items-end card">
             <Badge color="success" size="xs"><Check /> Done</Badge>
             <Badge color="success" size="sm"><Check /> Done</Badge>
             <Badge color="success" size="md"><Check /> Done</Badge>
             <Badge color="success" size="lg"><Check /> Done</Badge>
           </div>
-        </ContentPanel>
+        </section>
 
         {/* Truncation */}
-        <ContentPanel title="Truncation">
-          <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card" style={{ maxWidth: '10rem' }}>
+        <section>
+          <h3 className="heading-3 mb-3">Truncation</h3>
+          <div className="flex gap-2 flex-wrap items-center card" style={{ maxWidth: '10rem' }}>
             <Badge color="primary" truncate>This is a very long badge label that should truncate</Badge>
             <Badge color="secondary" truncate><Star /> Long label with icon that truncates nicely</Badge>
           </div>
-        </ContentPanel>
+        </section>
 
         {/* Tailwind overrides */}
-        <ContentPanel title="Tailwind Utility Overrides">
-          <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+        <section>
+          <h3 className="heading-3 mb-3">Tailwind Utility Overrides</h3>
+          <div className="flex gap-2 flex-wrap items-center card">
             <Badge color="primary">Default weight</Badge>
             <Badge color="primary" className="font-normal">font-normal</Badge>
             <Badge color="primary" className="font-bold">font-bold</Badge>
             <Badge color="primary" className="font-black">font-black</Badge>
           </div>
-          <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+          <div className="flex gap-2 flex-wrap items-center card">
             <Badge color="secondary">Default size</Badge>
             <Badge color="secondary" className="text-xs">text-xs</Badge>
             <Badge color="secondary" className="text-sm">text-sm</Badge>
             <Badge color="secondary" className="text-base">text-base</Badge>
           </div>
-        </ContentPanel>
+        </section>
 
         {/* CSS-only usage */}
-        <ContentPanel title="CSS-only (no component)">
-          <div className="flex gap-2 flex-wrap items-center border border-line bg-surface p-card">
+        <section>
+          <h3 className="heading-3 mb-3">CSS-only (no component)</h3>
+          <div className="flex gap-2 flex-wrap items-center card">
             <span className="badge badge-primary">Primary</span>
             <span className="badge badge-outline-danger">Outline</span>
             <span className="badge badge-sm badge-success">Small</span>
           </div>
-        </ContentPanel>
+        </section>
 
       </div>
     </div>
