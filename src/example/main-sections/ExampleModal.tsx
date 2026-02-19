@@ -115,7 +115,7 @@ export const ExampleModal = () => {
             <h2 className="modal-title">Quick Form</h2>
             <button type="button" className="modal-close-btn" onClick={() => { setOpenInlineForm(false); reset(); }} aria-label="Close">×</button>
           </div>
-          <div className="modal-content grid gap-5">
+          <div className="modal-content grid gap-5 pb-7">
             <div className="flex flex-col">
               <label className="form-label">Name</label>
               <input className={`form-control ${errors.name ? 'form-field-error' : ''}`} placeholder="John Doe" {...register('name', { required: 'Name is required' })} />

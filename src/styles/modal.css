@@ -38,7 +38,9 @@
         width: 100%;
         max-width: 90vw;
         max-height: 90vh;
-        overflow: auto;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
 
         /* Styling */
         background: var(--color-surface, #222);
@@ -79,7 +81,9 @@
         font-size: 1.5rem;
         line-height: 1;
         cursor: pointer;
-        padding: 0.25rem;
+        /* Stretch clickable area to fill header height and extend to panel edge */
+        padding: 0.75rem 1rem;
+        margin: -0.75rem -1rem -0.75rem 0;
         color: var(--color-fg-muted, #999);
         transition: color 150ms ease;
     }
@@ -90,6 +94,28 @@
 
     .modal-content {
         padding: 1rem;
+        overflow-y: auto;
+        flex: 1;
+        min-height: 0;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+    .modal-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
     }
 
     .modal-footer {
