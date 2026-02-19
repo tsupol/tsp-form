@@ -1,3 +1,4 @@
+@layer theme, base, components, utilities;
 @import "tailwindcss" source("../../src/example");
 
 @theme static {
@@ -270,46 +271,3 @@
     --color-skeleton: #e0e1e6;
 }
 
-html {
-    font-size: 16px;
-}
-
-/* Tablet portrait - larger base font */
-@media only screen and (max-width: 1024px) and (orientation: portrait) and (-webkit-min-device-pixel-ratio: 2) {
-    html {
-        font-size: 18px;
-    }
-}
-
-/* Phone */
-@media only screen and (max-width: 430px) and (-webkit-min-device-pixel-ratio: 2) {
-    html {
-        font-size: 18px;
-    }
-}
-
-body {
-    background: var(--color-bg);
-    color: var(--color-fg);
-    font-family: "Zalando Sans", "Roboto", "Inter", "Manrope", "DM Sans", sans-serif;
-    font-size: var(--text-base);
-    width: 100vw;
-    line-height: var(--text-base--line-height);
-    overflow-x: hidden;
-}
-
-#root {
-    width: 100vw;
-}
-
-.page-content {
-    padding: 3rem 1rem 1rem 1rem;
-    max-width: 50rem;
-    margin: 0 auto;
-}
-
-@media (min-width: 768px) {
-    .page-content {
-        padding: 2rem;
-    }
-}

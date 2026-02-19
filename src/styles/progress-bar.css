@@ -1,83 +1,86 @@
-.progress-bar {
-    width: 100%;
-    background: var(--color-surface-elevated);
-    border-radius: var(--radius-control);
-    overflow: hidden;
-    position: relative;
-}
-
-.progress-bar-sm {
-    height: 0.5rem;
-}
-
-.progress-bar-md {
-    height: 1rem;
-}
-
-.progress-bar-lg {
-    height: 1.5rem;
-}
-
-.progress-bar-fill {
-    height: 100%;
-    transition: width 0.3s ease-in-out;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius-control);
-}
-
-.progress-bar-fill-primary {
-    background: var(--color-primary);
-}
-
-.progress-bar-fill-secondary {
-    background: var(--color-secondary);
-}
-
-.progress-bar-fill-success {
-    background: var(--color-success);
-}
-
-.progress-bar-fill-danger {
-    background: var(--color-danger);
-}
-
-.progress-bar-fill-warning {
-    background: var(--color-warning);
-}
-
-.progress-bar-label {
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: white;
-    white-space: nowrap;
-    padding: 0 0.5rem;
-}
-
-.progress-bar-striped {
-    background-image: linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.15) 25%,
-        transparent 25%,
-        transparent 50%,
-        rgba(255, 255, 255, 0.15) 50%,
-        rgba(255, 255, 255, 0.15) 75%,
-        transparent 75%,
-        transparent
-    );
-    background-size: 1rem 1rem;
-}
-
-.progress-bar-animated {
-    animation: progress-bar-stripes 1s linear infinite;
-}
-
-@keyframes progress-bar-stripes {
-    0% {
-        background-position: 1rem 0;
+@layer components {
+    .progress-bar {
+        width: 100%;
+        background: var(--color-surface-elevated);
+        border-radius: var(--radius-control);
+        overflow: hidden;
+        position: relative;
     }
-    100% {
-        background-position: 0 0;
+
+    .progress-bar-sm {
+        height: 0.5rem;
     }
+
+    .progress-bar-md {
+        height: 1rem;
+    }
+
+    .progress-bar-lg {
+        height: 1.5rem;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        transition: width 0.3s ease-in-out;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: var(--radius-control);
+    }
+
+    .progress-bar-fill-primary {
+        background: var(--color-primary);
+    }
+
+    .progress-bar-fill-secondary {
+        background: var(--color-secondary);
+    }
+
+    .progress-bar-fill-success {
+        background: var(--color-success);
+    }
+
+    .progress-bar-fill-danger {
+        background: var(--color-danger);
+    }
+
+    .progress-bar-fill-warning {
+        background: var(--color-warning);
+    }
+
+    .progress-bar-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: white;
+        white-space: nowrap;
+        padding: 0 0.5rem;
+    }
+
+    .progress-bar-striped {
+        background-image: linear-gradient(
+            45deg,
+            rgba(255, 255, 255, 0.15) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255, 255, 255, 0.15) 50%,
+            rgba(255, 255, 255, 0.15) 75%,
+            transparent 75%,
+            transparent
+        );
+        background-size: 1rem 1rem;
+    }
+
+    .progress-bar-animated {
+        animation: progress-bar-stripes 1s linear infinite;
+    }
+
+    @keyframes progress-bar-stripes {
+        0% {
+            background-position: 1rem 0;
+        }
+        100% {
+            background-position: 0 0;
+        }
+    }
+
 }

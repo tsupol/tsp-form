@@ -1,54 +1,56 @@
-.cpanel {
-    border: 1px solid var(--color-line);
-    border-radius: var(--radius-control);
-    overflow: hidden;
-}
+@layer components {
+    .cpanel {
+        border: 1px solid var(--color-line);
+        border-radius: var(--radius-control);
+        overflow: hidden;
+    }
 
-.cpanel-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    text-align: left;
-    border-bottom: 1px solid var(--color-line);
-}
+    .cpanel-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        text-align: left;
+        border-bottom: 1px solid var(--color-line);
+    }
 
-.cpanel-header-title {
-    padding: var(--spacing-title-y) var(--spacing-title-x);
-    letter-spacing: var(--text-title--letter-spacing);
-    font-size: var(--text-title);
-    line-height: var(--text-title--line-height);
-    font-weight: var(--text-title--font-weight);
-}
+    .cpanel-header-title {
+        padding: var(--spacing-title-y) var(--spacing-title-x);
+        letter-spacing: var(--text-title--letter-spacing);
+        font-size: var(--text-title);
+        line-height: var(--text-title--line-height);
+        font-weight: var(--text-title--font-weight);
+    }
 
-.cpanel-header:focus {
-    outline: none;
-}
+    .cpanel-header:focus {
+        outline: none;
+    }
 
-.cpanel-header:focus-visible {
-    box-shadow: 0 0 0 1px var(--color-primary);
-}
+    .cpanel-header:focus-visible {
+        box-shadow: 0 0 0 1px var(--color-primary);
+    }
 
-.cpanel-chevron {
-    flex-shrink: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: var(--spacing-title-h);
-    height: var(--spacing-title-h);
-    border-left: var(--spacing-line) solid var(--color-line);
-    cursor: pointer;
-}
+    .cpanel-chevron {
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: var(--spacing-title-h);
+        height: var(--spacing-title-h);
+        border-left: var(--spacing-line) solid var(--color-line);
+        cursor: pointer;
+    }
 
-.cpanel-content {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.3s ease-in-out;
-}
+    .cpanel-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-in-out;
+    }
 
-.cpanel-content.open {
-    overflow: visible;
-}
+    .cpanel-content.open {
+        overflow: visible;
+    }
 
-.cpanel-content-inner {
-    /* Add any padding or spacing here if needed */
+    .cpanel-content-inner {
+        /* Add any padding or spacing here if needed */
+    }
 }

@@ -1,39 +1,42 @@
-.better-scroll {
-    overflow-y: auto;
-    scrollbar-width: thin; /* Firefox */
-}
+@layer components {
+    .better-scroll {
+        overflow-y: auto;
+        scrollbar-width: thin; /* Firefox */
+    }
 
-/* Webkit scrollbar styling */
-.better-scroll::-webkit-scrollbar {
-    width: 8px; /* Make it thin */
-}
+    /* Webkit scrollbar styling */
+    .better-scroll::-webkit-scrollbar {
+        width: 8px; /* Make it thin */
+    }
 
-.better-scroll::-webkit-scrollbar-track {
-    background: transparent;
-}
+    .better-scroll::-webkit-scrollbar-track {
+        background: transparent;
+    }
 
-.better-scroll::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.3);
-    border-radius: 4px;
-}
+    .better-scroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+    }
 
-.better-scroll::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.5);
-}
+    .better-scroll::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
 
-.better-scroll {
-    overflow-y: auto;
-    scrollbar-width: thin; /* Firefox */
-    scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox */
-}
+    .better-scroll {
+        overflow-y: auto;
+        scrollbar-width: thin; /* Firefox */
+        scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox */
+    }
 
-/* Hidden scrollbar but still scrollable */
-.hidden-scroll {
-    overflow-y: auto;
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE/Edge */
-}
+    /* Hidden scrollbar but still scrollable */
+    .hidden-scroll {
+        overflow-y: auto;
+        scrollbar-width: none; /* Firefox */
+        -ms-overflow-style: none; /* IE/Edge */
+    }
 
-.hidden-scroll::-webkit-scrollbar {
-    display: none; /* Chrome/Safari/Opera */
+    .hidden-scroll::-webkit-scrollbar {
+        display: none; /* Chrome/Safari/Opera */
+    }
+
 }

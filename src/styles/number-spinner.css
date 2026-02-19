@@ -1,172 +1,174 @@
-.number-spinner {
-    display: flex;
-    align-items: stretch;
-    position: relative;
-    width: fit-content;
-}
+@layer components {
+    .number-spinner {
+        display: flex;
+        align-items: stretch;
+        position: relative;
+        width: fit-content;
+    }
 
-.number-spinner .number-spinner-input,
-.number-spinner input.number-spinner-input {
-    border-radius: 0;
-    text-align: center;
-    min-width: 3em;
-    width: 3em;
-    padding-left: 0.25rem;
-    padding-right: 0.25rem;
-    /* Remove spinner arrows from number input */
-    -moz-appearance: textfield;
-}
+    .number-spinner .number-spinner-input,
+    .number-spinner input.number-spinner-input {
+        border-radius: 0;
+        text-align: center;
+        min-width: 3em;
+        width: 3em;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+        /* Remove spinner arrows from number input */
+        -moz-appearance: textfield;
+    }
 
-.number-spinner-input::-webkit-outer-spin-button,
-.number-spinner-input::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
+    .number-spinner-input::-webkit-outer-spin-button,
+    .number-spinner-input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
 
-.number-spinner-input:focus {
-    position: relative;
-    z-index: 1;
-}
+    .number-spinner-input:focus {
+        position: relative;
+        z-index: 1;
+    }
 
-.number-spinner-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 2rem;
-    border: 1px solid var(--color-line, #d1d5db);
-    background-color: var(--color-control-bg, rgba(125, 125, 125, 0.5));
-    color: var(--color-control-text, var(--color-fg));
-    cursor: pointer;
-    transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
-    font-size: 1.125rem;
-    font-weight: 400;
-    user-select: none;
-}
+    .number-spinner-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2rem;
+        border: 1px solid var(--color-line, #d1d5db);
+        background-color: var(--color-control-bg, rgba(125, 125, 125, 0.5));
+        color: var(--color-control-text, var(--color-fg));
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        font-size: 1.125rem;
+        font-weight: 400;
+        user-select: none;
+    }
 
-.number-spinner-btn:hover:not(:disabled) {
-    background-color: var(--color-surface-elevated, rgba(125, 125, 125, 0.7));
-}
+    .number-spinner-btn:hover:not(:disabled) {
+        background-color: var(--color-surface-elevated, rgba(125, 125, 125, 0.7));
+    }
 
-.number-spinner-btn:active:not(:disabled) {
-    background-color: var(--color-surface-elevated, rgba(125, 125, 125, 0.8));
-}
+    .number-spinner-btn:active:not(:disabled) {
+        background-color: var(--color-surface-elevated, rgba(125, 125, 125, 0.8));
+    }
 
-.number-spinner-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
+    .number-spinner-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
 
-.number-spinner-btn-decrement {
-    border-radius: var(--radius-control, 0.375rem) 0 0 var(--radius-control, 0.375rem);
-    border-right: none;
-}
+    .number-spinner-btn-decrement {
+        border-radius: var(--radius-control, 0.375rem) 0 0 var(--radius-control, 0.375rem);
+        border-right: none;
+    }
 
-.number-spinner-btn-increment {
-    border-radius: 0 var(--radius-control, 0.375rem) var(--radius-control, 0.375rem) 0;
-    border-left: none;
-}
+    .number-spinner-btn-increment {
+        border-radius: 0 var(--radius-control, 0.375rem) var(--radius-control, 0.375rem) 0;
+        border-left: none;
+    }
 
-.number-spinner-disabled {
-    opacity: 0.5;
-}
+    .number-spinner-disabled {
+        opacity: 0.5;
+    }
 
-.number-spinner:focus-within .number-spinner-input {
-    outline: 2px solid var(--color-primary);
-    outline-offset: -1px;
-    z-index: 1;
-}
+    .number-spinner:focus-within .number-spinner-input {
+        outline: 2px solid var(--color-primary);
+        outline-offset: -1px;
+        z-index: 1;
+    }
 
-/* Diagonal variant styles */
-.number-spinner-diagonal {
-    display: flex;
-    align-items: stretch;
-}
+    /* Diagonal variant styles */
+    .number-spinner-diagonal {
+        display: flex;
+        align-items: stretch;
+    }
 
-.number-spinner.number-spinner-diagonal .number-spinner-input,
-.number-spinner.number-spinner-diagonal input.number-spinner-input {
-    border-radius: var(--radius-control, 0.375rem) 0 0 var(--radius-control, 0.375rem);
-}
+    .number-spinner.number-spinner-diagonal .number-spinner-input,
+    .number-spinner.number-spinner-diagonal input.number-spinner-input {
+        border-radius: var(--radius-control, 0.375rem) 0 0 var(--radius-control, 0.375rem);
+    }
 
-.number-spinner-diagonal-buttons {
-    position: relative;
-    aspect-ratio: 1;
-    overflow: hidden;
-    border: 1px solid var(--color-line, #d1d5db);
-    border-left: none;
-    border-radius: 0 var(--radius-control, 0.375rem) var(--radius-control, 0.375rem) 0;
-    flex: 0 0 auto;
-    height: 100%;
-    cursor: pointer;
-}
+    .number-spinner-diagonal-buttons {
+        position: relative;
+        aspect-ratio: 1;
+        overflow: hidden;
+        border: 1px solid var(--color-line, #d1d5db);
+        border-left: none;
+        border-radius: 0 var(--radius-control, 0.375rem) var(--radius-control, 0.375rem) 0;
+        flex: 0 0 auto;
+        height: 100%;
+        cursor: pointer;
+    }
 
-.number-spinner-btn-diagonal-increment {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 1px solid var(--color-line, #d1d5db);
-    transform-origin: center;
-    transform: translate3d(50%, -50%, 0) rotate(45deg) scale(1.45);
-}
+    .number-spinner-btn-diagonal-increment {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 1px solid var(--color-line, #d1d5db);
+        transform-origin: center;
+        transform: translate3d(50%, -50%, 0) rotate(45deg) scale(1.45);
+    }
 
-.number-spinner-btn-diagonal-increment {
-    position: absolute;
-    top: 0;
-    right: 0;
-    z-index: 1;
-    cursor: pointer;
-}
+    .number-spinner-btn-diagonal-increment {
+        position: absolute;
+        top: 0;
+        right: 0;
+        z-index: 1;
+        cursor: pointer;
+    }
 
-.number-spinner-diagonal-buttons::before {
-    content: '-';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60%;
-    height: 60%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .number-spinner-diagonal-buttons::before {
+        content: '-';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60%;
+        height: 60%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-.number-spinner-diagonal-buttons::after {
-    content: '+';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 60%;
-    height: 60%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    .number-spinner-diagonal-buttons::after {
+        content: '+';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 60%;
+        height: 60%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 
-/* Size variants */
-.number-spinner.number-spinner-sm .number-spinner-input {
-    min-width: 2.5rem;
-    width: 2.5rem;
-    height: var(--height-control-sm, 1.75rem);
-    font-size: var(--text-control-sm, 0.75rem);
-}
+    /* Size variants */
+    .number-spinner.number-spinner-sm .number-spinner-input {
+        min-width: 2.5rem;
+        width: 2.5rem;
+        height: var(--height-control-sm, 1.75rem);
+        font-size: var(--text-control-sm, 0.75rem);
+    }
 
-.number-spinner.number-spinner-sm .number-spinner-btn {
-    min-width: 1.75rem;
-    font-size: 1rem;
-}
+    .number-spinner.number-spinner-sm .number-spinner-btn {
+        min-width: 1.75rem;
+        font-size: 1rem;
+    }
 
-.number-spinner.number-spinner-md .number-spinner-input {
-    min-width: 3rem;
-    width: 3rem;
-}
+    .number-spinner.number-spinner-md .number-spinner-input {
+        min-width: 3rem;
+        width: 3rem;
+    }
 
-.number-spinner.number-spinner-lg .number-spinner-input {
-    min-width: 5rem;
-    width: 5rem;
-    height: var(--height-control-lg, 2.75rem);
-}
+    .number-spinner.number-spinner-lg .number-spinner-input {
+        min-width: 5rem;
+        width: 5rem;
+        height: var(--height-control-lg, 2.75rem);
+    }
 
-.number-spinner.number-spinner-lg .number-spinner-btn {
-    min-width: 2.5rem;
-    font-size: 1.25rem;
+    .number-spinner.number-spinner-lg .number-spinner-btn {
+        min-width: 2.5rem;
+        font-size: 1.25rem;
+    }
 }

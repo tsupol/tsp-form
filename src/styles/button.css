@@ -1,3 +1,4 @@
+@layer components {
 .btn {
     --color-text: var(--color-fg);
     --color-bg: var(--color-button-default-bg, var(--color-surface-elevated));
@@ -281,4 +282,4 @@
 
 .btn-group > .btn:active,
 .btn-group > .btn:focus-visible { z-index: 1; }
-
+}
