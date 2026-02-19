@@ -1,9 +1,9 @@
 @import "tailwindcss" source("../../src/example");
 
 @theme static {
-    --color-danger: #d50303;
-    --color-danger-hover: #ff6363;
-    --color-danger-fade: #b23030;
+    --color-danger: #ef4444;
+    --color-danger-hover: #f87171;
+    --color-danger-fade: #dc2626;
     --color-danger-contrast: #ffffff;
 
     --color-success: #008000;
@@ -47,9 +47,9 @@
     --color-primary-contrast: #ffffff;
     --color-primary-light: rgba(0, 112, 243, 0.1);
 
-    --color-secondary: #8200ff;
-    --color-secondary-hover: #6800cc;
-    --color-secondary-active: #5300a8;
+    --color-secondary: #a855f7;
+    --color-secondary-hover: #9333ea;
+    --color-secondary-active: #7e22ce;
     --color-secondary-contrast: #ffffff;
 
     --spacing-control-y: 0.375rem;

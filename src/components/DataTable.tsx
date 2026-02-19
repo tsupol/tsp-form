@@ -123,8 +123,8 @@ type DataTableBaseProps<TData> = {
   enableRowSelection?: boolean;
   pageSize?: number;
   pageSizeOptions?: number[];
-  /** Controls the size of both the "rows per page" Select and the Pagination */
-  size?: 'sm' | 'md' | 'lg';
+  /** Controls the size of the footer controls (pagination and "rows per page" Select) */
+  controlSize?: 'xs' | 'sm' | 'md' | 'lg';
   globalFilter?: string;
   onGlobalFilterChange?: OnChangeFn<string>;
   sorting?: SortingState;
@@ -168,7 +168,7 @@ export function DataTable<TData>({
   enableRowSelection = false,
   pageSize = 10,
   pageSizeOptions = [10, 20, 50],
-  size = 'md',
+  controlSize = 'sm',
   globalFilter: controlledGlobalFilter,
   onGlobalFilterChange,
   sorting: controlledSorting,
@@ -231,7 +231,6 @@ export function DataTable<TData>({
   const selectedCount = Object.keys(table.getState().rowSelection).length;
   const totalRows = table.getFilteredRowModel().rows.length;
 
-  const selectSize = size === 'sm' ? 'xs' : size === 'lg' ? 'md' : 'sm';
 
   const pageSizeSelectOptions: SelectItem[] = useMemo(
     () => pageSizeOptions.map((s) => ({ value: String(s), label: String(s) })),
@@ -322,7 +321,7 @@ export function DataTable<TData>({
               options={pageSizeSelectOptions}
               value={String(table.getState().pagination.pageSize)}
               onChange={(v) => table.setPageSize(Number(v))}
-              size={selectSize}
+              size={controlSize}
               searchable={false}
               showChevron
               className="data-table-page-size-select"
@@ -362,7 +361,7 @@ export function DataTable<TData>({
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={(page) => table.setPageIndex(page - 1)}
-            size={size}
+            size={controlSize}
           />
         </div>
       )}

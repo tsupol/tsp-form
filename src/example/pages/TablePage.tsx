@@ -3,6 +3,7 @@ import { type ColumnDef } from '@tanstack/react-table';
 import { Table, TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell, TableCaption } from '../../components/Table';
 import { DataTable, DataTableColumnHeader, createSelectColumn } from '../../components/DataTable';
 import { Input } from '../../components/Input';
+import { Badge } from '../../components/Badge';
 
 // ── Basic Table data ────────────────────────────────────────────────
 
@@ -43,11 +44,11 @@ const payments: Payment[] = [
   { id: 'pay_015', amount: 180, status: 'failed', email: 'olivia.r@yahoo.com' },
 ];
 
-const statusStyle: Record<string, string> = {
-  success: 'color: #22c55e',
-  processing: 'color: #f59e0b',
-  pending: 'color: #6b7280',
-  failed: 'color: #ef4444',
+const statusBadgeColor: Record<string, 'success' | 'warning' | 'default' | 'danger'> = {
+  success: 'success',
+  processing: 'warning',
+  pending: 'default',
+  failed: 'danger',
 };
 
 const paymentColumns: ColumnDef<Payment, any>[] = [
@@ -58,9 +59,9 @@ const paymentColumns: ColumnDef<Payment, any>[] = [
     cell: ({ row }) => {
       const status = row.getValue('status') as string;
       return (
-        <span style={{ [statusStyle[status].split(': ')[0]]: statusStyle[status].split(': ')[1], fontWeight: 500, textTransform: 'capitalize' as const }}>
+        <Badge size="sm" color={statusBadgeColor[status] ?? 'default'} className="capitalize">
           {status}
-        </span>
+        </Badge>
       );
     },
   },
@@ -109,6 +110,13 @@ const roleColor: Record<string, string> = {
   Developer: '#0070f3',
   Designer: '#8b5cf6',
   Manager: '#f59e0b',
+};
+
+const roleBadgeColor: Record<string, 'danger' | 'primary' | 'secondary' | 'warning'> = {
+  Admin: 'danger',
+  Developer: 'primary',
+  Designer: 'secondary',
+  Manager: 'warning',
 };
 
 // ── Page ────────────────────────────────────────────────────────────
@@ -197,7 +205,7 @@ export const TablePage = () => {
           enablePagination
           pageSize={4}
           pageSizeOptions={[4, 8, 12]}
-          size="sm"
+          controlSize="sm"
           renderRow={(row) => {
             const user = row.original;
             return (
@@ -227,16 +235,9 @@ export const TablePage = () => {
                   <div style={{ fontWeight: 600 }}>{user.name}</div>
                   <div style={{ fontSize: '0.8125rem', opacity: 0.6 }}>{user.email}</div>
                 </div>
-                <div style={{
-                  padding: '0.125rem 0.5rem',
-                  borderRadius: '9999px',
-                  fontSize: '0.75rem',
-                  fontWeight: 600,
-                  background: `${roleColor[user.role]}20`,
-                  color: roleColor[user.role],
-                }}>
+                <Badge size="sm" color={roleBadgeColor[user.role] ?? 'default'}>
                   {user.role}
-                </div>
+                </Badge>
                 <div style={{ fontSize: '0.8125rem', opacity: 0.5, whiteSpace: 'nowrap' }}>
                   {user.joinedDate}
                 </div>

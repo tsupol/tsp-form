@@ -40,7 +40,7 @@ export type PaginationProps = {
   totalPages: number;
   onPageChange: (page: number) => void;
   className?: string;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   siblingCount?: number;
   showFirstLast?: boolean;
   disabled?: boolean;

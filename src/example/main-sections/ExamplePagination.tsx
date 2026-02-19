@@ -16,6 +16,15 @@ export function ExamplePagination() {
       <ContentPanel title="Sizes">
         <div className="border border-line bg-surface p-card space-y-4">
           <div>
+            <div className="text-sm text-fg-muted mb-2">Extra Small</div>
+            <Pagination
+              currentPage={currentPage1}
+              totalPages={10}
+              onPageChange={setCurrentPage1}
+              size="xs"
+            />
+          </div>
+          <div>
             <div className="text-sm text-fg-muted mb-2">Small</div>
             <Pagination
               currentPage={currentPage1}
