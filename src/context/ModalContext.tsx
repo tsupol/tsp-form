@@ -72,11 +72,10 @@ export const ModalProvider = ({
   // Update backdrop z-index when stack changes
   useEffect(() => {
     if (backdropMountRef.current && stack.length > 0) {
-      // Backdrop should be below the top modal but above all other modals
-      // Top modal gets the highest z-index, backdrop gets second highest
-      const topModalZIndex = baseZIndex + stack.length;
-      const backdropZIndex = topModalZIndex - 1;
-      backdropMountRef.current.style.zIndex = backdropZIndex.toString();
+      // Modals use z-index: base + i*2 + 1 (odd numbers: 1001, 1003, 1005...)
+      // Backdrop sits just below the top modal (even number between top two modals)
+      const topModalZIndex = baseZIndex + stack.length * 2 - 1;
+      backdropMountRef.current.style.zIndex = (topModalZIndex - 1).toString();
     }
   }, [stack.length, baseZIndex]);
 
@@ -91,7 +90,7 @@ export const ModalProvider = ({
 
       const newModal: ModalState = {
         id,
-        zIndex: baseZIndex + prev.length + 1
+        zIndex: baseZIndex + (prev.length + 1) * 2 - 1
       };
 
       return [...prev, newModal];
@@ -107,7 +106,7 @@ export const ModalProvider = ({
       const newStack = prev.filter(modal => modal.id !== id);
       return newStack.map((modal, index) => ({
         ...modal,
-        zIndex: baseZIndex + index + 1
+        zIndex: baseZIndex + (index + 1) * 2 - 1
       }));
     });
   }, [baseZIndex]);
@@ -224,13 +223,6 @@ export const ModalProvider = ({
     }
   }, [hasModals, bodyClassName]);
 
-  // Handle backdrop click to close top modal
-  const handleBackdropClick = useCallback(() => {
-    if (hasModals) {
-      closeTop();
-    }
-  }, [hasModals, closeTop]);
-
   // Global escape key handler
   useEffect(() => {
     if (!hasModals) return;
@@ -278,7 +270,6 @@ export const ModalProvider = ({
           ref={backdropRef}
           className="modal-global-backdrop"
           data-open={backdropVisible ? 'true' : 'false'}
-          onClick={handleBackdropClick}
           aria-hidden="true"
         />,
         backdropMountRef.current
