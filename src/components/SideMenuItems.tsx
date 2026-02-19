@@ -118,6 +118,7 @@ type SideMenuItemRowProps = {
   collapsed?: boolean;
   isMobile?: boolean;
   onSelect?: (key: string, path?: string) => void;
+  onCloseFlyout?: () => void;
   showChevron?: boolean;
   flyoutAlign?: 'start' | 'center' | 'end';
   level: number;
@@ -130,6 +131,7 @@ function SideMenuItemRow({
   collapsed,
   isMobile,
   onSelect,
+  onCloseFlyout,
   showChevron,
   flyoutAlign,
   level,
@@ -150,14 +152,16 @@ function SideMenuItemRow({
     if (closeTimer.current) clearTimeout(closeTimer.current);
   }, []);
 
+  const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
+
   const handleMouseEnter = () => {
-    if (isMobile) return;
+    if (isMobile || isTouchDevice) return;
     cancelClose();
     if (hasChildren) setFlyoutOpen(true);
   };
 
   const handleMouseLeave = () => {
-    if (isMobile) return;
+    if (isMobile || isTouchDevice) return;
     scheduleClose();
   };
 
@@ -179,11 +183,19 @@ function SideMenuItemRow({
       return;
     }
 
+    // Touch device with flyout: toggle on tap
+    if (isTouchDevice && hasChildren && !isMobile) {
+      setFlyoutOpen(prev => !prev);
+      return;
+    }
+
     // Desktop or leaf item: navigate directly
     if (item.path) {
       onSelect?.(item.key, item.path);
+      onCloseFlyout?.();
     } else if (!hasChildren) {
       onSelect?.(item.key);
+      onCloseFlyout?.();
     }
   };
 
@@ -210,6 +222,11 @@ function SideMenuItemRow({
 
   // Desktop: flyout via PopOver
   if (hasChildren && !isMobile) {
+    const closeFlyoutChain = () => {
+      setFlyoutOpen(false);
+      onCloseFlyout?.();
+    };
+
     return (
       <PopOver
         isOpen={flyoutOpen}
@@ -242,6 +259,7 @@ function SideMenuItemRow({
                 collapsed={false}
                 isMobile={false}
                 onSelect={onSelect}
+                onCloseFlyout={closeFlyoutChain}
                 showChevron={showChevron}
                 flyoutAlign={flyoutAlign}
                 level={level + 1}
