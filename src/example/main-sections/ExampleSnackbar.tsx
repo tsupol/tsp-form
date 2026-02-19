@@ -71,9 +71,16 @@ export const ExampleSnackbar = () => {
       </div>
 
       <Modal open={openModal} onClose={() => setOpenModal(false)} maxWidth="400px" ariaLabel="Snackbar Modal">
-        <h2>Modal from Snackbar</h2>
-        <p>Opened via snackbar action link</p>
-        <Button onClick={() => setOpenModal(false)}>Close</Button>
+        <div className="modal-header">
+          <h2 className="modal-title">Modal from Snackbar</h2>
+          <button type="button" className="modal-close-btn" onClick={() => setOpenModal(false)} aria-label="Close">×</button>
+        </div>
+        <div className="modal-content">
+          <p>Opened via snackbar action link</p>
+        </div>
+        <div className="modal-footer">
+          <Button onClick={() => setOpenModal(false)}>Close</Button>
+        </div>
       </Modal>
     </div>
   );

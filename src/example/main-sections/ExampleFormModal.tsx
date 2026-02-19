@@ -1,6 +1,6 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Modal, ModalWrapper } from '../../components/Modal';
+import { Modal } from '../../components/Modal';
 import { Button } from '../../components/Button';
 import { Select } from '../../components/Select';
 import { InputDateRangePicker } from '../../components/InputDateRangePicker';
@@ -69,26 +69,6 @@ export function ExampleFormModal() {
     reset();
   }, [reset]);
 
-  const modalFooter = useMemo(() => (
-    <div className="flex justify-end gap-2">
-      <Button
-        variant="ghost"
-        type="button"
-        onClick={handleCloseModal}
-      >
-        Cancel
-      </Button>
-      <Button
-        variant="primary"
-        type="submit"
-        form="modal-form"
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? "Submitting..." : "Submit"}
-      </Button>
-    </div>
-  ), [handleCloseModal, isSubmitting]);
-
   return (
     <div className="page-content">
       <h1 className="heading-1 mb-4">Form Modal Example</h1>
@@ -114,56 +94,79 @@ export function ExampleFormModal() {
         onClose={handleCloseModal}
         width="600px"
       >
-        <form id="modal-form" onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-          <div className="flex flex-col gap-1">
-            <label className="form-label">Category</label>
-            <Controller
-              name="category"
-              control={control}
-              rules={{ required: "Please select a category" }}
-              render={({ field: { onChange, value } }) => (
-                <FormControlError error={errors.category}>
-                  <Select
-                    options={categoryOptions}
-                    value={value}
-                    onChange={onChange}
-                    placeholder="Select a category"
-                    className="w-full"
-                  />
-                </FormControlError>
-              )}
-            />
-          </div>
+        <div className="modal-header">
+          <h2 className="modal-title">Form Modal</h2>
+          <button type="button" className="modal-close-btn" onClick={handleCloseModal} aria-label="Close">×</button>
+        </div>
+        <div className="modal-content">
+          <form id="modal-form" onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+            <div className="flex flex-col gap-1">
+              <label className="form-label">Category</label>
+              <Controller
+                name="category"
+                control={control}
+                rules={{ required: "Please select a category" }}
+                render={({ field: { onChange, value } }) => (
+                  <FormControlError error={errors.category}>
+                    <Select
+                      options={categoryOptions}
+                      value={value}
+                      onChange={onChange}
+                      placeholder="Select a category"
+                      className="w-full"
+                    />
+                  </FormControlError>
+                )}
+              />
+            </div>
 
-          <div className="flex flex-col gap-1">
-            <label className="form-label">Tags (Select at least 2)</label>
-            <Controller
-              name="tags"
-              control={control}
-              rules={{
-                validate: (value) => {
-                  if (!value || value.length < 2) {
-                    return "Please select at least 2 tags";
+            <div className="flex flex-col gap-1">
+              <label className="form-label">Tags (Select at least 2)</label>
+              <Controller
+                name="tags"
+                control={control}
+                rules={{
+                  validate: (value) => {
+                    if (!value || value.length < 2) {
+                      return "Please select at least 2 tags";
+                    }
+                    return true;
                   }
-                  return true;
-                }
-              }}
-              render={({ field: { onChange, value } }) => (
-                <FormControlError error={errors.tags}>
-                  <Select
-                    options={tagOptions}
-                    value={value}
-                    onChange={onChange}
-                    multiple
-                    placeholder="Select multiple tags"
-                  />
-                </FormControlError>
-              )}
-            />
-          </div>
+                }}
+                render={({ field: { onChange, value } }) => (
+                  <FormControlError error={errors.tags}>
+                    <Select
+                      options={tagOptions}
+                      value={value}
+                      onChange={onChange}
+                      multiple
+                      placeholder="Select multiple tags"
+                    />
+                  </FormControlError>
+                )}
+              />
+            </div>
 
-          <DateRangeField control={control} errors={errors} />
-        </form>
+            <DateRangeField control={control} errors={errors} />
+          </form>
+        </div>
+        <div className="modal-footer">
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={handleCloseModal}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="primary"
+            type="submit"
+            form="modal-form"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
+        </div>
       </Modal>
     </div>
   );

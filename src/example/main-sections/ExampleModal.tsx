@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useSnackbarContext } from '../../context/SnackbarContext';
-import { Modal, ModalWrapper } from '../../components/Modal';
+import { Modal } from '../../components/Modal';
 import { Button } from '../../components/Button';
 
 export const ExampleModal = () => {
@@ -17,38 +17,55 @@ export const ExampleModal = () => {
       </div>
 
       <Modal open={openA} onClose={() => setOpenA(false)} maxWidth="400px" ariaLabel="Modal A">
-        <h2>Modal A</h2>
-        <p>First modal</p>
-        <div className="flex gap-2">
+        <div className="modal-header">
+          <h2 className="modal-title">Modal A</h2>
+          <button type="button" className="modal-close-btn" onClick={() => setOpenA(false)} aria-label="Close">×</button>
+        </div>
+        <div className="modal-content">
+          <p>First modal</p>
+        </div>
+        <div className="modal-footer">
           <Button onClick={() => setOpenB(true)}>Open B</Button>
-          <Button onClick={() => setOpenA(false)}>Close A</Button>
+          <Button variant="ghost" onClick={() => setOpenA(false)}>Close A</Button>
         </div>
       </Modal>
 
       <Modal id="modal-b" open={openB} onClose={() => setOpenB(false)} maxWidth="300px" ariaLabel="Modal B">
-        <h2>Modal B</h2>
-        <p>Second modal on top</p>
-        <Button onClick={() => setOpenB(false)}>Close B</Button>
+        <div className="modal-header">
+          <h2 className="modal-title">Modal B</h2>
+          <button type="button" className="modal-close-btn" onClick={() => setOpenB(false)} aria-label="Close">×</button>
+        </div>
+        <div className="modal-content">
+          <p>Second modal on top</p>
+        </div>
+        <div className="modal-footer">
+          <Button onClick={() => setOpenB(false)}>Close B</Button>
+        </div>
       </Modal>
 
-      <ModalWrapper
+      <Modal
         id="form-modal"
-        isOpen={showForm}
+        open={showForm}
         onClose={() => setShowForm(false)}
-        title="User Form"
-        footer={
-          <div>
-            <button onClick={() => setShowForm(false)}>Cancel</button>
-            <button onClick={() => addSnackbar({
-              message: 'Saved!',
-              type: 'success',
-              position: 'bottom-center',
-            })}>Save</button>
-          </div>
-        }
+        width="500px"
+        ariaLabel="User Form"
       >
-        Mock Form
-      </ModalWrapper>
+        <div className="modal-header">
+          <h2 className="modal-title">User Form</h2>
+          <button type="button" className="modal-close-btn" onClick={() => setShowForm(false)} aria-label="Close">×</button>
+        </div>
+        <div className="modal-content">
+          Mock Form
+        </div>
+        <div className="modal-footer">
+          <Button variant="ghost" onClick={() => setShowForm(false)}>Cancel</Button>
+          <Button variant="primary" onClick={() => addSnackbar({
+            message: 'Saved!',
+            type: 'success',
+            position: 'bottom-center',
+          })}>Save</Button>
+        </div>
+      </Modal>
     </div>
   );
 };
