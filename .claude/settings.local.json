@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "WebFetch(domain:m3.material.io)",
+      "WebFetch(domain:www.heroui.com)",
+      "Bash(cat:*)",
+      "Bash(gh api:*)",
+      "Bash(npm run build:*)",
+      "Bash(timeout 10 npm run dev:*)",
+      "Bash(npx tsc:*)",
+      "Bash(node -e:*)",
+      "WebFetch(domain:ui.shadcn.com)",
+      "Bash(python -c \"import sys,json,base64; print\\(base64.b64decode\\(json.load\\(sys.stdin\\)[''content'']\\).decode\\(\\)\\)\")",
+      "Bash(python -c:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm install:*)",
+      "Bash(timeout 15 npm run dev)",
+      "WebFetch(domain:github.com)",
+      "Bash(gh search code:*)",
+      "WebFetch(domain:www.radix-ui.com)",
+      "Bash(curl:*)",
+      "Bash(timeout 15 npx vite build:*)",
+      "Bash(npx vite build:*)",
+      "WebSearch",
+      "WebFetch(domain:sherryhsu.medium.com)",
+      "WebFetch(domain:vercel.com)",
+      "Bash(for f in src/styles/chevron.css src/styles/aspect-ratio-fit.css src/styles/json-pretty.css src/styles/daterange.css src/styles/switch.css src/styles/collapsible-panel.css src/styles/progress-bar.css src/styles/popover.css src/styles/carousel.css src/styles/scroll.css src/styles/slider.css src/styles/number-spinner.css src/styles/datepicker.css src/styles/image-uploader.css src/styles/checkbox.css src/styles/skeleton.css src/styles/side-menu.css src/styles/side-menu-items.css src/styles/tooltip.css src/styles/snackbar.css src/styles/menu.css src/styles/data-table.css src/styles/table.css src/styles/select.css src/styles/button.css src/styles/form.css src/styles/pagination.css src/styles/modal.css)",
+      "Bash(do python -c \"\nimport sys\npath = sys.argv[1]\nwith open\\(path, ''r'', encoding=''utf-8''\\) as fh:\n    content = fh.read\\(\\)\n# Skip if already wrapped\nif content.strip\\(\\).startswith\\(''@layer components''\\):\n    print\\(f''SKIP {path}''\\)\n    sys.exit\\(0\\)\n# Indent all lines\nlines = content.split\\(''\\\\n''\\)\nindented = []\nfor line in lines:\n    if line.strip\\(\\) == '''':\n        indented.append\\(''''\\)\n    else:\n        indented.append\\(''    '' + line\\)\nnew_content = ''@layer components {\\\\n'' + ''\\\\n''.join\\(indented\\) + ''\\\\n}\\\\n''\nwith open\\(path, ''w'', encoding=''utf-8''\\) as fh:\n    fh.write\\(new_content\\)\nprint\\(f''DONE {path}''\\)\n\" \"$f\")",
+      "Bash(done)",
+      "Bash(git checkout:*)",
+      "Bash(for f in src/styles/chevron.css src/styles/aspect-ratio-fit.css src/styles/json-pretty.css src/styles/daterange.css src/styles/switch.css src/styles/collapsible-panel.css src/styles/progress-bar.css src/styles/popover.css src/styles/carousel.css src/styles/scroll.css src/styles/slider.css src/styles/number-spinner.css src/styles/datepicker.css src/styles/image-uploader.css src/styles/checkbox.css src/styles/skeleton.css src/styles/side-menu.css src/styles/side-menu-items.css src/styles/tooltip.css src/styles/snackbar.css src/styles/menu.css src/styles/data-table.css src/styles/table.css src/styles/select.css src/styles/form.css src/styles/pagination.css src/styles/modal.css)",
+      "Bash(do python -c \"\nimport sys\npath = sys.argv[1]\nwith open\\(path, ''r'', encoding=''utf-8''\\) as fh:\n    content = fh.read\\(\\)\nif content.strip\\(\\).startswith\\(''@layer components''\\):\n    print\\(f''SKIP {path}''\\)\n    sys.exit\\(0\\)\nlines = content.split\\(''\\\\n''\\)\nindented = []\nfor line in lines:\n    if line.strip\\(\\) == '''':\n        indented.append\\(''''\\)\n    else:\n        indented.append\\(''    '' + line\\)\nnew_content = ''@layer components {\\\\n'' + ''\\\\n''.join\\(indented\\) + ''\\\\n}\\\\n''\nwith open\\(path, ''w'', encoding=''utf-8''\\) as fh:\n    fh.write\\(new_content\\)\nprint\\(f''DONE {path}''\\)\n\" \"$f\")",
+      "Bash(npm run build:lib:*)"
+    ]
+  }
+}

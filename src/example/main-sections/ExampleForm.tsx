@@ -98,7 +98,7 @@ export function ExampleForm() {
   // @ts-ignore
   // @ts-ignore
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="page-content grid gap-3">
+    <form onSubmit={handleSubmit(onSubmit)} className="page-content grid gap-5">
       <div className="flex flex-col">
         <label className="form-label" htmlFor="name">Name with Icon</label>
         <Input

@@ -71,13 +71,10 @@ export const SideMenu = ({
     const checkIsMobile = () => {
       const mobile = window.innerWidth < mobileBreakpoint;
       setIsMobile(mobile);
-      // Auto-close menu on mobile
+      // Auto-close menu on mobile, preserve state on desktop
       if (mobile) {
         setCollapsed(true);
         onToggleCollapse?.(true);
-      } else {
-        setCollapsed(false);
-        onToggleCollapse?.(false);
       }
     };
     checkIsMobile();

@@ -123,6 +123,10 @@ type DataTableBaseProps<TData> = {
   enableRowSelection?: boolean;
   pageSize?: number;
   pageSizeOptions?: number[];
+  /** Total row count on the server. Enables manual (server-side) pagination when provided. */
+  rowCount?: number;
+  /** Called when page index or page size changes. Useful for server-side pagination to trigger refetch. */
+  onPageChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
   /** Controls the size of the footer controls (pagination and "rows per page" Select) */
   controlSize?: 'xs' | 'sm' | 'md' | 'lg';
   globalFilter?: string;
@@ -168,6 +172,8 @@ export function DataTable<TData>({
   enableRowSelection = false,
   pageSize = 10,
   pageSizeOptions = [10, 20, 50],
+  rowCount,
+  onPageChange,
   controlSize = 'sm',
   globalFilter: controlledGlobalFilter,
   onGlobalFilterChange,
@@ -200,13 +206,16 @@ export function DataTable<TData>({
     cell: () => null,
   }];
 
+  const isManualPagination = rowCount != null;
+
   const table = useReactTable({
     data,
     columns: effectiveColumns,
     getCoreRowModel: getCoreRowModel(),
     ...(enableSorting && { getSortedRowModel: getSortedRowModel() }),
     ...(enableFiltering && { getFilteredRowModel: getFilteredRowModel() }),
-    ...(enablePagination && { getPaginationRowModel: getPaginationRowModel() }),
+    ...(enablePagination && !isManualPagination && { getPaginationRowModel: getPaginationRowModel() }),
+    ...(isManualPagination && { manualPagination: true, rowCount }),
     enableRowSelection,
     state: {
       sorting: controlledSorting ?? internalSorting,
@@ -229,7 +238,7 @@ export function DataTable<TData>({
   const currentPage = table.getState().pagination.pageIndex + 1; // 1-based
 
   const selectedCount = Object.keys(table.getState().rowSelection).length;
-  const totalRows = table.getFilteredRowModel().rows.length;
+  const totalRows = rowCount ?? table.getFilteredRowModel().rows.length;
 
 
   const pageSizeSelectOptions: SelectItem[] = useMemo(
@@ -320,7 +329,11 @@ export function DataTable<TData>({
             <Select
               options={pageSizeSelectOptions}
               value={String(table.getState().pagination.pageSize)}
-              onChange={(v) => table.setPageSize(Number(v))}
+              onChange={(v) => {
+                const newSize = Number(v);
+                table.setPageSize(newSize);
+                onPageChange?.({ pageIndex: 0, pageSize: newSize });
+              }}
               size={controlSize}
               searchable={false}
               showChevron
@@ -351,7 +364,11 @@ export function DataTable<TData>({
                     key={s}
                     label={`${s} per page`}
                     active={table.getState().pagination.pageSize === s}
-                    onClick={() => { table.setPageSize(s); setMobileInfoOpen(false); }}
+                    onClick={() => {
+                      table.setPageSize(s);
+                      onPageChange?.({ pageIndex: 0, pageSize: s });
+                      setMobileInfoOpen(false);
+                    }}
                   />
                 ))}
               </div>
@@ -360,7 +377,11 @@ export function DataTable<TData>({
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
-            onPageChange={(page) => table.setPageIndex(page - 1)}
+            onPageChange={(page) => {
+              const pageIndex = page - 1;
+              table.setPageIndex(pageIndex);
+              onPageChange?.({ pageIndex, pageSize: table.getState().pagination.pageSize });
+            }}
             size={controlSize}
           />
         </div>

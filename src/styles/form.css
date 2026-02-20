@@ -135,8 +135,10 @@
     .form-error {
         color: var(--color-danger);
         font-size: var(--text-control-error, 0.75rem);
+        line-height: var(--text-control-error--line-height, 1.4);
         padding-left: var(--spacing-label-x);
-        padding-top: 0.1rem;
+        padding-top: 0.125rem;
+        margin-bottom: calc(-1 * (var(--text-control-error, 0.75rem) * var(--text-control-error--line-height, 1.4) + 0.125rem));
     }
 
     /* Input with icons */

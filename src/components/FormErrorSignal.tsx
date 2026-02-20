@@ -4,12 +4,9 @@ interface FormErrorMessageProps {
   error?: {
     message?: string;
   };
-  reserveSpace?: boolean;
 }
 
-export const FormErrorMessage = ({ error, reserveSpace = true }: FormErrorMessageProps) => {
-  if (!error) {
-    return reserveSpace ? <span className="form-error">&nbsp;</span> : null;
-  }
+export const FormErrorMessage = ({ error }: FormErrorMessageProps) => {
+  if (!error?.message) return null;
   return <span className="form-error">{error.message}</span>;
 };

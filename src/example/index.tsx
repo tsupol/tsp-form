@@ -25,7 +25,6 @@ import { clsx } from 'clsx';
 import './example.css';
 import './styles/typography.css';
 import './styles/layout.css';
-import { ExampleFormModal } from './main-sections/ExampleFormModal';
 import { CustomFormPage } from './pages/CustomFormPage';
 import { ContextMenuPage } from './pages/ContextMenuPage';
 import { CarouselPage } from './pages/CarouselPage';
@@ -37,6 +36,7 @@ import { DatePickerPage } from './pages/DatePickerPage';
 import { TablePage } from './pages/TablePage';
 import { ButtonGroupPage } from './pages/ButtonGroupPage';
 import { BadgePage } from './pages/BadgePage';
+import { ServerPaginationPage } from './pages/ServerPaginationPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -159,7 +159,6 @@ const menuItemsList = [
   { key: 'dashboard', path: '/' },
   { key: 'buttons', path: '/buttons' },
   { key: 'form', path: '/form' },
-  { key: 'form-modal', path: '/form-modal' },
   { key: 'popover', path: '/popover' },
   { key: 'modal', path: '/modal' },
   { key: 'snackbar', path: '/snackbar' },
@@ -180,11 +179,12 @@ const menuItemsList = [
   { key: 'table', path: '/table' },
   { key: 'button-group', path: '/button-group' },
   { key: 'badge', path: '/badge' },
+  { key: 'server-pagination', path: '/server-pagination' },
 ];
 
 const SideNav = () => {
 
-  const [menuCollapsed, setMenuCollapsed] = useState(false);
+  const [menuCollapsed, setMenuCollapsed] = useState(() => localStorage.getItem('sidebar-collapsed') === 'true');
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -205,7 +205,6 @@ const SideNav = () => {
         { key: 'badge', icon: <Box size="1rem"/>, label: "Badge", path: '/badge' },
         { key: 'button-group', icon: <Box size="1rem"/>, label: "Button Group", path: '/button-group' },
         { key: 'form', icon: <FileText size="1rem"/>, label: "Form", path: '/form' },
-        { key: 'form-modal', icon: <FileText size="1rem"/>, label: "Form Modal", path: '/form-modal' },
         { key: 'popover', icon: <MessageSquare size="1rem"/>, label: "PopOver", path: '/popover' },
         { key: 'modal', icon: <Columns3 size="1rem"/>, label: "Modal", path: '/modal' },
         { key: 'snackbar', icon: <MessageSquare size="1rem"/>, label: "Snackbar", path: '/snackbar' },
@@ -232,6 +231,7 @@ const SideNav = () => {
     { key: 'form-sizes', icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", path: '/form-sizes' },
     { key: 'image-uploader', icon: <Upload size="1rem"/>, label: "Image Uploader", path: '/image-uploader' },
     { key: 'nav-modal', icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", path: '/nav-modal' },
+    { key: 'server-pagination', icon: <Table2 size="1rem"/>, label: "Server Pagination", path: '/server-pagination' },
   ];
 
   const handleSelect = (key: string, path?: string) => {
@@ -246,7 +246,7 @@ const SideNav = () => {
     <div className={clsx('h-dvh flex-shrink-0', menuCollapsed ? 'md:w-side-menu-min' : 'md:w-side-menu')}>
       <SideMenu
         isCollapsed={menuCollapsed}
-        onToggleCollapse={(collapsed) => setMenuCollapsed(collapsed)}
+        onToggleCollapse={(collapsed) => { setMenuCollapsed(collapsed); localStorage.setItem('sidebar-collapsed', String(collapsed)); }}
         linkFn={(to) => navigate(to)}
         autoCloseMobileOnClick={false}
         className=""
@@ -313,7 +313,6 @@ const App = () => {
               <Routes>
                 <Route path="/buttons" element={<ExampleButtons/>}/>
                 <Route path="/form" element={<ExampleForm/>}/>
-                <Route path="/form-modal" element={<ExampleFormModal/>}/>
                 <Route path="/popover" element={<ExamplePopOver/>}/>
                 <Route path="/modal" element={<ExampleModal/>}/>
                 <Route path="/snackbar" element={<ExampleSnackbar/>}/>
@@ -334,6 +333,7 @@ const App = () => {
                 <Route path="/table" element={<TablePage/>}/>
                 <Route path="/badge" element={<BadgePage/>}/>
                 <Route path="/button-group" element={<ButtonGroupPage/>}/>
+                <Route path="/server-pagination" element={<ServerPaginationPage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="heading-1 mb-4">Dashboard</h1>
