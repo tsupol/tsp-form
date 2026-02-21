@@ -2,7 +2,6 @@
     .table-container {
         position: relative;
         width: 100%;
-        overflow-x: auto;
     }
 
     .table {
@@ -14,7 +13,10 @@
     }
 
     .table-header {
-        background: var(--color-table-header-bg, transparent);
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        background: var(--color-table-header-bg, var(--color-bg));
     }
 
     .table-header .table-row {
@@ -30,8 +32,10 @@
         border-bottom: none;
     }
 
-    .table-body .table-row:hover {
-        background: var(--color-table-row-hover, var(--color-surface-hover));
+    @media (hover: hover) {
+        .table-body .table-row:hover {
+            background: var(--color-table-row-hover, var(--color-surface-hover));
+        }
     }
 
     .table-body .table-row[data-state="selected"] {
@@ -71,8 +75,10 @@
         background: var(--color-table-stripe, var(--color-surface));
     }
 
-    .table-striped .table-body .table-row:nth-child(even):hover {
-        background: var(--color-table-row-hover, var(--color-surface-hover));
+    @media (hover: hover) {
+        .table-striped .table-body .table-row:nth-child(even):hover {
+            background: var(--color-table-row-hover, var(--color-surface-hover));
+        }
     }
 
 }
