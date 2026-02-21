@@ -105,33 +105,45 @@ export const ExampleModal = () => {
         </div>
       </Modal>
 
-      <Modal open={openInlineForm} onClose={() => { setOpenInlineForm(false); reset(); }} width="400px" ariaLabel="Quick Form">
-        <form onSubmit={handleSubmit((data) => {
+      <Modal open={openInlineForm} onClose={() => {
+        setOpenInlineForm(false);
+        reset();
+      }} width="400px" ariaLabel="Quick Form">
+        <form className="flex flex-col overflow-hidden" onSubmit={handleSubmit((data) => {
           addSnackbar({ message: `Submitted: ${data.name} (${data.email})`, type: 'success', position: 'bottom-center' });
           reset();
           setOpenInlineForm(false);
         })}>
           <div className="modal-header">
             <h2 className="modal-title">Quick Form</h2>
-            <button type="button" className="modal-close-btn" onClick={() => { setOpenInlineForm(false); reset(); }} aria-label="Close">×</button>
+            <button type="button" className="modal-close-btn" onClick={() => {
+              setOpenInlineForm(false);
+              reset();
+            }} aria-label="Close">×
+            </button>
           </div>
-          <div className="modal-content form-grid">
-            <div className="flex flex-col">
-              <label className="form-label">Name</label>
-              <input className={`form-control ${errors.name ? 'form-field-error' : ''}`} placeholder="John Doe" {...register('name', { required: 'Name is required' })} />
-              <FormErrorMessage error={errors.name} />
-            </div>
-            <div className="flex flex-col">
-              <label className="form-label">Email</label>
-              <input className={`form-control ${errors.email ? 'form-field-error' : ''}`} type="email" placeholder="john@example.com" {...register('email', {
-                required: 'Email is required',
-                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email address' }
-              })} />
-              <FormErrorMessage error={errors.email} />
+          <div className="modal-content">
+            <div className="form-grid">
+              <div className="flex flex-col">
+                <label className="form-label">Name</label>
+                <input className={`form-control ${errors.name ? 'form-field-error' : ''}`} placeholder="John Doe" {...register('name', { required: 'Name is required' })} />
+                <FormErrorMessage error={errors.name}/>
+              </div>
+              <div className="flex flex-col">
+                <label className="form-label">Email</label>
+                <input className={`form-control ${errors.email ? 'form-field-error' : ''}`} type="email" placeholder="john@example.com" {...register('email', {
+                  required: 'Email is required',
+                  pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email address' }
+                })} />
+                <FormErrorMessage error={errors.email}/>
+              </div>
             </div>
           </div>
           <div className="modal-footer">
-            <Button variant="ghost" type="button" onClick={() => { setOpenInlineForm(false); reset(); }}>Cancel</Button>
+            <Button variant="ghost" type="button" onClick={() => {
+              setOpenInlineForm(false);
+              reset();
+            }}>Cancel</Button>
             <Button variant="primary" type="submit">Submit</Button>
           </div>
         </form>
@@ -153,7 +165,7 @@ export const ExampleModal = () => {
                   }}
                   aria-label={`Delete ${item.name}`}
                 >
-                  <Trash2 size={16} />
+                  <Trash2 size={16}/>
                 </button>
               </div>
             ))}

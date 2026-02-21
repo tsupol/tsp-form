@@ -1,3 +1,5 @@
+import './src/styles/alert.css';
+
 export * from './src/components/AspectRatioFit';
 export * from './src/components/Badge';
 export * from './src/components/Button';
