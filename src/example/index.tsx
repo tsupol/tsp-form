@@ -37,6 +37,7 @@ import { TablePage } from './pages/TablePage';
 import { ButtonGroupPage } from './pages/ButtonGroupPage';
 import { BadgePage } from './pages/BadgePage';
 import { ServerPaginationPage } from './pages/ServerPaginationPage';
+import { AlertPage } from './pages/AlertPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -180,6 +181,7 @@ const menuItemsList = [
   { key: 'button-group', path: '/button-group' },
   { key: 'badge', path: '/badge' },
   { key: 'server-pagination', path: '/server-pagination' },
+  { key: 'alert', path: '/alert' },
 ];
 
 const SideNav = () => {
@@ -202,6 +204,7 @@ const SideNav = () => {
       key: 'components', icon: <Layers size="1rem"/>, label: "Components",
       children: [
         { key: 'buttons', icon: <Box size="1rem"/>, label: "Buttons", path: '/buttons' },
+        { key: 'alert', icon: <Box size="1rem"/>, label: "Alert", path: '/alert' },
         { key: 'badge', icon: <Box size="1rem"/>, label: "Badge", path: '/badge' },
         { key: 'button-group', icon: <Box size="1rem"/>, label: "Button Group", path: '/button-group' },
         { key: 'form', icon: <FileText size="1rem"/>, label: "Form", path: '/form' },
@@ -331,6 +334,7 @@ const App = () => {
                 <Route path="/image-uploader" element={<ImageUploaderPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>
                 <Route path="/table" element={<TablePage/>}/>
+                <Route path="/alert" element={<AlertPage/>}/>
                 <Route path="/badge" element={<BadgePage/>}/>
                 <Route path="/button-group" element={<ButtonGroupPage/>}/>
                 <Route path="/server-pagination" element={<ServerPaginationPage/>}/>

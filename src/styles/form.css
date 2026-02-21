@@ -232,6 +232,13 @@
         padding-right: 2.75rem;
     }
 
+    /* Form field grid — standard container for form fields (not buttons) */
+    .form-grid {
+        display: grid;
+        gap: 1.25rem;
+        padding-bottom: 1.75rem;
+    }
+
     /* Input group - joined controls in a single bordered container */
     .input-group {
         display: flex;

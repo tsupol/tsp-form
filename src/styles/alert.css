@@ -1,0 +1,88 @@
+@layer components {
+
+.alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-alert-border, var(--color-line));
+    border-radius: var(--radius-alert, 0.5rem);
+    background: var(--color-alert-bg, var(--color-surface));
+    color: var(--color-alert-fg, var(--color-fg));
+    font-size: var(--text-alert, 0.875rem);
+    line-height: 1.5;
+}
+
+/* Auto-size the first-child SVG icon */
+.alert > svg:first-child {
+    flex-shrink: 0;
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-top: 0.0625rem;
+}
+
+/* ── Variants ─────────────────────────────────────────────────────── */
+
+.alert-info {
+    border-color: var(--color-alert-info-border, var(--color-info));
+    --color-alert-icon: var(--color-alert-info-icon, var(--color-info));
+}
+
+.alert-info > svg:first-child {
+    color: var(--color-alert-icon);
+}
+
+.alert-success {
+    border-color: var(--color-alert-success-border, var(--color-success));
+    --color-alert-icon: var(--color-alert-success-icon, var(--color-success));
+}
+
+.alert-success > svg:first-child {
+    color: var(--color-alert-icon);
+}
+
+.alert-warning {
+    border-color: var(--color-alert-warning-border, var(--color-warning));
+    --color-alert-icon: var(--color-alert-warning-icon, var(--color-warning));
+}
+
+.alert-warning > svg:first-child {
+    color: var(--color-alert-icon);
+}
+
+.alert-danger {
+    border-color: var(--color-alert-danger-border, var(--color-danger));
+    --color-alert-icon: var(--color-alert-danger-icon, var(--color-danger));
+}
+
+.alert-danger > svg:first-child {
+    color: var(--color-alert-icon);
+}
+
+/* ── Title & Description ──────────────────────────────────────────── */
+
+.alert-title {
+    font-weight: 600;
+    line-height: 1.5;
+}
+
+.alert-description {
+    color: var(--color-alert-description, var(--color-fg-muted));
+    font-size: var(--text-alert-description, 0.8125rem);
+    line-height: 1.5;
+    margin-top: 0.125rem;
+}
+
+/* ── Snackbar integration ─────────────────────────────────────────── */
+/* Strip redundant styling when alert is inside a snackbar */
+
+.snackbar-item .alert {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    font-size: inherit;
+}
+
+} /* end @layer components */

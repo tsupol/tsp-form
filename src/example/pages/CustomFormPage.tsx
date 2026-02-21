@@ -50,7 +50,7 @@ export function CustomFormPage() {
       <div className="grid gap-4 w-full max-w-[250px]">
         <form onSubmit={handleSubmit(onSubmit)} className="card space-y-4 w-full">
           <h1 className="heading-1">Custom Form</h1>
-          <div className="grid gap-1">
+          <div className="form-grid">
             <div className="flex flex-col">
               <label className="form-label" htmlFor="category">Category & Name</label>
               <div className="input-group">

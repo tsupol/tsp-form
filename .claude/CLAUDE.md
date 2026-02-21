@@ -50,10 +50,14 @@ These are used by other library components — changes to them have wider impact
 
 ## Form Patterns
 - Each field: `flex flex-col` (no gap) — label, input, and error message handle their own spacing
-- Form container: use `grid gap-5` — the gap accommodates one-line errors without layout shift
+- Form field container: use `.form-grid` class (defined in `src/styles/form.css`) — provides `grid`, `gap-5`, and `pb-7`. Apply to the `<div>` wrapping form fields, not the `<form>` itself or buttons. Tailwind utilities can override (e.g. `form-grid gap-3`).
 - Use `FormErrorMessage` (from `FormErrorSignal.tsx`) placed after the input — renders nothing when no error, one-line errors fit within gap-5, multi-line errors shift layout
 - Use `form-field-error` class on inputs for error border styling
-- **Forms in modals**: `FormErrorMessage` renders nothing when there's no error, so the modal starts compact. When errors appear, they add height and can cause unexpected scrolling. Add `pb-7` to `.modal-content` to reserve bottom space for error messages (e.g. `<div className="modal-content grid gap-5 pb-7">`)
+- **Forms in modals**: use `modal-content form-grid` on the fields container (e.g. `<div className="modal-content form-grid">`)
+
+## Change Scope
+- **Always prefer scoped fixes over global/structural changes.** If a problem can be solved by modifying only the affected file or component, do that — never change shared layout, app shell, or global styles to fix a single page or component.
+- Before modifying shared files (e.g. `src/example/index.tsx`, global CSS, layout wrappers), ask first. These affect every page/component in the project.
 
 ## Conventions
 - Components are standalone `.tsx` files, styles in separate `.css` files
