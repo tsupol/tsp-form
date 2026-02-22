@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import '../styles/pagination.css';
 
@@ -42,6 +42,7 @@ export type PaginationProps = {
   className?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg';
   siblingCount?: number;
+  mobileSiblingCount?: number;
   showFirstLast?: boolean;
   disabled?: boolean;
   icons?: PaginationIcons;
@@ -61,20 +62,33 @@ export const Pagination = ({
   className,
   size = 'md',
   siblingCount = 1,
+  mobileSiblingCount = 0,
   showFirstLast = true,
   disabled = false,
   icons,
 }: PaginationProps) => {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const mql = window.matchMedia('(max-width: 640px)');
+    setIsMobile(mql.matches);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mql.addEventListener('change', handler);
+    return () => mql.removeEventListener('change', handler);
+  }, []);
+
+  const effectiveSiblingCount = isMobile ? mobileSiblingCount : siblingCount;
+
   const paginationRange = useMemo(() => {
-    const totalPageNumbers = siblingCount + 5; // siblingCount + firstPage + lastPage + currentPage + 2*DOTS
+    const totalPageNumbers = effectiveSiblingCount + 5; // siblingCount + firstPage + lastPage + currentPage + 2*DOTS
 
     // Case 1: If the number of pages is less than the page numbers we want to show
     if (totalPageNumbers >= totalPages) {
       return range(1, totalPages);
     }
 
-    const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
-    const rightSiblingIndex = Math.min(currentPage + siblingCount, totalPages);
+    const leftSiblingIndex = Math.max(currentPage - effectiveSiblingCount, 1);
+    const rightSiblingIndex = Math.min(currentPage + effectiveSiblingCount, totalPages);
 
     const shouldShowLeftDots = leftSiblingIndex > 2;
     const shouldShowRightDots = rightSiblingIndex < totalPages - 2;
@@ -84,7 +98,7 @@ export const Pagination = ({
 
     // Case 2: No left dots to show, but rights dots to be shown
     if (!shouldShowLeftDots && shouldShowRightDots) {
-      const leftItemCount = 3 + 2 * siblingCount;
+      const leftItemCount = 3 + 2 * effectiveSiblingCount;
       const leftRange = range(1, leftItemCount);
 
       return [...leftRange, DOTS, totalPages];
@@ -92,7 +106,7 @@ export const Pagination = ({
 
     // Case 3: No right dots to show, but left dots to be shown
     if (shouldShowLeftDots && !shouldShowRightDots) {
-      const rightItemCount = 3 + 2 * siblingCount;
+      const rightItemCount = 3 + 2 * effectiveSiblingCount;
       const rightRange = range(totalPages - rightItemCount + 1, totalPages);
 
       return [firstPageIndex, DOTS, ...rightRange];
@@ -105,7 +119,7 @@ export const Pagination = ({
     }
 
     return range(1, totalPages);
-  }, [totalPages, siblingCount, currentPage]);
+  }, [totalPages, effectiveSiblingCount, currentPage]);
 
   const handlePageChange = (page: number | string) => {
     if (page === DOTS || disabled) return;

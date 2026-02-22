@@ -32,9 +32,11 @@
         user-select: none;
     }
 
-    .pagination-item:hover:not(.disabled):not(.pagination-dots) {
-        background: var(--color-pagination-hover-bg, var(--color-surface-elevated));
-        border-color: var(--color-pagination-hover-border, var(--color-primary));
+    @media (hover: hover) and (pointer: fine) {
+        .pagination-item:hover:not(.disabled):not(.pagination-dots) {
+            background: var(--color-pagination-hover-bg, var(--color-surface-elevated));
+            border-color: var(--color-pagination-hover-border, var(--color-primary));
+        }
     }
 
     .pagination-item.active {
