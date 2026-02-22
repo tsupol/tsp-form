@@ -42,6 +42,7 @@
         min-height: var(--height-control-sm, 1.75rem);
         padding-top: 0;
         padding-bottom: 0;
+        padding-right: 2rem;
     }
 
     .form-control-sm.select.select-has-chips {
@@ -62,6 +63,7 @@
 
     .form-control-lg.select {
         min-height: var(--height-control-lg, 2.75rem);
+        padding-right: 2.5rem;
     }
 
     .form-control-lg.select.select-has-chips {
@@ -217,7 +219,7 @@
 
     .select-input {
         flex: 1;
-        min-width: 50px;
+        min-width: 20px;
         padding: 0.25rem 0;
         border-radius: 0.25rem;
         border: none;

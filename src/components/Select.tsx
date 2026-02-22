@@ -421,7 +421,6 @@ export function Select({
         className={clsx(
           "select-input control-placeholder-input",
           selectedOptions.length > 0 && !useChipDisplay && !isOpen ? "select-input-hidden" : "",
-          selectedOptions.length > 0 && useChipDisplay ? "min-w-[50px]" : "w-full",
           !searchable && "cursor-pointer",
         )}
         value={searchTerm}
