@@ -98,6 +98,12 @@ export function Select({
   const inputRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLDivElement>(null); // Ref for the main select container
   const listRef = useRef<HTMLDivElement>(null);
+  const isTouchDevice = useRef(false);
+  const skipBlurRef = useRef(false);
+
+  useEffect(() => {
+    isTouchDevice.current = window.matchMedia('(pointer: coarse)').matches;
+  }, []);
 
   // Determine the actual closeOnSelect behavior
   const actualCloseOnSelect = closeOnSelect !== undefined ? closeOnSelect : !multiple;
@@ -219,7 +225,9 @@ export function Select({
       setIsOpen(false);
       setInternalSearchTerm('');
     } else if (multiple) {
-      inputRef.current?.focus();
+      if (!isTouchDevice.current) {
+        inputRef.current?.focus();
+      }
       setInternalSearchTerm('');
     }
   }, [multiple, selectedValuesArray, onChange, actualCloseOnSelect, disabled, maxSelect]);
@@ -232,7 +240,7 @@ export function Select({
     } else {
       onChange(null);
     }
-    if (isOpen) {
+    if (isOpen && !isTouchDevice.current) {
       inputRef.current?.focus();
     }
   }, [multiple, selectedValuesArray, onChange, disabled, isOpen]);
@@ -251,7 +259,9 @@ export function Select({
   const handleWrapperClick = useCallback(() => {
     if (disabled) return;
     setIsOpen(true);
-    setTimeout(() => inputRef.current?.focus(), 0);
+    if (!isTouchDevice.current) {
+      setTimeout(() => inputRef.current?.focus(), 0);
+    }
   }, [disabled]);
 
   const handleChevronClick = useCallback((e: MouseEvent) => {
@@ -259,7 +269,9 @@ export function Select({
     if (disabled) return;
     setIsOpen(prev => !prev);
     if (!isOpen) {
-      setTimeout(() => inputRef.current?.focus(), 50);
+      if (!isTouchDevice.current) {
+        setTimeout(() => inputRef.current?.focus(), 50);
+      }
     } else {
       setInternalSearchTerm('');
       inputRef.current?.blur();
@@ -274,12 +286,22 @@ export function Select({
 
   const handleInputFocus = useCallback(() => {
     if (disabled) return;
+    if (isTouchDevice.current && !isOpen) {
+      skipBlurRef.current = true;
+      inputRef.current?.blur();
+      setIsOpen(true);
+      return;
+    }
     setIsOpen(true);
     setInternalSearchTerm('');
     onSearchChange?.('');
-  }, [disabled, onSearchChange]);
+  }, [disabled, onSearchChange, isOpen]);
 
   const handleInputBlur = useCallback(() => {
+    if (skipBlurRef.current) {
+      skipBlurRef.current = false;
+      return;
+    }
     setInternalSearchTerm('');
     setIsOpen(false);
   }, []);
