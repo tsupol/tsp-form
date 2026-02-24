@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { type ColumnDef } from '@tanstack/react-table';
+import { type ColumnDef, type SortingState } from '../../components/DataTable';
 import { DataTable, DataTableColumnHeader } from '../../components/DataTable';
 import { Badge } from '../../components/Badge';
 
@@ -31,8 +31,8 @@ const categoryColor: Record<string, 'primary' | 'success' | 'warning' | 'danger'
   Sports: 'danger',
 };
 
-const columns: ColumnDef<Product, any>[] = [
-  { accessorKey: 'id', header: 'ID', size: 60 },
+const columns: ColumnDef<Product>[] = [
+  { accessorKey: 'id', header: 'ID' },
   {
     accessorKey: 'name',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Name" />,
@@ -40,16 +40,16 @@ const columns: ColumnDef<Product, any>[] = [
   {
     accessorKey: 'category',
     header: 'Category',
-    cell: ({ row }) => {
-      const cat = row.getValue('category') as string;
+    cell: ({ value }) => {
+      const cat = value as string;
       return <Badge size="sm" color={categoryColor[cat] ?? 'default'}>{cat}</Badge>;
     },
   },
   {
     accessorKey: 'price',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Price" />,
-    cell: ({ row }) =>
-      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(row.getValue('price')),
+    cell: ({ value }) =>
+      new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value),
   },
   {
     accessorKey: 'stock',
@@ -59,11 +59,22 @@ const columns: ColumnDef<Product, any>[] = [
 
 // ── Simulate server fetch ──────────────────────────────────────────
 
-function fakeServerFetch(pageIndex: number, pageSize: number) {
+function fakeServerFetch(pageIndex: number, pageSize: number, sorting: SortingState) {
+  let sorted = [...allProducts];
+  if (sorting.length > 0) {
+    const { id, desc } = sorting[0];
+    sorted.sort((a, b) => {
+      const aVal = a[id as keyof Product];
+      const bVal = b[id as keyof Product];
+      if (aVal < bVal) return desc ? 1 : -1;
+      if (aVal > bVal) return desc ? -1 : 1;
+      return 0;
+    });
+  }
   const start = pageIndex * pageSize;
   return {
-    rows: allProducts.slice(start, start + pageSize),
-    totalCount: allProducts.length,
+    rows: sorted.slice(start, start + pageSize),
+    totalCount: sorted.length,
   };
 }
 
@@ -71,25 +82,26 @@ function fakeServerFetch(pageIndex: number, pageSize: number) {
 
 export const ServerPaginationPage = () => {
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(20);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const { rows, totalCount } = useMemo(
-    () => fakeServerFetch(pageIndex, pageSize),
-    [pageIndex, pageSize],
+    () => fakeServerFetch(pageIndex, pageSize, sorting),
+    [pageIndex, pageSize, sorting],
   );
 
   return (
-    <div className="page-content max-w-[64rem]">
-      <h1 className="heading-1 mb-2">Server-Side Pagination</h1>
-      <p className="text-muted mb-8">
-        DataTable receives only the current page of data. The <code>rowCount</code> prop
-        tells it the total rows on the server so the built-in footer (pagination, page-size,
-        row info) works correctly without loading all data at once.
+    <div className="page-content h-dvh max-h-dvh max-w-[64rem] flex flex-col overflow-hidden">
+      <h1 className="heading-1 mb-2 flex-none">Server-Side Pagination</h1>
+      <p className="text-muted mb-4 flex-none">
+        DataTable receives only the current page of data. Controlled <code>pageIndex</code> and
+        {' '}<code>manualSorting</code> let the consumer own pagination and sort state.
+        Sorting resets to page 1 and data is sorted server-side before slicing.
       </p>
 
-      <section className="mb-12">
-        <h2 className="heading-3 mb-4">Simulated Server Fetch</h2>
-        <p className="text-muted mb-4">
+      <section className="flex-1 min-h-0 flex flex-col">
+        <h2 className="heading-3 mb-4 flex-none">Simulated Server Fetch</h2>
+        <p className="text-muted mb-4 flex-none">
           73 products total — only {pageSize} loaded per page.
           Page {pageIndex + 1} of {Math.ceil(totalCount / pageSize)}.
         </p>
@@ -97,14 +109,23 @@ export const ServerPaginationPage = () => {
           data={rows}
           columns={columns}
           enableSorting
+          manualSorting
           enablePagination
+          pageIndex={pageIndex}
           pageSize={pageSize}
-          pageSizeOptions={[5, 10, 20]}
+          pageSizeOptions={[10, 20, 50]}
           rowCount={totalCount}
+          sorting={sorting}
+          onSortingChange={(updater) => {
+            const next = typeof updater === 'function' ? updater(sorting) : updater;
+            setSorting(next);
+            setPageIndex(0);
+          }}
           onPageChange={({ pageIndex: pi, pageSize: ps }) => {
             setPageIndex(pi);
             setPageSize(ps);
           }}
+          className="flex-1 min-h-0"
         />
       </section>
     </div>

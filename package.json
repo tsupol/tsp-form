@@ -1,6 +1,6 @@
 {
   "name": "tsp-form",
-  "version": "0.4.8",
+  "version": "0.5.2",
   "type": "module",
   "description": "A unified Tailwind 4 variables compatible UI component library for my own projects.",
   "module": "dist/index.js",
@@ -35,7 +35,6 @@
   "license": "MIT",
   "devDependencies": {
     "@babel/core": "^7.28.3",
-    "@tanstack/react-table": "^8.21.3",
     "@babel/preset-env": "^7.28.3",
     "@babel/preset-react": "^7.27.1",
     "@babel/preset-typescript": "^7.27.1",
@@ -64,7 +63,6 @@
     "webpack-dev-server": "^5.2.2"
   },
   "peerDependencies": {
-    "@tanstack/react-table": ">=8.0.0",
     "clsx": "^2.1.1",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
@@ -73,9 +71,5 @@
   "dependencies": {
     "react-json-view-lite": "^2.4.2"
   },
-  "peerDependenciesMeta": {
-    "@tanstack/react-table": {
-      "optional": true
-    }
-  }
+  "peerDependenciesMeta": {}
 }

@@ -33,6 +33,7 @@ export * from './src/components/NumberSpinner';
 export * from './src/components/Pagination';
 export * from './src/components/Table';
 export * from './src/components/DataTable';
+export * from './src/hooks/useDataSource';
 export * from './src/components/Tooltip';
 export * from './src/components/ProgressBar';
 export * from './src/components/Slider';

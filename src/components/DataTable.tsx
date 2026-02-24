@@ -1,23 +1,7 @@
 import { useState, useMemo, type ReactNode } from 'react';
 import clsx from 'clsx';
-import {
-  useReactTable,
-  getCoreRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  flexRender,
-  type ColumnDef,
-  type SortingState,
-  type ColumnFiltersState,
-  type VisibilityState,
-  type RowSelectionState,
-  type Row,
-  type Table as TanstackTable,
-  type Column,
-  type OnChangeFn,
-} from '@tanstack/react-table';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './Table';
+import { Button } from './Button';
 import { Checkbox } from './Checkbox';
 import { Pagination } from './Pagination';
 import { Select, type SelectItem } from './Select';
@@ -25,10 +9,43 @@ import { PopOver } from './PopOver';
 import { MenuItem, MenuSeparator } from './Menu';
 import '../styles/data-table.css';
 
+// ── Types ───────────────────────────────────────────────────────────
+
+export type SortDirection = 'asc' | 'desc';
+export type SortingState = { id: string; desc: boolean }[];
+export type RowSelectionState = Record<string, boolean>;
+export type VisibilityState = Record<string, boolean>;
+
+export type Updater<T> = T | ((old: T) => T);
+
+export type ColumnHelper<TData> = {
+  id: string;
+  getCanSort: () => boolean;
+  getIsSorted: () => SortDirection | false;
+  toggleSorting: (desc?: boolean) => void;
+};
+
+export type RowHelper<TData> = {
+  original: TData;
+  index: number;
+  id: string;
+  getValue: (key: string) => any;
+  getIsSelected: () => boolean;
+  toggleSelected: (selected?: boolean) => void;
+};
+
+export type ColumnDef<TData> = {
+  id?: string;
+  accessorKey?: string;
+  header?: string | ((props: { column: ColumnHelper<TData> }) => ReactNode);
+  cell?: (props: { row: RowHelper<TData>; value: any }) => ReactNode;
+  enableSorting?: boolean;
+};
+
 // ── Inline SVG icons (no external icon libs) ────────────────────────
 
 const InfoIcon = () => (
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="data-table-info-icon">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <circle cx="12" cy="12" r="10" />
     <path d="M12 16v-4" />
     <path d="M12 8h.01" />
@@ -60,17 +77,17 @@ const SortNoneIcon = () => (
 
 // ── DataTableColumnHeader ───────────────────────────────────────────
 
-export type DataTableColumnHeaderProps<TData, TValue> = {
-  column: Column<TData, TValue>;
+export type DataTableColumnHeaderProps<TData> = {
+  column: ColumnHelper<TData>;
   title: string;
   className?: string;
 };
 
-export function DataTableColumnHeader<TData, TValue>({
+export function DataTableColumnHeader<TData>({
   column,
   title,
   className,
-}: DataTableColumnHeaderProps<TData, TValue>) {
+}: DataTableColumnHeaderProps<TData>) {
   if (!column.getCanSort()) {
     return <span className={className}>{title}</span>;
   }
@@ -91,16 +108,13 @@ export function DataTableColumnHeader<TData, TValue>({
 
 // ── createSelectColumn ──────────────────────────────────────────────
 
-export function createSelectColumn<TData>(): ColumnDef<TData, unknown> {
+export function createSelectColumn<TData>(): ColumnDef<TData> {
   return {
     id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={table.getIsAllPageRowsSelected()}
-        onChange={(e) => table.toggleAllPageRowsSelected(e.target.checked)}
-        aria-label="Select all"
-      />
-    ),
+    header: ({ column }) => {
+      // This will be patched at render time with table-level select-all
+      return null;
+    },
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
@@ -109,8 +123,17 @@ export function createSelectColumn<TData>(): ColumnDef<TData, unknown> {
       />
     ),
     enableSorting: false,
-    enableColumnFilter: false,
   };
+}
+
+// ── Helpers ─────────────────────────────────────────────────────────
+
+function resolveUpdater<T>(updater: Updater<T>, current: T): T {
+  return typeof updater === 'function' ? (updater as (old: T) => T)(current) : updater;
+}
+
+function getAccessorValue(row: any, accessorKey: string): any {
+  return row[accessorKey];
 }
 
 // ── DataTable ───────────────────────────────────────────────────────
@@ -121,32 +144,28 @@ type DataTableBaseProps<TData> = {
   enableFiltering?: boolean;
   enablePagination?: boolean;
   enableRowSelection?: boolean;
+  pageIndex?: number;
   pageSize?: number;
   pageSizeOptions?: number[];
-  /** Total row count on the server. Enables manual (server-side) pagination when provided. */
   rowCount?: number;
-  /** Called when page index or page size changes. Useful for server-side pagination to trigger refetch. */
   onPageChange?: (pagination: { pageIndex: number; pageSize: number }) => void;
-  /** Controls the size of the footer controls (pagination and "rows per page" Select) */
+  manualSorting?: boolean;
   controlSize?: 'xs' | 'sm' | 'md' | 'lg';
   globalFilter?: string;
-  onGlobalFilterChange?: OnChangeFn<string>;
+  onGlobalFilterChange?: (value: string) => void;
   sorting?: SortingState;
-  onSortingChange?: OnChangeFn<SortingState>;
-  columnFilters?: ColumnFiltersState;
-  onColumnFiltersChange?: OnChangeFn<ColumnFiltersState>;
+  onSortingChange?: (updater: Updater<SortingState>) => void;
   columnVisibility?: VisibilityState;
-  onColumnVisibilityChange?: OnChangeFn<VisibilityState>;
+  onColumnVisibilityChange?: (updater: Updater<VisibilityState>) => void;
   rowSelection?: RowSelectionState;
-  onRowSelectionChange?: OnChangeFn<RowSelectionState>;
-  toolbar?: (table: TanstackTable<TData>) => ReactNode;
+  onRowSelectionChange?: (updater: Updater<RowSelectionState>) => void;
   noResults?: ReactNode;
   className?: string;
   striped?: boolean;
 };
 
 type ColumnModeProps<TData> = DataTableBaseProps<TData> & {
-  columns: ColumnDef<TData, any>[];
+  columns: ColumnDef<TData>[];
   renderRow?: never;
   renderHeader?: never;
   tableClassName?: string;
@@ -154,7 +173,7 @@ type ColumnModeProps<TData> = DataTableBaseProps<TData> & {
 
 type FreeformModeProps<TData> = DataTableBaseProps<TData> & {
   columns?: never;
-  renderRow: (row: Row<TData>) => ReactNode;
+  renderRow: (row: RowHelper<TData>) => ReactNode;
   renderHeader?: () => ReactNode;
   tableClassName?: never;
 };
@@ -170,22 +189,21 @@ export function DataTable<TData>({
   enableFiltering = false,
   enablePagination = false,
   enableRowSelection = false,
+  pageIndex: controlledPageIndex,
   pageSize = 10,
   pageSizeOptions = [10, 20, 50],
   rowCount,
   onPageChange,
+  manualSorting = false,
   controlSize = 'sm',
   globalFilter: controlledGlobalFilter,
   onGlobalFilterChange,
   sorting: controlledSorting,
   onSortingChange,
-  columnFilters: controlledColumnFilters,
-  onColumnFiltersChange,
   columnVisibility: controlledColumnVisibility,
   onColumnVisibilityChange,
   rowSelection: controlledRowSelection,
   onRowSelectionChange,
-  toolbar,
   noResults,
   className,
   tableClassName,
@@ -193,53 +211,194 @@ export function DataTable<TData>({
 }: DataTableProps<TData>) {
   // Internal state with optional controlled overrides
   const [internalSorting, setInternalSorting] = useState<SortingState>([]);
-  const [internalColumnFilters, setInternalColumnFilters] = useState<ColumnFiltersState>([]);
   const [internalColumnVisibility, setInternalColumnVisibility] = useState<VisibilityState>({});
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
   const [internalGlobalFilter, setInternalGlobalFilter] = useState('');
+  const [internalPageIndex, setInternalPageIndex] = useState(0);
+  const [internalPageSize, setInternalPageSize] = useState(pageSize);
   const [mobileInfoOpen, setMobileInfoOpen] = useState(false);
 
-  // For freeform mode, we need a minimal column definition so TanStack can manage rows
-  const effectiveColumns: ColumnDef<TData, any>[] = columns ?? [{
-    id: '__placeholder',
-    header: () => null,
-    cell: () => null,
-  }];
+  const sorting = controlledSorting ?? internalSorting;
+  const columnVisibility = controlledColumnVisibility ?? internalColumnVisibility;
+  const rowSelection = controlledRowSelection ?? internalRowSelection;
+  const globalFilter = controlledGlobalFilter ?? internalGlobalFilter;
+  const effectivePageIndex = controlledPageIndex ?? internalPageIndex;
+  const effectivePageSize = pageSize;
 
   const isManualPagination = rowCount != null;
 
-  const table = useReactTable({
-    data,
-    columns: effectiveColumns,
-    getCoreRowModel: getCoreRowModel(),
-    ...(enableSorting && { getSortedRowModel: getSortedRowModel() }),
-    ...(enableFiltering && { getFilteredRowModel: getFilteredRowModel() }),
-    ...(enablePagination && !isManualPagination && { getPaginationRowModel: getPaginationRowModel() }),
-    ...(isManualPagination && { manualPagination: true, rowCount }),
-    enableRowSelection,
-    state: {
-      sorting: controlledSorting ?? internalSorting,
-      columnFilters: controlledColumnFilters ?? internalColumnFilters,
-      columnVisibility: controlledColumnVisibility ?? internalColumnVisibility,
-      rowSelection: controlledRowSelection ?? internalRowSelection,
-      globalFilter: controlledGlobalFilter ?? internalGlobalFilter,
+  // Resolve column IDs
+  const resolvedColumns = useMemo(() => {
+    if (!columns) return [];
+    return columns.map((col, i) => ({
+      ...col,
+      _id: col.id ?? col.accessorKey ?? `col_${i}`,
+    }));
+  }, [columns]);
+
+  // Visible columns
+  const visibleColumns = useMemo(() => {
+    return resolvedColumns.filter((col) => columnVisibility[col._id] !== false);
+  }, [resolvedColumns, columnVisibility]);
+
+  // Update sorting
+  const handleSortingChange = (updater: Updater<SortingState>) => {
+    if (onSortingChange) {
+      onSortingChange(updater);
+    } else {
+      setInternalSorting((prev) => resolveUpdater(updater, prev));
+    }
+  };
+
+  // Update row selection
+  const handleRowSelectionChange = (updater: Updater<RowSelectionState>) => {
+    if (onRowSelectionChange) {
+      onRowSelectionChange(updater);
+    } else {
+      setInternalRowSelection((prev) => resolveUpdater(updater, prev));
+    }
+  };
+
+  // Update global filter
+  const handleGlobalFilterChange = (value: string) => {
+    if (onGlobalFilterChange) {
+      onGlobalFilterChange(value);
+    } else {
+      setInternalGlobalFilter(value);
+    }
+  };
+
+  // Create ColumnHelper for a given column
+  const makeColumnHelper = (col: typeof resolvedColumns[number]): ColumnHelper<TData> => ({
+    id: col._id,
+    getCanSort: () => enableSorting && col.enableSorting !== false,
+    getIsSorted: () => {
+      const found = sorting.find((s) => s.id === col._id);
+      if (!found) return false;
+      return found.desc ? 'desc' : 'asc';
     },
-    onSortingChange: onSortingChange ?? setInternalSorting,
-    onColumnFiltersChange: onColumnFiltersChange ?? setInternalColumnFilters,
-    onColumnVisibilityChange: onColumnVisibilityChange ?? setInternalColumnVisibility,
-    onRowSelectionChange: onRowSelectionChange ?? setInternalRowSelection,
-    onGlobalFilterChange: onGlobalFilterChange ?? setInternalGlobalFilter,
-    initialState: {
-      pagination: { pageSize },
+    toggleSorting: (desc?: boolean) => {
+      handleSortingChange(() => {
+        const nextDesc = desc ?? false;
+        return [{ id: col._id, desc: nextDesc }];
+      });
     },
   });
 
-  const totalPages = table.getPageCount();
-  const currentPage = table.getState().pagination.pageIndex + 1; // 1-based
+  // Build row helpers from data
+  const allRowHelpers = useMemo(() => {
+    return data.map((item, index): RowHelper<TData> => {
+      const id = String(index);
+      return {
+        original: item,
+        index,
+        id,
+        getValue: (key: string) => getAccessorValue(item, key),
+        getIsSelected: () => !!rowSelection[id],
+        toggleSelected: (selected?: boolean) => {
+          handleRowSelectionChange((prev) => {
+            const next = { ...prev };
+            const newValue = selected ?? !prev[id];
+            if (newValue) {
+              next[id] = true;
+            } else {
+              delete next[id];
+            }
+            return next;
+          });
+        },
+      };
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, rowSelection]);
 
-  const selectedCount = Object.keys(table.getState().rowSelection).length;
-  const totalRows = rowCount ?? table.getFilteredRowModel().rows.length;
+  // Apply client-side global filter
+  const filteredRows = useMemo(() => {
+    if (!enableFiltering || !globalFilter) return allRowHelpers;
+    const lowerFilter = globalFilter.toLowerCase();
+    return allRowHelpers.filter((row) => {
+      // Match against all accessor columns
+      const cols = resolvedColumns.length > 0 ? resolvedColumns : [];
+      if (cols.length === 0) {
+        // Freeform mode — match against all string values
+        return Object.values(row.original as any).some(
+          (v) => v != null && String(v).toLowerCase().includes(lowerFilter),
+        );
+      }
+      return cols.some((col) => {
+        if (!col.accessorKey) return false;
+        const val = getAccessorValue(row.original, col.accessorKey);
+        return val != null && String(val).toLowerCase().includes(lowerFilter);
+      });
+    });
+  }, [allRowHelpers, enableFiltering, globalFilter, resolvedColumns]);
 
+  // Apply client-side sorting
+  const sortedRows = useMemo(() => {
+    if (!enableSorting || manualSorting || sorting.length === 0) return filteredRows;
+    const { id: sortId, desc } = sorting[0];
+    const sorted = [...filteredRows];
+    sorted.sort((a, b) => {
+      const aVal = getAccessorValue(a.original, sortId);
+      const bVal = getAccessorValue(b.original, sortId);
+      if (aVal == null && bVal == null) return 0;
+      if (aVal == null) return 1;
+      if (bVal == null) return -1;
+      if (aVal < bVal) return desc ? 1 : -1;
+      if (aVal > bVal) return desc ? -1 : 1;
+      return 0;
+    });
+    return sorted;
+  }, [filteredRows, enableSorting, manualSorting, sorting]);
+
+  // Total rows count (for display and pagination)
+  const totalRows = rowCount ?? sortedRows.length;
+
+  // Apply client-side pagination
+  const paginatedRows = useMemo(() => {
+    if (!enablePagination || isManualPagination) return sortedRows;
+    const start = effectivePageIndex * effectivePageSize;
+    return sortedRows.slice(start, start + effectivePageSize);
+  }, [sortedRows, enablePagination, isManualPagination, effectivePageIndex, effectivePageSize]);
+
+  // The rows to render
+  const displayRows = enablePagination ? paginatedRows : sortedRows;
+
+  const totalPages = enablePagination
+    ? Math.ceil(totalRows / effectivePageSize)
+    : 1;
+  const currentPage = effectivePageIndex + 1;
+
+  const selectedCount = Object.keys(rowSelection).length;
+
+  // Page change handler
+  const handlePageChange = (newPageIndex: number) => {
+    setInternalPageIndex(newPageIndex);
+    onPageChange?.({ pageIndex: newPageIndex, pageSize: effectivePageSize });
+  };
+
+  const handlePageSizeChange = (newPageSize: number) => {
+    setInternalPageSize(newPageSize);
+    setInternalPageIndex(0);
+    onPageChange?.({ pageIndex: 0, pageSize: newPageSize });
+  };
+
+  // Select-all for current page
+  const isAllPageRowsSelected = displayRows.length > 0 &&
+    displayRows.every((row) => rowSelection[row.id]);
+  const toggleAllPageRowsSelected = (selected: boolean) => {
+    handleRowSelectionChange((prev) => {
+      const next = { ...prev };
+      displayRows.forEach((row) => {
+        if (selected) {
+          next[row.id] = true;
+        } else {
+          delete next[row.id];
+        }
+      });
+      return next;
+    });
+  };
 
   const pageSizeSelectOptions: SelectItem[] = useMemo(
     () => pageSizeOptions.map((s) => ({ value: String(s), label: String(s) })),
@@ -248,97 +407,120 @@ export function DataTable<TData>({
 
   const isFreeform = !!renderRow;
 
+  // Render header for a column
+  const renderColumnHeader = (col: typeof resolvedColumns[number]) => {
+    const colHelper = makeColumnHelper(col);
+
+    // Special handling for select column
+    if (col.id === 'select' && enableRowSelection) {
+      return (
+        <Checkbox
+          checked={isAllPageRowsSelected}
+          onChange={(e) => toggleAllPageRowsSelected(e.target.checked)}
+          aria-label="Select all"
+        />
+      );
+    }
+
+    if (typeof col.header === 'function') {
+      return col.header({ column: colHelper });
+    }
+    return col.header ?? col._id;
+  };
+
+  // Render cell for a column and row
+  const renderColumnCell = (col: typeof resolvedColumns[number], row: RowHelper<TData>) => {
+    const value = col.accessorKey ? getAccessorValue(row.original, col.accessorKey) : undefined;
+    if (col.cell) {
+      return col.cell({ row, value });
+    }
+    return value != null ? String(value) : '';
+  };
+
   return (
     <div className={clsx('data-table', className)}>
-      {toolbar?.(table)}
-
-      {isFreeform ? (
-        /* ── Freeform mode ── */
-        <div className="data-table-freeform">
-          {renderHeader && (
-            <div className="data-table-freeform-header">
-              {renderHeader()}
-            </div>
-          )}
-          <div className="data-table-freeform-body">
-            {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
-                <div key={row.id}>{renderRow(row)}</div>
-              ))
-            ) : (
-              <div className="data-table-no-results">
-                {noResults ?? 'No results.'}
+      <div className="data-table-content better-scroll">
+        {isFreeform ? (
+          /* ── Freeform mode ── */
+          <div className="data-table-freeform">
+            {renderHeader && (
+              <div className="data-table-freeform-header">
+                {renderHeader()}
               </div>
             )}
+            <div className="data-table-freeform-body">
+              {displayRows.length > 0 ? (
+                displayRows.map((row) => (
+                  <div key={row.id}>{renderRow(row)}</div>
+                ))
+              ) : (
+                <div className="data-table-no-results">
+                  {noResults ?? 'No results.'}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ) : (
-        /* ── Column mode ── */
-        <Table className={clsx(striped && 'table-striped', tableClassName)}>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
+        ) : (
+          /* ── Column mode ── */
+          <Table className={clsx(striped && 'table-striped', tableClassName)}>
+            <TableHeader>
+              <TableRow>
+                {visibleColumns.map((col) => (
+                  <TableHead key={col._id}>
+                    {renderColumnHeader(col)}
                   </TableHead>
                 ))}
               </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows.length > 0 ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() ? 'selected' : undefined}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+            </TableHeader>
+            <TableBody>
+              {displayRows.length > 0 ? (
+                displayRows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() ? 'selected' : undefined}
+                  >
+                    {visibleColumns.map((col) => (
+                      <TableCell key={col._id}>
+                        {renderColumnCell(col, row)}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={visibleColumns.length}>
+                    <div className="data-table-no-results">
+                      {noResults ?? 'No results.'}
+                    </div>
+                  </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={effectiveColumns.length}>
-                  <div className="data-table-no-results">
-                    {noResults ?? 'No results.'}
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      )}
+              )}
+            </TableBody>
+          </Table>
+        )}
+      </div>
 
       {enablePagination && totalPages > 0 && (
         <div className="data-table-footer">
-          <div className="data-table-footer-info">
-            {enableRowSelection ? (
-              <span>{selectedCount} of {totalRows} row(s) selected</span>
-            ) : (
-              <span>{totalRows} row(s)</span>
-            )}
-          </div>
-          <div className="data-table-page-size">
-            <span>Rows per page</span>
+          <div className="data-table-footer-left">
             <Select
               options={pageSizeSelectOptions}
-              value={String(table.getState().pagination.pageSize)}
+              value={String(effectivePageSize)}
               onChange={(v) => {
-                const newSize = Number(v);
-                table.setPageSize(newSize);
-                onPageChange?.({ pageIndex: 0, pageSize: newSize });
+                handlePageSizeChange(Number(v));
               }}
               size={controlSize}
               searchable={false}
               showChevron
               className="data-table-page-size-select"
             />
+            <div className="data-table-footer-info">
+              {enableRowSelection ? (
+                <span>{selectedCount} of {totalRows} row(s) selected</span>
+              ) : (
+                <span>{totalRows} row(s)</span>
+              )}
+            </div>
           </div>
           <div className="data-table-footer-mobile">
             <PopOver
@@ -347,9 +529,9 @@ export function DataTable<TData>({
               placement="top"
               align="start"
               trigger={
-                <button type="button" className="data-table-info-btn" onClick={() => setMobileInfoOpen((v) => !v)}>
+                <Button variant="outline" color="default" size={controlSize} className={`btn-icon${controlSize !== 'md' ? `-${controlSize}` : ''}`} onClick={() => setMobileInfoOpen((v) => !v)}>
                   <InfoIcon />
-                </button>
+                </Button>
               }
             >
               <div className="data-table-info-popover">
@@ -363,10 +545,9 @@ export function DataTable<TData>({
                   <MenuItem
                     key={s}
                     label={`${s} per page`}
-                    active={table.getState().pagination.pageSize === s}
+                    active={effectivePageSize === s}
                     onClick={() => {
-                      table.setPageSize(s);
-                      onPageChange?.({ pageIndex: 0, pageSize: s });
+                      handlePageSizeChange(s);
                       setMobileInfoOpen(false);
                     }}
                   />
@@ -378,9 +559,7 @@ export function DataTable<TData>({
             currentPage={currentPage}
             totalPages={totalPages}
             onPageChange={(page) => {
-              const pageIndex = page - 1;
-              table.setPageIndex(pageIndex);
-              onPageChange?.({ pageIndex, pageSize: table.getState().pagination.pageSize });
+              handlePageChange(page - 1);
             }}
             size={controlSize}
           />

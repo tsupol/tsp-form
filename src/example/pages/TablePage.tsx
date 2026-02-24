@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { type ColumnDef } from '@tanstack/react-table';
+import { type ColumnDef } from '../../components/DataTable';
 import { Table, TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell, TableCaption } from '../../components/Table';
 import { DataTable, DataTableColumnHeader, createSelectColumn } from '../../components/DataTable';
 import { Input } from '../../components/Input';
@@ -51,13 +51,13 @@ const statusBadgeColor: Record<string, 'success' | 'warning' | 'default' | 'dang
   failed: 'danger',
 };
 
-const paymentColumns: ColumnDef<Payment, any>[] = [
+const paymentColumns: ColumnDef<Payment>[] = [
   createSelectColumn<Payment>(),
   {
     accessorKey: 'status',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
-    cell: ({ row }) => {
-      const status = row.getValue('status') as string;
+    cell: ({ value }) => {
+      const status = value as string;
       return (
         <Badge size="sm" color={statusBadgeColor[status] ?? 'default'} className="capitalize">
           {status}
@@ -72,9 +72,8 @@ const paymentColumns: ColumnDef<Payment, any>[] = [
   {
     accessorKey: 'amount',
     header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'));
-      const formatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    cell: ({ value }) => {
+      const formatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
       return <span style={{ fontWeight: 500 }}>{formatted}</span>;
     },
   },
@@ -169,6 +168,15 @@ export const TablePage = () => {
         <p className="text-muted mb-4">
           Full-featured data table with sorting, filtering, pagination, and row selection.
         </p>
+        <div className="data-table-toolbar">
+          <Input
+            placeholder="Filter emails..."
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            style={{ maxWidth: '16rem' }}
+            size="sm"
+          />
+        </div>
         <DataTable
           data={payments}
           columns={paymentColumns}
@@ -180,18 +188,23 @@ export const TablePage = () => {
           pageSizeOptions={[5, 10, 20]}
           globalFilter={globalFilter}
           onGlobalFilterChange={setGlobalFilter}
-          toolbar={(table) => (
-            <div className="data-table-toolbar">
-              <Input
-                placeholder="Filter emails..."
-                value={globalFilter}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                style={{ maxWidth: '16rem' }}
-                size="sm"
-              />
-            </div>
-          )}
         />
+
+        <h3 className="heading-4 mt-8 mb-2">Scrollable (fixed-height container)</h3>
+        <p className="text-muted mb-4">
+          When placed in a height-constrained parent, the header stays sticky at the top,
+          the body scrolls, and the pagination footer stays at the bottom.
+        </p>
+        <div style={{ height: '24rem' }}>
+          <DataTable
+            data={payments}
+            columns={paymentColumns}
+            enableSorting
+            enablePagination
+            pageSize={10}
+            pageSizeOptions={[5, 10, 15]}
+          />
+        </div>
       </section>
 
       {/* ── Section 3: DataTable (freeform mode) ── */}
@@ -258,8 +271,8 @@ export const TablePage = () => {
             {
               accessorKey: 'amount',
               header: 'Amount',
-              cell: ({ row }) => {
-                const formatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(row.getValue('amount'));
+              cell: ({ value }) => {
+                const formatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
                 return formatted;
               },
             },
