@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { type ColumnDef, type SortingState } from '../../components/DataTable';
 import { DataTable, DataTableColumnHeader } from '../../components/DataTable';
 import { Badge } from '../../components/Badge';
@@ -85,10 +85,20 @@ export const ServerPaginationPage = () => {
   const [pageSize, setPageSize] = useState(20);
   const [sorting, setSorting] = useState<SortingState>([]);
 
-  const { rows, totalCount } = useMemo(
-    () => fakeServerFetch(pageIndex, pageSize, sorting),
-    [pageIndex, pageSize, sorting],
-  );
+  const [rows, setRows] = useState<Product[]>([]);
+  const [totalCount, setTotalCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setLoading(true);
+    const timer = setTimeout(() => {
+      const result = fakeServerFetch(pageIndex, pageSize, sorting);
+      setRows(result.rows);
+      setTotalCount(result.totalCount);
+      setLoading(false);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [pageIndex, pageSize, sorting]);
 
   return (
     <div className="page-content h-dvh max-h-dvh max-w-[64rem] flex flex-col overflow-hidden">
