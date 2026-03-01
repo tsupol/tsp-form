@@ -29,9 +29,11 @@ export function FormSizesPage() {
   const [rangeToMd, setRangeToMd] = useState<Date | null>(null);
   const [rangeFromLg, setRangeFromLg] = useState<Date | null>(null);
   const [rangeToLg, setRangeToLg] = useState<Date | null>(null);
+  const [spinnerXs, setSpinnerXs] = useState<number | "">(0);
   const [spinnerSm, setSpinnerSm] = useState<number | "">(0);
   const [spinnerMd, setSpinnerMd] = useState<number | "">(0);
   const [spinnerLg, setSpinnerLg] = useState<number | "">(0);
+  const [spinnerDiagXs, setSpinnerDiagXs] = useState<number | "">(0);
   const [spinnerDiagSm, setSpinnerDiagSm] = useState<number | "">(0);
   const [spinnerDiagMd, setSpinnerDiagMd] = useState<number | "">(0);
   const [spinnerDiagLg, setSpinnerDiagLg] = useState<number | "">(0);
@@ -256,6 +258,16 @@ export function FormSizesPage() {
           <h2 className="heading-3 mb-4">NumberSpinner</h2>
           <div className="grid gap-3">
             <div className="flex flex-col">
+              <label className="form-label">Extra Small</label>
+              <NumberSpinner
+                scale="xs"
+                value={spinnerXs}
+                onChange={setSpinnerXs}
+                min={0}
+                max={100}
+              />
+            </div>
+            <div className="flex flex-col">
               <label className="form-label">Small</label>
               <NumberSpinner
                 scale="sm"
@@ -292,6 +304,17 @@ export function FormSizesPage() {
         <section className="card">
           <h2 className="heading-3 mb-4">NumberSpinner (Diagonal)</h2>
           <div className="grid gap-3">
+            <div className="flex flex-col">
+              <label className="form-label">Extra Small</label>
+              <NumberSpinner
+                variant="diagonal"
+                scale="xs"
+                value={spinnerDiagXs}
+                onChange={setSpinnerDiagXs}
+                min={0}
+                max={100}
+              />
+            </div>
             <div className="flex flex-col">
               <label className="form-label">Small</label>
               <NumberSpinner

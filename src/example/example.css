@@ -100,9 +100,6 @@
     --spacing-control-b-lg:   0.5625rem;
     --spacing-control-l-lg:   1rem;
 
-    /* Font metric compensation */
-    --text-shift-y: 0px;
-
     --text-base: 0.875rem;
     --text-base--letter-spacing: 0em;
     --text-base--line-height: 1.5;

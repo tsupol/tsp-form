@@ -10,7 +10,7 @@ export type NumberSpinnerProps = Omit<InputHTMLAttributes<HTMLInputElement>, 'ty
   max?: number;
   step?: number;
   variant?: "default" | "diagonal";
-  scale?: "sm" | "md" | "lg";
+  scale?: "xs" | "sm" | "md" | "lg";
   leadingZero?: boolean;
 };
 

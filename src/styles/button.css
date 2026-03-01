@@ -34,12 +34,13 @@
     width: 1rem;
     height: 1rem;
     margin: -0.5rem 0;
+    margin-top: calc(-0.5rem - var(--text-shift-y, 0px));
 }
 
 
 /* Tighter horizontal padding when button contains an SVG */
 .btn:has(> svg) { padding-left: 0.75rem; padding-right: 0.75rem; }
-.btn-xs:has(> svg) { padding-left: 0.25rem; padding-right: 0.25rem; }
+.btn-xs:has(> svg) { padding-left: 0.375rem; padding-right: 0.375rem; }
 .btn-sm:has(> svg) { padding-left: 0.375rem; padding-right: 0.375rem; }
 .btn-lg:has(> svg) { padding-left: 1.125rem; padding-right: 1.125rem; }
 
@@ -69,8 +70,8 @@
 }
 
 .btn-xs {
-    padding-left: 0.375rem;
-    padding-right: 0.375rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
     font-size: var(--text-control-xs, 0.625rem);
     min-height: var(--height-control-xs, 1.375rem);
     min-width: var(--height-control-xs, 1.375rem);
@@ -81,6 +82,7 @@
     width: 0.75rem;
     height: 0.75rem;
     margin: -0.375rem 0;
+    margin-top: calc(-0.375rem - var(--text-shift-y, 0px));
 }
 
 .btn-sm {
@@ -96,6 +98,7 @@
     width: 0.875rem;
     height: 0.875rem;
     margin: -0.4375rem 0;
+    margin-top: calc(-0.4375rem - var(--text-shift-y, 0px));
 }
 
 .btn-lg {
@@ -110,7 +113,14 @@
     width: 1.25rem;
     height: 1.25rem;
     margin: -0.625rem 0;
+    margin-top: calc(-0.625rem - var(--text-shift-y, 0px));
 }
+
+/* Icon-only — symmetric margins, no text-shift-y compensation */
+.btn-icon svg { margin: -0.5rem 0; }
+.btn-icon-xs svg { margin: -0.375rem 0; }
+.btn-icon-sm svg { margin: -0.4375rem 0; }
+.btn-icon-lg svg { margin: -0.625rem 0; }
 
 /* Icon-only variants — square buttons with no padding */
 .btn-icon {
