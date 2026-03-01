@@ -8,6 +8,8 @@
         transition-property: border-color, box-shadow;
         transition-duration: 200ms;
         cursor: pointer;
+        padding-top: var(--text-shift-y, 0px);
+        padding-bottom: 0;
         padding-right: 2.5rem;
         width: 100%;
         min-width: 0;
@@ -21,7 +23,7 @@
 
     .form-control-xs.select {
         min-height: var(--height-control-xs, 1.375rem);
-        padding-top: 0;
+        padding-top: var(--text-shift-y, 0px);
         padding-bottom: 0;
         padding-right: 1.75rem;
     }
@@ -40,7 +42,7 @@
 
     .form-control-sm.select {
         min-height: var(--height-control-sm, 1.75rem);
-        padding-top: 0;
+        padding-top: var(--text-shift-y, 0px);
         padding-bottom: 0;
         padding-right: 2rem;
     }
@@ -63,6 +65,8 @@
 
     .form-control-lg.select {
         min-height: var(--height-control-lg, 2.75rem);
+        padding-top: var(--text-shift-y, 0px);
+        padding-bottom: 0;
         padding-right: 2.5rem;
     }
 

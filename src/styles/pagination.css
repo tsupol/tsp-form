@@ -86,7 +86,8 @@
     .pagination-xs .pagination-item {
         min-width: var(--height-control-xs, 1.375rem);
         height: var(--height-control-xs, 1.375rem);
-        padding: 0 0.1875rem;
+        padding-left: 0.1875rem;
+        padding-right: 0.1875rem;
         font-size: var(--text-control-xs, 0.625rem);
     }
 
@@ -98,7 +99,8 @@
     .pagination-sm .pagination-item {
         min-width: var(--height-control-sm, 1.75rem);
         height: var(--height-control-sm, 1.75rem);
-        padding: 0 0.25rem;
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
         font-size: var(--text-control-sm, 0.75rem);
     }
 
@@ -106,7 +108,8 @@
     .pagination-lg .pagination-item {
         min-width: var(--height-control-lg, 2.75rem);
         height: var(--height-control-lg, 2.75rem);
-        padding: 0 0.5rem;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
         font-size: var(--text-control-lg, 1rem);
     }
 
