@@ -99,6 +99,7 @@
         max-width: var(--max-width-select-chip, 10rem);
         overflow: hidden;
         box-sizing: border-box;
+        padding-top: var(--text-shift-y, 0px);
     }
 
     .form-control-sm.select .selected-chip {
@@ -146,7 +147,6 @@
         font-size: 1rem;
         line-height: 1.5;
         padding-right: 0.25rem;
-        margin-top: -1px;
     }
 
     .selected-chip-close:hover {

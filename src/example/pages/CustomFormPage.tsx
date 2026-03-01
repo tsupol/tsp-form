@@ -88,7 +88,7 @@ export function CustomFormPage() {
             </div>
             <div className="flex flex-col">
               <label className="form-label" htmlFor="status">Status</label>
-              <div className="w-8/12">
+              <div className="w-4/12">
                 <Controller
                   name="status"
                   control={control}
@@ -96,6 +96,7 @@ export function CustomFormPage() {
                   render={({ field: { onChange, value } }) => (
                     <Select
                       id="status"
+                      size="sm"
                       startIcon={<Search size={16}/>}
                       options={[
                         { value: 'active', label: 'Active', icon: <span style={{ color: '#22c55e' }}>●</span> },

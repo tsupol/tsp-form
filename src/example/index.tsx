@@ -38,6 +38,7 @@ import { ButtonGroupPage } from './pages/ButtonGroupPage';
 import { BadgePage } from './pages/BadgePage';
 import { ServerPaginationPage } from './pages/ServerPaginationPage';
 import { AlertPage } from './pages/AlertPage';
+import { FontComparePage } from './pages/FontComparePage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -182,6 +183,7 @@ const menuItemsList = [
   { key: 'badge', path: '/badge' },
   { key: 'server-pagination', path: '/server-pagination' },
   { key: 'alert', path: '/alert' },
+  { key: 'font-compare', path: '/font-compare' },
 ];
 
 const SideNav = () => {
@@ -235,6 +237,7 @@ const SideNav = () => {
     { key: 'image-uploader', icon: <Upload size="1rem"/>, label: "Image Uploader", path: '/image-uploader' },
     { key: 'nav-modal', icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", path: '/nav-modal' },
     { key: 'server-pagination', icon: <Table2 size="1rem"/>, label: "Server Pagination", path: '/server-pagination' },
+    { key: 'font-compare', icon: <Type size="1rem"/>, label: "Font Compare", path: '/font-compare' },
   ];
 
   const handleSelect = (key: string, path?: string) => {
@@ -338,6 +341,7 @@ const App = () => {
                 <Route path="/badge" element={<BadgePage/>}/>
                 <Route path="/button-group" element={<ButtonGroupPage/>}/>
                 <Route path="/server-pagination" element={<ServerPaginationPage/>}/>
+                <Route path="/font-compare" element={<FontComparePage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="heading-1 mb-4">Dashboard</h1>

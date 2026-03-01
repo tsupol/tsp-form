@@ -196,6 +196,7 @@
     --color-pagination-active-fg: var(--color-fg);
     --color-pagination-active-border: var(--color-button-default-border);
     --spacing-pagination-gap: 0.125rem;
+
 }
 
 /* ── Light theme ──────────────────────────────────────────────────── */

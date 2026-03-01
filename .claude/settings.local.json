@@ -32,7 +32,9 @@
       "Bash(git checkout:*)",
       "Bash(for f in src/styles/chevron.css src/styles/aspect-ratio-fit.css src/styles/json-pretty.css src/styles/daterange.css src/styles/switch.css src/styles/collapsible-panel.css src/styles/progress-bar.css src/styles/popover.css src/styles/carousel.css src/styles/scroll.css src/styles/slider.css src/styles/number-spinner.css src/styles/datepicker.css src/styles/image-uploader.css src/styles/checkbox.css src/styles/skeleton.css src/styles/side-menu.css src/styles/side-menu-items.css src/styles/tooltip.css src/styles/snackbar.css src/styles/menu.css src/styles/data-table.css src/styles/table.css src/styles/select.css src/styles/form.css src/styles/pagination.css src/styles/modal.css)",
       "Bash(do python -c \"\nimport sys\npath = sys.argv[1]\nwith open\\(path, ''r'', encoding=''utf-8''\\) as fh:\n    content = fh.read\\(\\)\nif content.strip\\(\\).startswith\\(''@layer components''\\):\n    print\\(f''SKIP {path}''\\)\n    sys.exit\\(0\\)\nlines = content.split\\(''\\\\n''\\)\nindented = []\nfor line in lines:\n    if line.strip\\(\\) == '''':\n        indented.append\\(''''\\)\n    else:\n        indented.append\\(''    '' + line\\)\nnew_content = ''@layer components {\\\\n'' + ''\\\\n''.join\\(indented\\) + ''\\\\n}\\\\n''\nwith open\\(path, ''w'', encoding=''utf-8''\\) as fh:\n    fh.write\\(new_content\\)\nprint\\(f''DONE {path}''\\)\n\" \"$f\")",
-      "Bash(npm run build:lib:*)"
+      "Bash(npm run build:lib:*)",
+      "Bash(node -p:*)",
+      "Bash(npm version:*)"
     ]
   }
 }

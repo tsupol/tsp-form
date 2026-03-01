@@ -30,16 +30,6 @@ export function BadgePage() {
           </div>
         </section>
 
-        {/* Sizes */}
-        <section>
-          <h3 className="heading-3 mb-3">Sizes</h3>
-          <div className="flex gap-2 flex-wrap items-end card">
-            {sizes.map((s) => (
-              <Badge key={s} color="primary" size={s}>{s}</Badge>
-            ))}
-          </div>
-        </section>
-
         {/* With icons */}
         <section>
           <h3 className="heading-3 mb-3">With Icons</h3>
@@ -59,14 +49,16 @@ export function BadgePage() {
           </div>
         </section>
 
-        {/* Icon sizes */}
+        {/* Sizes */}
         <section>
-          <h3 className="heading-3 mb-3">Icons at Different Sizes</h3>
-          <div className="flex gap-2 flex-wrap items-end card">
-            <Badge color="success" size="xs"><Check /> Done</Badge>
-            <Badge color="success" size="sm"><Check /> Done</Badge>
-            <Badge color="success" size="md"><Check /> Done</Badge>
-            <Badge color="success" size="lg"><Check /> Done</Badge>
+          <h3 className="heading-3 mb-3">Sizes</h3>
+          <div className="flex gap-2 flex-wrap items-center card">
+            {sizes.map((s) => (
+              <>
+                <Badge key={s} color="primary" size={s}>{s}</Badge>
+                <Badge key={`${s}-icon`} color="success" size={s}><Check /> {s}</Badge>
+              </>
+            ))}
           </div>
         </section>
 

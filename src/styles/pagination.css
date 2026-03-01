@@ -30,6 +30,7 @@
         cursor: pointer;
         transition: all 0.2s ease;
         user-select: none;
+        padding-top: var(--text-shift-y, 0px);
     }
 
     @media (hover: hover) and (pointer: fine) {

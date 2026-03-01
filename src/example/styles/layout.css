@@ -19,7 +19,7 @@ html {
 body {
     background: var(--color-bg);
     color: var(--color-fg);
-    font-family: "Zalando Sans", "Roboto", "Inter", "Manrope", "DM Sans", sans-serif;
+    font-family: "Inter", sans-serif;
     font-size: var(--text-base);
     width: 100vw;
     line-height: var(--text-base--line-height);
@@ -28,6 +28,9 @@ body {
 
 #root {
     width: 100vw;
+
+    /* ── Font metric compensation ──────────────────────────────────── */
+    --text-shift-y: .5em;
 }
 
 .page-content {

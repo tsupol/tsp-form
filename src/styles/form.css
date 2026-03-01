@@ -14,6 +14,7 @@
         line-height: var(--text-control--line-height, 1.4);
         box-sizing: border-box;
         color: var(--color-control-text, var(--color-fg));
+        padding-top: var(--text-shift-y, 0px);
     }
 
     textarea.form-control {
