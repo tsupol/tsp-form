@@ -19,7 +19,7 @@ html {
 body {
     background: var(--color-bg);
     color: var(--color-fg);
-    font-family: "Inter", sans-serif;
+    font-family: "Noto Sans Thai", "Inter", sans-serif;
     font-size: var(--text-base);
     width: 100vw;
     line-height: var(--text-base--line-height);
