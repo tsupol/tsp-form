@@ -1,4 +1,4 @@
-import { useState, useMemo, Fragment, type ReactNode } from 'react';
+import { useState, useMemo, useRef, useCallback, Fragment, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './Table';
 import { Button } from './Button';
@@ -297,6 +297,35 @@ export function DataTable<TData>({
     }
   };
 
+  // Shift-click bulk selection
+  const lastSelectedIndex = useRef<number | null>(null);
+
+  const handleRowCheckboxClick = useCallback(
+    (displayIndex: number, checked: boolean, shiftKey: boolean, rows: RowHelper<TData>[]) => {
+      if (shiftKey && lastSelectedIndex.current != null) {
+        const from = Math.min(lastSelectedIndex.current, displayIndex);
+        const to = Math.max(lastSelectedIndex.current, displayIndex);
+        handleRowSelectionChange((prev) => {
+          const next = { ...prev };
+          for (let i = from; i <= to; i++) {
+            if (checked) {
+              next[rows[i].id] = true;
+            } else {
+              delete next[rows[i].id];
+            }
+          }
+          return next;
+        });
+      } else {
+        const row = rows[displayIndex];
+        row.toggleSelected(checked);
+      }
+      lastSelectedIndex.current = displayIndex;
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [],
+  );
+
   // Update row expansion
   const handleRowExpansionChange = (updater: Updater<RowExpansionState>) => {
     if (onRowExpansionChange) {
@@ -493,7 +522,29 @@ export function DataTable<TData>({
   };
 
   // Render cell for a column and row
-  const renderColumnCell = (col: typeof resolvedColumns[number], row: RowHelper<TData>) => {
+  const renderColumnCell = (col: typeof resolvedColumns[number], row: RowHelper<TData>, displayIndex: number) => {
+    // Override select column cell to support shift-click
+    if (col.id === 'select' && enableRowSelection) {
+      return (
+        <div
+          className="data-table-select-cell"
+          role="checkbox"
+          aria-checked={row.getIsSelected()}
+          aria-label="Select row"
+          onClick={(e: React.MouseEvent) => {
+            const checked = !row.getIsSelected();
+            handleRowCheckboxClick(displayIndex, checked, e.shiftKey, displayRows);
+          }}
+        >
+          <Checkbox
+            checked={row.getIsSelected()}
+            onChange={() => {}}
+            tabIndex={-1}
+            aria-hidden
+          />
+        </div>
+      );
+    }
     const value = col.accessorKey ? getAccessorValue(row.original, col.accessorKey) : undefined;
     if (col.cell) {
       return col.cell({ row, value });
@@ -538,14 +589,14 @@ export function DataTable<TData>({
             </TableHeader>
             <TableBody>
               {displayRows.length > 0 ? (
-                displayRows.map((row) => (
+                displayRows.map((row, displayIndex) => (
                   <Fragment key={row.id}>
                     <TableRow
                       data-state={row.getIsSelected() ? 'selected' : undefined}
                     >
                       {visibleColumns.map((col) => (
                         <TableCell key={col._id}>
-                          {renderColumnCell(col, row)}
+                          {renderColumnCell(col, row, displayIndex)}
                         </TableCell>
                       ))}
                     </TableRow>

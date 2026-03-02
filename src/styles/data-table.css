@@ -114,6 +114,17 @@
         }
     }
 
+    /* Select cell — intercept clicks for shift-select */
+    .data-table-select-cell {
+        display: inline-flex;
+        cursor: pointer;
+    }
+
+    .data-table-select-cell .checkbox-box,
+    .data-table-select-cell .checkbox-peer {
+        pointer-events: none;
+    }
+
     /* Expand toggle button */
     .data-table-expand-toggle {
         display: inline-flex;
