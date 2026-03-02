@@ -6,7 +6,7 @@
     justify-content: center;
     gap: 0.25rem;
     height: 1.25rem;
-    padding: var(--text-shift-y, 0px) 0.5rem 1px;
+    padding: var(--text-shift-y, 0px) 0.5rem 0rem;
     box-sizing: border-box;
     border-radius: var(--radius-badge, 9999px);
     font-size: 0.75rem;

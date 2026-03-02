@@ -39,6 +39,7 @@ import { BadgePage } from './pages/BadgePage';
 import { ServerPaginationPage } from './pages/ServerPaginationPage';
 import { AlertPage } from './pages/AlertPage';
 import { FontComparePage } from './pages/FontComparePage';
+import { TextShiftPage } from './pages/TextShiftPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -184,6 +185,7 @@ const menuItemsList = [
   { key: 'server-pagination', path: '/server-pagination' },
   { key: 'alert', path: '/alert' },
   { key: 'font-compare', path: '/font-compare' },
+  { key: 'text-shift', path: '/text-shift' },
 ];
 
 const SideNav = () => {
@@ -238,6 +240,7 @@ const SideNav = () => {
     { key: 'nav-modal', icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", path: '/nav-modal' },
     { key: 'server-pagination', icon: <Table2 size="1rem"/>, label: "Server Pagination", path: '/server-pagination' },
     { key: 'font-compare', icon: <Type size="1rem"/>, label: "Font Compare", path: '/font-compare' },
+    { key: 'text-shift', icon: <SlidersHorizontal size="1rem"/>, label: "Text Shift", path: '/text-shift' },
   ];
 
   const handleSelect = (key: string, path?: string) => {
@@ -342,6 +345,7 @@ const App = () => {
                 <Route path="/button-group" element={<ButtonGroupPage/>}/>
                 <Route path="/server-pagination" element={<ServerPaginationPage/>}/>
                 <Route path="/font-compare" element={<FontComparePage/>}/>
+                <Route path="/text-shift" element={<TextShiftPage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="heading-1 mb-4">Dashboard</h1>

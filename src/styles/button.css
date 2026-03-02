@@ -8,7 +8,7 @@
     --color-text-hover: var(--color-fg-contrast);
     padding-top: var(--text-shift-y, 0px);
     padding-right: 1rem;
-    padding-bottom: 0;
+    padding-bottom: calc(0px - var(--text-shift-y, 0px));
     padding-left: 1rem;
     font-size: var(--text-control, 0.875rem);
     line-height: var(--text-control--line-height, 1.4);
