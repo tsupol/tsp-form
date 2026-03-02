@@ -114,6 +114,40 @@
         }
     }
 
+    /* Expand toggle button */
+    .data-table-expand-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: none;
+        border: none;
+        padding: 0.125rem;
+        color: inherit;
+        cursor: pointer;
+        border-radius: var(--radius-sm, 0.25rem);
+    }
+
+    @media (hover: hover) {
+        .data-table-expand-toggle:hover {
+            color: var(--color-fg);
+            background: var(--color-surface-hover, rgba(0, 0, 0, 0.04));
+        }
+    }
+
+    /* Expanded detail row */
+    .data-table-expanded-row {
+        background: var(--color-surface);
+    }
+
+    .data-table-expanded-row:hover {
+        background: var(--color-surface);
+    }
+
+    .data-table-expanded-cell {
+        padding: var(--spacing-data-table-expanded-y, 0.75rem) var(--spacing-data-table-expanded-x, 1rem);
+        border-bottom: 1px solid var(--color-table-border, var(--color-line));
+    }
+
     /* Freeform mode */
     .data-table-freeform {
         display: flex;

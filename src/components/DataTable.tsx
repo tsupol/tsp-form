@@ -1,8 +1,9 @@
-import { useState, useMemo, type ReactNode } from 'react';
+import { useState, useMemo, Fragment, type ReactNode } from 'react';
 import clsx from 'clsx';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from './Table';
 import { Button } from './Button';
 import { Checkbox } from './Checkbox';
+import { Chevron } from './Chevron';
 import { Pagination } from './Pagination';
 import { Select, type SelectItem } from './Select';
 import { PopOver } from './PopOver';
@@ -14,6 +15,7 @@ import '../styles/data-table.css';
 export type SortDirection = 'asc' | 'desc';
 export type SortingState = { id: string; desc: boolean }[];
 export type RowSelectionState = Record<string, boolean>;
+export type RowExpansionState = Record<string, boolean>;
 export type VisibilityState = Record<string, boolean>;
 
 export type Updater<T> = T | ((old: T) => T);
@@ -32,6 +34,9 @@ export type RowHelper<TData> = {
   getValue: (key: string) => any;
   getIsSelected: () => boolean;
   toggleSelected: (selected?: boolean) => void;
+  getIsExpanded: () => boolean;
+  toggleExpanded: () => void;
+  getCanExpand: () => boolean;
 };
 
 export type ColumnDef<TData> = {
@@ -126,6 +131,29 @@ export function createSelectColumn<TData>(): ColumnDef<TData> {
   };
 }
 
+// ── createExpandColumn ──────────────────────────────────────────────
+
+export function createExpandColumn<TData>(): ColumnDef<TData> {
+  return {
+    id: 'expand',
+    header: '',
+    cell: ({ row }) => {
+      if (!row.getCanExpand()) return null;
+      return (
+        <button
+          type="button"
+          className="data-table-expand-toggle"
+          onClick={() => row.toggleExpanded()}
+          aria-label={row.getIsExpanded() ? 'Collapse row' : 'Expand row'}
+        >
+          <Chevron direction="right" open={row.getIsExpanded()} size={16} />
+        </button>
+      );
+    },
+    enableSorting: false,
+  };
+}
+
 // ── Helpers ─────────────────────────────────────────────────────────
 
 function resolveUpdater<T>(updater: Updater<T>, current: T): T {
@@ -159,6 +187,10 @@ type DataTableBaseProps<TData> = {
   onColumnVisibilityChange?: (updater: Updater<VisibilityState>) => void;
   rowSelection?: RowSelectionState;
   onRowSelectionChange?: (updater: Updater<RowSelectionState>) => void;
+  renderExpandedRow?: (row: RowHelper<TData>) => ReactNode;
+  getRowCanExpand?: (original: TData, index: number) => boolean;
+  rowExpansion?: RowExpansionState;
+  onRowExpansionChange?: (updater: Updater<RowExpansionState>) => void;
   noResults?: ReactNode;
   className?: string;
   striped?: boolean;
@@ -204,6 +236,10 @@ export function DataTable<TData>({
   onColumnVisibilityChange,
   rowSelection: controlledRowSelection,
   onRowSelectionChange,
+  renderExpandedRow,
+  getRowCanExpand,
+  rowExpansion: controlledRowExpansion,
+  onRowExpansionChange,
   noResults,
   className,
   tableClassName,
@@ -213,6 +249,7 @@ export function DataTable<TData>({
   const [internalSorting, setInternalSorting] = useState<SortingState>([]);
   const [internalColumnVisibility, setInternalColumnVisibility] = useState<VisibilityState>({});
   const [internalRowSelection, setInternalRowSelection] = useState<RowSelectionState>({});
+  const [internalRowExpansion, setInternalRowExpansion] = useState<RowExpansionState>({});
   const [internalGlobalFilter, setInternalGlobalFilter] = useState('');
   const [internalPageIndex, setInternalPageIndex] = useState(0);
   const [internalPageSize, setInternalPageSize] = useState(pageSize);
@@ -221,6 +258,7 @@ export function DataTable<TData>({
   const sorting = controlledSorting ?? internalSorting;
   const columnVisibility = controlledColumnVisibility ?? internalColumnVisibility;
   const rowSelection = controlledRowSelection ?? internalRowSelection;
+  const rowExpansion = controlledRowExpansion ?? internalRowExpansion;
   const globalFilter = controlledGlobalFilter ?? internalGlobalFilter;
   const effectivePageIndex = controlledPageIndex ?? internalPageIndex;
   const effectivePageSize = pageSize;
@@ -256,6 +294,15 @@ export function DataTable<TData>({
       onRowSelectionChange(updater);
     } else {
       setInternalRowSelection((prev) => resolveUpdater(updater, prev));
+    }
+  };
+
+  // Update row expansion
+  const handleRowExpansionChange = (updater: Updater<RowExpansionState>) => {
+    if (onRowExpansionChange) {
+      onRowExpansionChange(updater);
+    } else {
+      setInternalRowExpansion((prev) => resolveUpdater(updater, prev));
     }
   };
 
@@ -307,10 +354,27 @@ export function DataTable<TData>({
             return next;
           });
         },
+        getIsExpanded: () => !!rowExpansion[id],
+        toggleExpanded: () => {
+          handleRowExpansionChange((prev) => {
+            const next = { ...prev };
+            if (prev[id]) {
+              delete next[id];
+            } else {
+              next[id] = true;
+            }
+            return next;
+          });
+        },
+        getCanExpand: () => {
+          if (!renderExpandedRow) return false;
+          if (getRowCanExpand) return getRowCanExpand(item, index);
+          return true;
+        },
       };
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, rowSelection]);
+  }, [data, rowSelection, rowExpansion, renderExpandedRow, getRowCanExpand]);
 
   // Apply client-side global filter
   const filteredRows = useMemo(() => {
@@ -475,16 +539,24 @@ export function DataTable<TData>({
             <TableBody>
               {displayRows.length > 0 ? (
                 displayRows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() ? 'selected' : undefined}
-                  >
-                    {visibleColumns.map((col) => (
-                      <TableCell key={col._id}>
-                        {renderColumnCell(col, row)}
-                      </TableCell>
-                    ))}
-                  </TableRow>
+                  <Fragment key={row.id}>
+                    <TableRow
+                      data-state={row.getIsSelected() ? 'selected' : undefined}
+                    >
+                      {visibleColumns.map((col) => (
+                        <TableCell key={col._id}>
+                          {renderColumnCell(col, row)}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    {renderExpandedRow && row.getIsExpanded() && (
+                      <tr className="data-table-expanded-row">
+                        <td colSpan={visibleColumns.length} className="data-table-expanded-cell">
+                          {renderExpandedRow(row)}
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
                 ))
               ) : (
                 <TableRow>

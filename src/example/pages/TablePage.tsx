@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { type ColumnDef } from '../../components/DataTable';
 import { Table, TableHeader, TableBody, TableFooter, TableRow, TableHead, TableCell, TableCaption } from '../../components/Table';
-import { DataTable, DataTableColumnHeader, createSelectColumn } from '../../components/DataTable';
+import { DataTable, DataTableColumnHeader, createSelectColumn, createExpandColumn } from '../../components/DataTable';
 import { Input } from '../../components/Input';
 import { Badge } from '../../components/Badge';
 
@@ -260,7 +260,61 @@ export const TablePage = () => {
         />
       </section>
 
-      {/* ── Section 4: Striped variant ── */}
+      {/* ── Section 4: Expandable Rows ── */}
+      <section className="mb-12">
+        <h2 className="heading-3 mb-4">Expandable Rows</h2>
+        <p className="text-muted mb-4">
+          Use <code>renderExpandedRow</code> and <code>createExpandColumn</code> to add
+          collapsible detail rows with a chevron toggle.
+        </p>
+        <DataTable
+          data={payments}
+          columns={[
+            createExpandColumn<Payment>(),
+            {
+              accessorKey: 'status',
+              header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+              cell: ({ value }) => {
+                const status = value as string;
+                return (
+                  <Badge size="sm" color={statusBadgeColor[status] ?? 'default'} className="capitalize">
+                    {status}
+                  </Badge>
+                );
+              },
+            },
+            {
+              accessorKey: 'email',
+              header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+            },
+            {
+              accessorKey: 'amount',
+              header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
+              cell: ({ value }) => {
+                const formatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+                return <span style={{ fontWeight: 500 }}>{formatted}</span>;
+              },
+            },
+          ]}
+          renderExpandedRow={(row) => {
+            const p = row.original;
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.875rem' }}>
+                <div><strong>ID:</strong> {p.id}</div>
+                <div><strong>Email:</strong> {p.email}</div>
+                <div><strong>Amount:</strong> ${p.amount.toFixed(2)}</div>
+                <div><strong>Status:</strong> {p.status}</div>
+              </div>
+            );
+          }}
+          enableSorting
+          enablePagination
+          pageSize={5}
+          pageSizeOptions={[5, 10, 20]}
+        />
+      </section>
+
+      {/* ── Section 5: Striped variant ── */}
       <section className="mb-12">
         <h2 className="heading-3 mb-4">Striped Table</h2>
         <DataTable
