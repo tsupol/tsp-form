@@ -1,0 +1,137 @@
+@layer components {
+    /* drawer.css */
+
+    /* The sliding panel */
+    .drawer-panel {
+        position: fixed;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+
+        /* Styling */
+        background: var(--color-surface, #222);
+        border: 1px solid var(--color-line, rgba(222, 220, 209, 0.15));
+
+        /* Animation */
+        transition: transform 200ms ease;
+    }
+
+    /* Side positioning */
+    .drawer-panel[data-side="right"] {
+        top: 0;
+        right: 0;
+        height: 100dvh;
+        border-right: none;
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        transform: translateX(100%);
+    }
+
+    .drawer-panel[data-side="left"] {
+        top: 0;
+        left: 0;
+        height: 100dvh;
+        border-left: none;
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        transform: translateX(-100%);
+    }
+
+    .drawer-panel[data-side="top"] {
+        top: 0;
+        left: 0;
+        width: 100dvw;
+        border-top: none;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        transform: translateY(-100%);
+    }
+
+    .drawer-panel[data-side="bottom"] {
+        bottom: 0;
+        left: 0;
+        width: 100dvw;
+        border-bottom: none;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        transform: translateY(100%);
+    }
+
+    /* Open state — slide in */
+    .modal-layer[data-open="true"] .drawer-panel[data-side="right"],
+    .modal-layer[data-open="true"] .drawer-panel[data-side="left"] {
+        transform: translateX(0);
+    }
+
+    .modal-layer[data-open="true"] .drawer-panel[data-side="top"],
+    .modal-layer[data-open="true"] .drawer-panel[data-side="bottom"] {
+        transform: translateY(0);
+    }
+
+    /* Drawer content building blocks (mirror modal pattern) */
+    .drawer-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        border-bottom: 1px solid var(--color-line, rgba(222, 220, 209, 0.15));
+    }
+
+    .drawer-title {
+        margin: 0;
+        font-size: var(--text-h2, 1.25rem);
+        line-height: var(--text-h2--line-height, 1.4);
+        font-weight: var(--text-h2--font-weight, 600);
+        letter-spacing: var(--text-h2--letter-spacing, normal);
+    }
+
+    .drawer-close-btn {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0.75rem 1rem;
+        margin: -0.75rem -1rem -0.75rem 0;
+        color: var(--color-fg-muted, #999);
+        transition: color 150ms ease;
+    }
+
+    .drawer-close-btn:hover {
+        color: var(--color-fg, #fff);
+    }
+
+    .drawer-content {
+        padding: 1rem;
+        overflow-y: auto;
+        flex: 1;
+        min-height: 0;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+    }
+
+    .drawer-content::-webkit-scrollbar {
+        width: 8px;
+    }
+
+    .drawer-content::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .drawer-content::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 4px;
+    }
+
+    .drawer-content::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.5);
+    }
+
+    .drawer-footer {
+        padding: 0.75rem 1rem;
+        border-top: 1px solid var(--color-line, rgba(222, 220, 209, 0.15));
+        display: flex;
+        gap: 0.5rem;
+        justify-content: flex-end;
+    }
+}

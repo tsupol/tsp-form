@@ -40,6 +40,7 @@ import { ServerPaginationPage } from './pages/ServerPaginationPage';
 import { AlertPage } from './pages/AlertPage';
 import { FontComparePage } from './pages/FontComparePage';
 import { TextShiftPage } from './pages/TextShiftPage';
+import { DrawerPage } from './pages/DrawerPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -186,6 +187,7 @@ const menuItemsList = [
   { key: 'alert', path: '/alert' },
   { key: 'font-compare', path: '/font-compare' },
   { key: 'text-shift', path: '/text-shift' },
+  { key: 'drawer', path: '/drawer' },
 ];
 
 const SideNav = () => {
@@ -214,6 +216,7 @@ const SideNav = () => {
         { key: 'form', icon: <FileText size="1rem"/>, label: "Form", path: '/form' },
         { key: 'popover', icon: <MessageSquare size="1rem"/>, label: "PopOver", path: '/popover' },
         { key: 'modal', icon: <Columns3 size="1rem"/>, label: "Modal", path: '/modal' },
+        { key: 'drawer', icon: <Columns3 size="1rem"/>, label: "Drawer", path: '/drawer' },
         { key: 'snackbar', icon: <MessageSquare size="1rem"/>, label: "Snackbar", path: '/snackbar' },
         { key: 'tabs', icon: <GalleryHorizontalEnd size="1rem"/>, label: "Tabs", path: '/tabs' },
         {
@@ -346,6 +349,7 @@ const App = () => {
                 <Route path="/server-pagination" element={<ServerPaginationPage/>}/>
                 <Route path="/font-compare" element={<FontComparePage/>}/>
                 <Route path="/text-shift" element={<TextShiftPage/>}/>
+                <Route path="/drawer" element={<DrawerPage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="heading-1 mb-4">Dashboard</h1>

@@ -18,6 +18,7 @@ export * from './src/components/JsonPretty';
 export * from './src/components/LabeledCheckbox';
 export * from './src/components/Menu';
 export * from './src/components/Modal';
+export * from './src/components/Drawer';
 export * from './src/components/PopOver';
 export * from './src/components/RadioCircle';
 export * from './src/components/RadioGroup';
