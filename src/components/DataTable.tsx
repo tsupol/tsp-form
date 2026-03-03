@@ -189,6 +189,7 @@ type DataTableBaseProps<TData> = {
   onRowSelectionChange?: (updater: Updater<RowSelectionState>) => void;
   renderExpandedRow?: (row: RowHelper<TData>) => ReactNode;
   getRowCanExpand?: (original: TData, index: number) => boolean;
+  expandOnRowClick?: boolean;
   rowExpansion?: RowExpansionState;
   onRowExpansionChange?: (updater: Updater<RowExpansionState>) => void;
   noResults?: ReactNode;
@@ -238,6 +239,7 @@ export function DataTable<TData>({
   onRowSelectionChange,
   renderExpandedRow,
   getRowCanExpand,
+  expandOnRowClick = false,
   rowExpansion: controlledRowExpansion,
   onRowExpansionChange,
   noResults,
@@ -593,6 +595,8 @@ export function DataTable<TData>({
                   <Fragment key={row.id}>
                     <TableRow
                       data-state={row.getIsSelected() ? 'selected' : undefined}
+                      className={clsx(expandOnRowClick && row.getCanExpand() && 'data-table-row-expandable')}
+                      onClick={expandOnRowClick && row.getCanExpand() ? () => row.toggleExpanded() : undefined}
                     >
                       {visibleColumns.map((col) => (
                         <TableCell key={col._id}>

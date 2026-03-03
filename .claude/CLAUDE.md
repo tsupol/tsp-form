@@ -9,7 +9,8 @@ React UI component library using CSS variables (Tailwind 4 compatible). Personal
 - `index.ts` — Public exports. **All new components must be exported here.**
 
 ## Dev
-- `npm run dev` — Vite dev server on port 3003
+- `npm run dev` — Vite dev server on port 3003 (do NOT run this to check for errors)
+- `npm run build` — Use this to check for compile errors
 - `npm run build:lib` — Library build (tsc + webpack)
 
 ## Styling

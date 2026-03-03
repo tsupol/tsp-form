@@ -4,6 +4,10 @@ import { Table, TableHeader, TableBody, TableFooter, TableRow, TableHead, TableC
 import { DataTable, DataTableColumnHeader, createSelectColumn, createExpandColumn } from '../../components/DataTable';
 import { Input } from '../../components/Input';
 import { Badge } from '../../components/Badge';
+import { Button } from '../../components/Button';
+import { PopOver } from '../../components/PopOver';
+import { MenuItem, MenuSeparator } from '../../components/Menu';
+import { Copy, Trash2, Eye, Ellipsis } from 'lucide-react';
 
 // ── Basic Table data ────────────────────────────────────────────────
 
@@ -117,6 +121,42 @@ const roleBadgeColor: Record<string, 'danger' | 'primary' | 'secondary' | 'warni
   Designer: 'secondary',
   Manager: 'warning',
 };
+
+// ── Row Actions Menu (for expandOnRowClick example) ────────────────
+
+function RowActionsMenu({ payment }: { payment: Payment }) {
+  const [open, setOpen] = useState(false);
+  return (
+    // eslint-disable-next-line jsx-a11y/click-events-have-key-events,jsx-a11y/no-static-element-interactions
+    <div onClick={(e) => e.stopPropagation()}>
+      <PopOver
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        placement="bottom"
+        align="end"
+        trigger={
+          <Button
+            variant="ghost"
+            color="default"
+            size="sm"
+            className="btn-icon-sm"
+            aria-label="Actions"
+            onClick={() => setOpen((v) => !v)}
+          >
+            <Ellipsis size={16} />
+          </Button>
+        }
+      >
+        <div className="py-1 min-w-[140px]">
+          <MenuItem icon={<Eye size={16} />} label="View" onClick={() => { alert(`View ${payment.id}`); setOpen(false); }} />
+          <MenuItem icon={<Copy size={16} />} label="Copy email" onClick={() => { navigator.clipboard.writeText(payment.email); setOpen(false); }} />
+          <MenuSeparator />
+          <MenuItem icon={<Trash2 size={16} />} label="Delete" danger onClick={() => { alert(`Delete ${payment.id}`); setOpen(false); }} />
+        </div>
+      </PopOver>
+    </div>
+  );
+}
 
 // ── Page ────────────────────────────────────────────────────────────
 
@@ -307,6 +347,66 @@ export const TablePage = () => {
               </div>
             );
           }}
+          enableSorting
+          enablePagination
+          pageSize={5}
+          pageSizeOptions={[5, 10, 20]}
+        />
+      </section>
+
+      {/* ── Section 4b: Expand on Row Click + Actions Menu ── */}
+      <section className="mb-12">
+        <h2 className="heading-3 mb-4">Expand on Row Click + Actions Menu</h2>
+        <p className="text-muted mb-4">
+          Use <code>expandOnRowClick</code> to expand rows by clicking anywhere on the row.
+          Add an actions column with a menu button — <code>e.stopPropagation()</code> prevents the click from expanding the row.
+        </p>
+        <DataTable
+          data={payments}
+          columns={[
+            {
+              accessorKey: 'status',
+              header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
+              cell: ({ value }) => {
+                const status = value as string;
+                return (
+                  <Badge size="sm" color={statusBadgeColor[status] ?? 'default'} className="capitalize">
+                    {status}
+                  </Badge>
+                );
+              },
+            },
+            {
+              accessorKey: 'email',
+              header: ({ column }) => <DataTableColumnHeader column={column} title="Email" />,
+            },
+            {
+              accessorKey: 'amount',
+              header: ({ column }) => <DataTableColumnHeader column={column} title="Amount" />,
+              cell: ({ value }) => {
+                const formatted = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
+                return <span style={{ fontWeight: 500 }}>{formatted}</span>;
+              },
+            },
+            {
+              id: 'actions',
+              header: '',
+              cell: ({ row }) => <RowActionsMenu payment={row.original} />,
+              enableSorting: false,
+            },
+          ]}
+          renderExpandedRow={(row) => {
+            const p = row.original;
+            return (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', fontSize: '0.875rem' }}>
+                <div><strong>ID:</strong> {p.id}</div>
+                <div><strong>Email:</strong> {p.email}</div>
+                <div><strong>Amount:</strong> ${p.amount.toFixed(2)}</div>
+                <div><strong>Status:</strong> {p.status}</div>
+              </div>
+            );
+          }}
+          expandOnRowClick
           enableSorting
           enablePagination
           pageSize={5}

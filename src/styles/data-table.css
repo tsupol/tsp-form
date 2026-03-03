@@ -145,6 +145,11 @@
         }
     }
 
+    /* Row-click expand */
+    .data-table-row-expandable {
+        cursor: pointer;
+    }
+
     /* Expanded detail row */
     .data-table-expanded-row {
         background: var(--color-surface);
