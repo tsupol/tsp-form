@@ -1,4 +1,4 @@
-import { CSSProperties, useEffect, useRef, useState, type ReactNode, useCallback, useId } from 'react';
+import { useEffect, useRef, useState, type ReactNode, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
 import "../styles/drawer.css";
 import { useModal } from '../context/ModalContext';
@@ -11,8 +11,6 @@ type DrawerProps = {
   onClose?: () => void;
   children: ReactNode;
   side?: DrawerSide;
-  width?: CSSProperties['width'];
-  height?: CSSProperties['height'];
   className?: string;
   ariaLabel?: string;
 };
@@ -23,8 +21,6 @@ export const Drawer = ({
   onClose,
   children,
   side = 'right',
-  width,
-  height,
   className = '',
   ariaLabel,
 }: DrawerProps) => {
@@ -40,8 +36,6 @@ export const Drawer = ({
   const mouseDownTargetRef = useRef<EventTarget | null>(null);
   const panelRef = useRef<HTMLDivElement | null>(null);
   const closingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const isHorizontal = side === 'left' || side === 'right';
 
   // Create mount node
   useEffect(() => {
@@ -163,13 +157,6 @@ export const Drawer = ({
   const shouldRender = isOpen || closing;
   if (!mountNodeRef.current || !shouldRender) return null;
 
-  const panelStyle: CSSProperties = {};
-  if (isHorizontal) {
-    panelStyle.width = width ?? '24rem';
-  } else {
-    panelStyle.height = height ?? '24rem';
-  }
-
   return createPortal(
     <div
       className="modal-layer"
@@ -188,7 +175,6 @@ export const Drawer = ({
         aria-label={ariaLabel}
         className={`drawer-panel ${className}`.trim()}
         data-side={side}
-        style={panelStyle}
         tabIndex={-1}
         onClick={handlePanelClick}
       >

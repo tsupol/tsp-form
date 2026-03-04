@@ -47,16 +47,16 @@ export const DrawerPage = () => {
         </Drawer>
       ))}
 
-      <h3 className="heading-3 mb-3">Custom Width</h3>
+      <h3 className="heading-3 mb-3">Custom Size (Tailwind)</h3>
       <div className="card mb-6">
-        <Button onClick={() => setWideOpen(true)}>Open Wide Drawer (40rem)</Button>
+        <Button onClick={() => setWideOpen(true)}>Open Wide Drawer (w-160 / mobile full)</Button>
       </div>
 
       <Drawer
         open={wideOpen}
         onClose={() => setWideOpen(false)}
         side="right"
-        width="40rem"
+        className="w-160 max-sm:w-full"
         ariaLabel="Wide drawer"
       >
         <div className="drawer-header">
@@ -64,21 +64,21 @@ export const DrawerPage = () => {
           <button className="drawer-close-btn" onClick={() => setWideOpen(false)}>&times;</button>
         </div>
         <div className="drawer-content">
-          <p className="text-muted mb-4">This drawer has a custom width of 40rem.</p>
-          <p>Use the <code>width</code> prop on left/right drawers to customize the panel width.</p>
+          <p className="text-muted mb-4">This drawer uses <code>className="w-160 max-sm:w-full"</code> for responsive sizing.</p>
+          <p>Use Tailwind width/height classes on the Drawer to customize size. Responsive variants like <code>max-sm:</code> work naturally.</p>
         </div>
       </Drawer>
 
-      <h3 className="heading-3 mb-3">Custom Height</h3>
+      <h3 className="heading-3 mb-3">Custom Height (Tailwind)</h3>
       <div className="card">
-        <Button onClick={() => setTallOpen(true)}>Open Tall Bottom Drawer (60dvh)</Button>
+        <Button onClick={() => setTallOpen(true)}>Open Tall Bottom Drawer (h-[60dvh])</Button>
       </div>
 
       <Drawer
         open={tallOpen}
         onClose={() => setTallOpen(false)}
         side="bottom"
-        height="60dvh"
+        className="h-[60dvh]"
         ariaLabel="Tall bottom drawer"
       >
         <div className="drawer-header">
@@ -86,8 +86,8 @@ export const DrawerPage = () => {
           <button className="drawer-close-btn" onClick={() => setTallOpen(false)}>&times;</button>
         </div>
         <div className="drawer-content">
-          <p className="text-muted mb-4">This bottom drawer has a custom height of 60dvh.</p>
-          <p>Use the <code>height</code> prop on top/bottom drawers to customize the panel height.</p>
+          <p className="text-muted mb-4">This bottom drawer uses <code>className="h-[60dvh]"</code>.</p>
+          <p>Use Tailwind height classes on top/bottom drawers to customize the panel height.</p>
         </div>
       </Drawer>
     </div>

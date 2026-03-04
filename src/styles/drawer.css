@@ -20,7 +20,9 @@
     .drawer-panel[data-side="right"] {
         top: 0;
         right: 0;
+        width: 24rem;
         height: 100dvh;
+        max-width: 100dvw;
         border-right: none;
         border-top-left-radius: 8px;
         border-bottom-left-radius: 8px;
@@ -30,7 +32,9 @@
     .drawer-panel[data-side="left"] {
         top: 0;
         left: 0;
+        width: 24rem;
         height: 100dvh;
+        max-width: 100dvw;
         border-left: none;
         border-top-right-radius: 8px;
         border-bottom-right-radius: 8px;
@@ -41,6 +45,7 @@
         top: 0;
         left: 0;
         width: 100dvw;
+        height: 24rem;
         border-top: none;
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
@@ -51,6 +56,7 @@
         bottom: 0;
         left: 0;
         width: 100dvw;
+        height: 24rem;
         border-bottom: none;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;
