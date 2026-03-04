@@ -1,4 +1,4 @@
-import { forwardRef, ButtonHTMLAttributes } from "react";
+import { forwardRef, ButtonHTMLAttributes, ReactNode } from "react";
 import clsx from "clsx";
 import "../styles/form.css";
 import "../styles/button.css";
@@ -7,11 +7,14 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   color?: string;
   variant?: string;
   size?: string;
+  truncate?: boolean;
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
   className?: string;
 }
 
-function getClassName(variant: string, color: string, size: string, disabled?: boolean, className?: string, ) {
-  const classes = ['btn', size !== 'md' ? `btn-${size}` : '', className];
+function getClassName(variant: string, color: string, size: string, iconOnly: boolean, disabled?: boolean, truncate?: boolean, className?: string) {
+  const classes = ['btn', size !== 'md' ? `btn-${size}` : '', iconOnly && 'btn-icon-only', truncate && 'btn-truncate', className];
   switch (variant) {
     case 'solid':
       classes.push(`btn-${color}`);
@@ -37,14 +40,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       color = "default",
       variant = "solid",
       size = "md",
+      truncate,
+      startIcon,
+      endIcon,
       className,
       disabled,
       type = "button",
+      children,
       ...props
     },
     ref
   ) => {
-    const classes = getClassName(variant, color, size, disabled, className);
+    const iconOnly = !children && !!(startIcon || endIcon);
+    const classes = getClassName(variant, color, size, iconOnly, disabled, truncate, className);
 
     return (
       <button
@@ -53,7 +61,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={classes}
         disabled={disabled}
         {...props}
-      />
+      >
+        {startIcon && <span className="btn-icon-slot">{startIcon}</span>}
+        <span className="btn-content">{children}</span>
+        {endIcon && <span className="btn-icon-slot">{endIcon}</span>}
+      </button>
     );
   }
 );

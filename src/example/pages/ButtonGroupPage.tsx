@@ -30,7 +30,7 @@ export function ButtonGroupPage() {
             </div>
             <div className="btn-group">
               <Button variant="outline" color="danger">Delete</Button>
-              <Button variant="outline" color="danger" size="icon"><Trash2/></Button>
+              <Button variant="outline" color="danger" startIcon={<Trash2/>} />
             </div>
           </div>
           <div className="flex gap-2 flex-wrap items-center card">
@@ -54,14 +54,14 @@ export function ButtonGroupPage() {
           <h3 className="heading-3 mb-3">Icon Toolbar</h3>
           <div className="flex gap-2 flex-wrap items-center card">
             <div className="btn-group">
-              <Button variant="outline" size="icon"><Bold/></Button>
-              <Button variant="outline" size="icon"><Italic/></Button>
-              <Button variant="outline" size="icon"><Underline/></Button>
+              <Button variant="outline" startIcon={<Bold/>} />
+              <Button variant="outline" startIcon={<Italic/>} />
+              <Button variant="outline" startIcon={<Underline/>} />
             </div>
             <div className="btn-group">
-              <Button variant="outline" size="icon"><AlignLeft/></Button>
-              <Button variant="outline" size="icon"><AlignCenter/></Button>
-              <Button variant="outline" size="icon"><AlignRight/></Button>
+              <Button variant="outline" startIcon={<AlignLeft/>} />
+              <Button variant="outline" startIcon={<AlignCenter/>} />
+              <Button variant="outline" startIcon={<AlignRight/>} />
             </div>
           </div>
         </section>
@@ -72,7 +72,7 @@ export function ButtonGroupPage() {
           <div className="flex gap-4 flex-wrap items-center card">
             <div className="input-group">
               <Input placeholder="Search..."/>
-              <Button color="primary"><Search/> Search</Button>
+              <Button color="primary" startIcon={<Search/>}>Search</Button>
             </div>
           </div>
           <div className="flex gap-4 flex-wrap items-center card">
@@ -80,7 +80,7 @@ export function ButtonGroupPage() {
               <Button variant="outline">Action</Button>
               <div className="input-group-divider"/>
               <Input placeholder="Type here..."/>
-              <Button color="primary"><Plus/></Button>
+              <Button color="primary" startIcon={<Plus/>} />
             </div>
           </div>
           <div className="flex gap-4 flex-wrap items-center card">

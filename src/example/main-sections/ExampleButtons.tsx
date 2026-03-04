@@ -1,5 +1,5 @@
 import { Button } from '../../components/Button';
-import { Mail, Plus, Trash2, Settings, Heart, ChevronRight } from 'lucide-react';
+import { Mail, Plus, Trash2, Settings, Heart, ChevronRight, ChevronDown, Upload, Filter, ExternalLink, Download } from 'lucide-react';
 
 export function ExampleButtons() {
   return (
@@ -98,20 +98,60 @@ export function ExampleButtons() {
       <section>
         <h3 className="heading-3 mb-3">Icon + Text</h3>
         <div className="flex gap-2 flex-wrap items-center card">
-          <Button size="xs" color="primary"><Mail className="w-5 h-5" />Lucide</Button>
-          <Button size="xs" color="primary"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> Inline SVG</Button>
+          <Button size="xs" color="primary" startIcon={<Mail className="w-5 h-5" />}>Lucide</Button>
+          <Button size="xs" color="primary" startIcon={<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>}>Inline SVG</Button>
         </div>
         <div className="flex gap-2 flex-wrap items-center card">
-          <Button size="xs" color="primary"><Mail /> Send</Button>
-          <Button size="sm" color="primary"><Mail /> Send</Button>
-          <Button color="primary"><Mail /> Send</Button>
-          <Button size="lg" color="primary"><Mail /> Send</Button>
+          <Button size="xs" color="primary" startIcon={<Mail />}>Send</Button>
+          <Button size="sm" color="primary" startIcon={<Mail />}>Send</Button>
+          <Button color="primary" startIcon={<Mail />}>Send</Button>
+          <Button size="lg" color="primary" startIcon={<Mail />}>Send</Button>
         </div>
         <div className="flex gap-2 flex-wrap items-center card">
-          <Button color="success"><Plus /> Create</Button>
-          <Button color="danger"><Trash2 /> Delete</Button>
-          <Button variant="outline" className="pr-2 gap-1">Next<ChevronRight className="w-5 h-5" /></Button>
-          <Button variant="ghost"><Settings /> Settings</Button>
+          <Button color="success" startIcon={<Plus />}>Create</Button>
+          <Button color="danger" startIcon={<Trash2 />}>Delete</Button>
+          <Button variant="outline" endIcon={<ChevronRight />}>Next</Button>
+          <Button variant="ghost" startIcon={<Settings />}>Settings</Button>
+        </div>
+        <div className="flex gap-2 flex-wrap items-center card">
+          <Button size="xs" color="primary" startIcon={<Upload />} endIcon={<ChevronDown />}>Upload</Button>
+          <Button size="xs" variant="outline" startIcon={<Filter />} endIcon={<ChevronDown />}>Filter</Button>
+          <Button size="xs" color="secondary" startIcon={<Download />} endIcon={<ExternalLink />}>Export</Button>
+          <Button size="xs" variant="outline" startIcon={<Plus />} endIcon={<ChevronDown />}>Add</Button>
+          <Button size="xs" color="primary" startIcon={<Mail />} endIcon={<ChevronRight />}>Send</Button>
+        </div>
+        <div className="flex gap-2 flex-wrap items-center card">
+          <Button size="sm" color="primary" startIcon={<Upload />} endIcon={<ChevronDown />}>Upload</Button>
+          <Button size="sm" variant="outline" startIcon={<Filter />} endIcon={<ChevronDown />}>Filter</Button>
+          <Button size="sm" color="secondary" startIcon={<Download />} endIcon={<ExternalLink />}>Export</Button>
+          <Button size="sm" variant="outline" startIcon={<Plus />} endIcon={<ChevronDown />}>Add</Button>
+          <Button size="sm" color="primary" startIcon={<Mail />} endIcon={<ChevronRight />}>Send</Button>
+        </div>
+        <div className="flex gap-2 flex-wrap items-center card">
+          <Button color="primary" startIcon={<Upload />} endIcon={<ChevronDown />}>Upload</Button>
+          <Button variant="outline" startIcon={<Filter />} endIcon={<ChevronDown />}>Filter</Button>
+          <Button color="secondary" startIcon={<Download />} endIcon={<ExternalLink />}>Export</Button>
+          <Button variant="outline" startIcon={<Plus />} endIcon={<ChevronDown />}>Add</Button>
+          <Button color="primary" startIcon={<Mail />} endIcon={<ChevronRight />}>Send</Button>
+        </div>
+        <div className="flex gap-2 flex-wrap items-center card">
+          <Button size="lg" color="primary" startIcon={<Upload />} endIcon={<ChevronDown />}>Upload</Button>
+          <Button size="lg" variant="outline" startIcon={<Filter />} endIcon={<ChevronDown />}>Filter</Button>
+          <Button size="lg" color="secondary" startIcon={<Download />} endIcon={<ExternalLink />}>Export</Button>
+          <Button size="lg" variant="outline" startIcon={<Plus />} endIcon={<ChevronDown />}>Add</Button>
+          <Button size="lg" color="primary" startIcon={<Mail />} endIcon={<ChevronRight />}>Send</Button>
+        </div>
+      </section>
+
+      {/* Icon Spacing Fix */}
+      <section>
+        <h3 className="heading-3 mb-3">Icon Spacing Fix</h3>
+        <p className="text-muted mb-3">Narrow icons like chevrons can look visually loose. Use negative margin on the icon to tighten.</p>
+        <div className="flex gap-2 flex-wrap items-center card">
+          <Button variant="outline" endIcon={<ChevronRight />}>Next</Button>
+          <Button variant="outline" endIcon={<ChevronRight className="-mr-1" />}>Next (fixed)</Button>
+          <Button variant="outline" startIcon={<ChevronRight className="-ml-1" />}>Prev</Button>
+          <Button color="primary" startIcon={<Upload />} endIcon={<ChevronDown className="-mr-0.5" />}>Upload</Button>
         </div>
       </section>
 
@@ -119,22 +159,22 @@ export function ExampleButtons() {
       <section>
         <h3 className="heading-3 mb-3">Icon Only</h3>
         <div className="flex gap-2 flex-wrap items-center card">
-          <Button size="icon-xs" variant="outline"><Mail /></Button>
-          <Button size="icon-sm" variant="outline"><Mail /></Button>
-          <Button size="icon" variant="outline"><Mail /></Button>
-          <Button size="icon-lg" variant="outline"><Mail /></Button>
+          <Button size="xs" variant="outline" startIcon={<Mail />} />
+          <Button size="sm" variant="outline" startIcon={<Mail />} />
+          <Button variant="outline" startIcon={<Mail />} />
+          <Button size="lg" variant="outline" startIcon={<Mail />} />
         </div>
         <div className="flex gap-2 flex-wrap items-center card">
-          <Button size="icon" color="primary"><Plus /></Button>
-          <Button size="icon" color="danger"><Trash2 /></Button>
-          <Button size="icon" variant="ghost"><Settings /></Button>
-          <Button size="icon" variant="outline" color="danger"><Heart /></Button>
+          <Button color="primary" startIcon={<Plus />} />
+          <Button color="danger" startIcon={<Trash2 />} />
+          <Button variant="ghost" startIcon={<Settings />} />
+          <Button variant="outline" color="danger" startIcon={<Heart />} />
         </div>
         <div className="flex gap-2 flex-wrap items-center card">
-          <Button size="icon-xs" style={{'--radius-button': '9999px'} as React.CSSProperties} color="primary"><Mail /></Button>
-          <Button size="icon-sm" style={{'--radius-button': '9999px'} as React.CSSProperties} color="primary"><Mail /></Button>
-          <Button size="icon" style={{'--radius-button': '9999px'} as React.CSSProperties} color="primary"><Mail /></Button>
-          <Button size="icon-lg" style={{'--radius-button': '9999px'} as React.CSSProperties} color="primary"><Mail /></Button>
+          <Button size="xs" style={{'--radius-button': '9999px'} as React.CSSProperties} color="primary" startIcon={<Mail />} />
+          <Button size="sm" style={{'--radius-button': '9999px'} as React.CSSProperties} color="primary" startIcon={<Mail />} />
+          <Button style={{'--radius-button': '9999px'} as React.CSSProperties} color="primary" startIcon={<Mail />} />
+          <Button size="lg" style={{'--radius-button': '9999px'} as React.CSSProperties} color="primary" startIcon={<Mail />} />
         </div>
       </section>
 

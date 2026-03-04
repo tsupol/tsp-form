@@ -2,8 +2,8 @@
 /* --text-shift-y  : flexbox controls (button, select, badge)           */
 /* --text-shift-y-input : <input> / fixed-height controls (falls back to --text-shift-y) */
 :root {
-    --text-shift-y: .05em;
-    --text-shift-y-input: .025em;
+    --text-shift-y: .0em;
+    --text-shift-y-input: .0em;
 }
 
 @layer components {
