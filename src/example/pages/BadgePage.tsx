@@ -34,18 +34,18 @@ export function BadgePage() {
         <section>
           <h3 className="heading-3 mb-3">With Icons</h3>
           <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="success"><Check /> Approved</Badge>
-            <Badge color="danger"><X /> Rejected</Badge>
-            <Badge color="warning"><AlertTriangle /> Warning</Badge>
-            <Badge color="info"><Info /> Info</Badge>
-            <Badge color="primary">Featured <Star /></Badge>
-            <Badge color="secondary"><Zap /> New</Badge>
+            <Badge color="success" startIcon={<Check />}>Approved</Badge>
+            <Badge color="danger" startIcon={<X />}>Rejected</Badge>
+            <Badge color="warning" startIcon={<AlertTriangle />}>Warning</Badge>
+            <Badge color="info" startIcon={<Info />}>Info</Badge>
+            <Badge color="primary" endIcon={<Star />}>Featured</Badge>
+            <Badge color="secondary" startIcon={<Zap />}>New</Badge>
           </div>
           <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="success" variant="outline"><Check /> Approved</Badge>
-            <Badge color="danger" variant="outline"><X /> Rejected</Badge>
-            <Badge color="warning" variant="outline"><AlertTriangle /> Warning</Badge>
-            <Badge color="primary" variant="outline">Featured <Star /></Badge>
+            <Badge color="success" variant="outline" startIcon={<Check />}>Approved</Badge>
+            <Badge color="danger" variant="outline" startIcon={<X />}>Rejected</Badge>
+            <Badge color="warning" variant="outline" startIcon={<AlertTriangle />}>Warning</Badge>
+            <Badge color="primary" variant="outline" endIcon={<Star />}>Featured</Badge>
           </div>
         </section>
 
@@ -56,7 +56,7 @@ export function BadgePage() {
             {sizes.map((s) => (
               <>
                 <Badge key={s} color="primary" size={s}>{s}</Badge>
-                <Badge key={`${s}-icon`} color="success" size={s}><Check /> {s}</Badge>
+                <Badge key={`${s}-icon`} color="success" size={s} startIcon={<Check />}>{s}</Badge>
               </>
             ))}
           </div>
@@ -66,22 +66,22 @@ export function BadgePage() {
         <section>
           <h3 className="heading-3 mb-3">Icon Only</h3>
           <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="primary" size="icon-xs"><Star /></Badge>
-            <Badge color="primary" size="icon-sm"><Star /></Badge>
-            <Badge color="primary" size="icon"><Star /></Badge>
-            <Badge color="primary" size="icon-lg"><Star /></Badge>
+            <Badge color="primary" size="xs" startIcon={<Star />} />
+            <Badge color="primary" size="sm" startIcon={<Star />} />
+            <Badge color="primary" startIcon={<Star />} />
+            <Badge color="primary" size="lg" startIcon={<Star />} />
           </div>
           <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="success" size="icon"><Check /></Badge>
-            <Badge color="danger" size="icon"><X /></Badge>
-            <Badge color="warning" size="icon"><AlertTriangle /></Badge>
-            <Badge color="info" size="icon"><Info /></Badge>
+            <Badge color="success" startIcon={<Check />} />
+            <Badge color="danger" startIcon={<X />} />
+            <Badge color="warning" startIcon={<AlertTriangle />} />
+            <Badge color="info" startIcon={<Info />} />
           </div>
           <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="success" size="icon" variant="outline"><Check /></Badge>
-            <Badge color="danger" size="icon" variant="outline"><X /></Badge>
-            <Badge color="warning" size="icon" variant="outline"><AlertTriangle /></Badge>
-            <Badge color="info" size="icon" variant="outline"><Info /></Badge>
+            <Badge color="success" variant="outline" startIcon={<Check />} />
+            <Badge color="danger" variant="outline" startIcon={<X />} />
+            <Badge color="warning" variant="outline" startIcon={<AlertTriangle />} />
+            <Badge color="info" variant="outline" startIcon={<Info />} />
           </div>
         </section>
 
@@ -90,7 +90,7 @@ export function BadgePage() {
           <h3 className="heading-3 mb-3">Truncation</h3>
           <div className="flex gap-2 flex-wrap items-center card" style={{ maxWidth: '10rem' }}>
             <Badge color="primary" truncate>This is a very long badge label that should truncate</Badge>
-            <Badge color="secondary" truncate><Star /> Long label with icon that truncates nicely</Badge>
+            <Badge color="secondary" truncate startIcon={<Star />}>Long label with icon that truncates nicely</Badge>
           </div>
         </section>
 

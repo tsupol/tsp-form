@@ -1,8 +1,8 @@
-# Button Migration Guide
+# Migration Guide
 
 ## Breaking Changes
 
-### Icons now use `startIcon` / `endIcon` props
+### Button & Badge: Icons now use `startIcon` / `endIcon` props
 
 Icons are no longer passed as children. Use the `startIcon` and `endIcon` props instead.
 
@@ -23,22 +23,38 @@ Both icons:
 <Button startIcon={<Upload />} endIcon={<ChevronDown />}>Upload</Button>
 ```
 
-### Icon-only buttons auto-detect
+Badge follows the same pattern:
 
-No more `size="icon"` / `size="icon-sm"` etc. Just pass an icon with no children — the button automatically becomes square.
+**Before:**
+```tsx
+<Badge color="success"><Check /> Approved</Badge>
+<Badge color="primary">Featured <Star /></Badge>
+```
+
+**After:**
+```tsx
+<Badge color="success" startIcon={<Check />}>Approved</Badge>
+<Badge color="primary" endIcon={<Star />}>Featured</Badge>
+```
+
+### Icon-only auto-detect (Button & Badge)
+
+No more `size="icon"` / `size="icon-sm"` etc. Just pass an icon with no children — it automatically becomes square.
 
 **Before:**
 ```tsx
 <Button size="icon" variant="outline"><Mail /></Button>
 <Button size="icon-sm" color="primary"><Plus /></Button>
-<Button size="icon-lg" variant="ghost"><Settings /></Button>
+<Badge color="primary" size="icon"><Star /></Badge>
+<Badge color="success" size="icon-sm"><Check /></Badge>
 ```
 
 **After:**
 ```tsx
 <Button variant="outline" startIcon={<Mail />} />
 <Button size="sm" color="primary" startIcon={<Plus />} />
-<Button size="lg" variant="ghost" startIcon={<Settings />} />
+<Badge color="primary" startIcon={<Star />} />
+<Badge color="success" size="sm" startIcon={<Check />} />
 ```
 
 ### `width` / `height` props removed from Drawer

@@ -1,12 +1,14 @@
-import { type HTMLAttributes, type ReactNode, Children, isValidElement } from 'react';
+import { type HTMLAttributes, type ReactNode } from 'react';
 import clsx from 'clsx';
 import '../styles/badge.css';
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   color?: 'default' | 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
   variant?: 'solid' | 'outline';
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'icon-xs' | 'icon-sm' | 'icon' | 'icon-lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   truncate?: boolean;
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
   className?: string;
   children?: ReactNode;
 }
@@ -15,10 +17,11 @@ function getBadgeClassName(
   variant: string,
   color: string,
   size: string,
+  iconOnly: boolean,
   truncate: boolean,
   className?: string,
 ) {
-  const classes = ['badge', size !== 'md' ? `badge-${size}` : '', className];
+  const classes = ['badge', size !== 'md' ? `badge-${size}` : '', iconOnly && 'badge-icon-only', truncate && 'badge-truncate', className];
   switch (variant) {
     case 'solid':
       classes.push(`badge-${color}`);
@@ -26,9 +29,6 @@ function getBadgeClassName(
     case 'outline':
       classes.push(`badge-outline-${color}`);
       break;
-  }
-  if (truncate) {
-    classes.push('badge-truncate');
   }
   return clsx(classes);
 }
@@ -38,42 +38,20 @@ export const Badge = ({
   variant = 'solid',
   size = 'md',
   truncate = false,
+  startIcon,
+  endIcon,
   className,
   children,
   ...props
 }: BadgeProps) => {
-  const classes = getBadgeClassName(variant, color, size, truncate, className);
-
-  if (truncate) {
-    const leading: ReactNode[] = [];
-    const trailing: ReactNode[] = [];
-    const label: ReactNode[] = [];
-    let foundText = false;
-
-    Children.forEach(children, (child) => {
-      const isIcon = isValidElement(child) && typeof child.type !== 'string';
-      if (isIcon && !foundText) {
-        leading.push(child);
-      } else if (isIcon && foundText) {
-        trailing.push(child);
-      } else {
-        foundText = true;
-        label.push(child);
-      }
-    });
-
-    return (
-      <span className={classes} {...props}>
-        {leading}
-        <span className="badge-label">{label}</span>
-        {trailing}
-      </span>
-    );
-  }
+  const iconOnly = !children && !!(startIcon || endIcon);
+  const classes = getBadgeClassName(variant, color, size, iconOnly, truncate, className);
 
   return (
     <span className={classes} {...props}>
-      {children}
+      {startIcon && <span className="badge-icon-slot">{startIcon}</span>}
+      <span className={truncate ? 'badge-label' : 'badge-content'}>{children}</span>
+      {endIcon && <span className="badge-icon-slot">{endIcon}</span>}
     </span>
   );
 };
