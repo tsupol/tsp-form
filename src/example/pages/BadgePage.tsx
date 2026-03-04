@@ -62,6 +62,29 @@ export function BadgePage() {
           </div>
         </section>
 
+        {/* Icon-only */}
+        <section>
+          <h3 className="heading-3 mb-3">Icon Only</h3>
+          <div className="flex gap-2 flex-wrap items-center card">
+            <Badge color="primary" size="icon-xs"><Star /></Badge>
+            <Badge color="primary" size="icon-sm"><Star /></Badge>
+            <Badge color="primary" size="icon"><Star /></Badge>
+            <Badge color="primary" size="icon-lg"><Star /></Badge>
+          </div>
+          <div className="flex gap-2 flex-wrap items-center card">
+            <Badge color="success" size="icon"><Check /></Badge>
+            <Badge color="danger" size="icon"><X /></Badge>
+            <Badge color="warning" size="icon"><AlertTriangle /></Badge>
+            <Badge color="info" size="icon"><Info /></Badge>
+          </div>
+          <div className="flex gap-2 flex-wrap items-center card">
+            <Badge color="success" size="icon" variant="outline"><Check /></Badge>
+            <Badge color="danger" size="icon" variant="outline"><X /></Badge>
+            <Badge color="warning" size="icon" variant="outline"><AlertTriangle /></Badge>
+            <Badge color="info" size="icon" variant="outline"><Info /></Badge>
+          </div>
+        </section>
+
         {/* Truncation */}
         <section>
           <h3 className="heading-3 mb-3">Truncation</h3>

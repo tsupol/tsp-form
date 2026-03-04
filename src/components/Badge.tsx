@@ -5,7 +5,7 @@ import '../styles/badge.css';
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   color?: 'default' | 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info';
   variant?: 'solid' | 'outline';
-  size?: 'xs' | 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'icon-xs' | 'icon-sm' | 'icon' | 'icon-lg';
   truncate?: boolean;
   className?: string;
   children?: ReactNode;
