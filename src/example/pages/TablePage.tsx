@@ -393,6 +393,7 @@ export const TablePage = () => {
               header: '',
               cell: ({ row }) => <RowActionsMenu payment={row.original} />,
               enableSorting: false,
+              className: 'w-12',
             },
           ]}
           renderExpandedRow={(row) => {

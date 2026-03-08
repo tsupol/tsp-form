@@ -45,6 +45,7 @@ export type ColumnDef<TData> = {
   header?: string | ((props: { column: ColumnHelper<TData> }) => ReactNode);
   cell?: (props: { row: RowHelper<TData>; value: any }) => ReactNode;
   enableSorting?: boolean;
+  className?: string;
 };
 
 // ── Inline SVG icons (no external icon libs) ────────────────────────
@@ -583,7 +584,7 @@ export function DataTable<TData>({
             <TableHeader>
               <TableRow>
                 {visibleColumns.map((col) => (
-                  <TableHead key={col._id}>
+                  <TableHead key={col._id} className={col.className}>
                     {renderColumnHeader(col)}
                   </TableHead>
                 ))}
@@ -599,7 +600,7 @@ export function DataTable<TData>({
                       onClick={expandOnRowClick && row.getCanExpand() ? () => row.toggleExpanded() : undefined}
                     >
                       {visibleColumns.map((col) => (
-                        <TableCell key={col._id}>
+                        <TableCell key={col._id} className={col.className}>
                           {renderColumnCell(col, row, displayIndex)}
                         </TableCell>
                       ))}
