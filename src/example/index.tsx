@@ -41,6 +41,7 @@ import { AlertPage } from './pages/AlertPage';
 import { FontComparePage } from './pages/FontComparePage';
 import { TextShiftPage } from './pages/TextShiftPage';
 import { DrawerPage } from './pages/DrawerPage';
+import { PageNavPage } from './pages/PageNavPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -188,6 +189,7 @@ const menuItemsList = [
   { key: 'font-compare', path: '/font-compare' },
   { key: 'text-shift', path: '/text-shift' },
   { key: 'drawer', path: '/drawer' },
+  { key: 'page-nav', path: '/page-nav' },
 ];
 
 const SideNav = () => {
@@ -244,6 +246,7 @@ const SideNav = () => {
     { key: 'server-pagination', icon: <Table2 size="1rem"/>, label: "Server Pagination", path: '/server-pagination' },
     { key: 'font-compare', icon: <Type size="1rem"/>, label: "Font Compare", path: '/font-compare' },
     { key: 'text-shift', icon: <SlidersHorizontal size="1rem"/>, label: "Text Shift", path: '/text-shift' },
+    { key: 'page-nav', icon: <Columns3 size="1rem"/>, label: "PageNav", path: '/page-nav' },
   ];
 
   const handleSelect = (key: string, path?: string) => {
@@ -350,6 +353,7 @@ const App = () => {
                 <Route path="/font-compare" element={<FontComparePage/>}/>
                 <Route path="/text-shift" element={<TextShiftPage/>}/>
                 <Route path="/drawer" element={<DrawerPage/>}/>
+                <Route path="/page-nav" element={<PageNavPage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="heading-1 mb-4">Dashboard</h1>

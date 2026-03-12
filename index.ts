@@ -31,6 +31,7 @@ export * from './src/components/SideMenuItems';
 export * from './src/components/Skeleton';
 export * from './src/components/Switch';
 export * from './src/components/NumberSpinner';
+export * from './src/components/PageNav';
 export * from './src/components/Pagination';
 export * from './src/components/Table';
 export * from './src/components/DataTable';
