@@ -88,6 +88,18 @@ export const SideMenu = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll]);
 
+  // Listen for custom event to open the side menu
+  useEffect(() => {
+    const handleOpen = () => {
+      if (collapsed) {
+        setCollapsed(false);
+        onToggleCollapse?.(false);
+      }
+    };
+    window.addEventListener('sidemenu:open', handleOpen);
+    return () => window.removeEventListener('sidemenu:open', handleOpen);
+  }, [collapsed, onToggleCollapse]);
+
   return (
     <>
       {/* Mobile toggle button - scroll-aware visibility */}

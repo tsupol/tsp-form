@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { PageNav } from '../../components/PageNav';
+import { PageNav, PageNavPanel } from '../../components/PageNav';
 import { clsx } from 'clsx';
+import { Menu } from 'lucide-react';
 
 type Lesson = {
   id: number;
@@ -18,6 +19,18 @@ const lessons: Lesson[] = [
   { id: 5, title: 'Routing & Navigation', description: 'Client-side routing with React Router', duration: '20 min', content: 'React Router enables navigation among views of various components in a React Application.\n\nTopics covered:\n- BrowserRouter setup\n- Route and Routes\n- Link and NavLink\n- URL parameters\n- Nested routes' },
   { id: 6, title: 'Forms & Validation', description: 'Building forms with react-hook-form', duration: '25 min', content: 'React Hook Form is a performant library for managing form state and validation.\n\nTopics covered:\n- useForm hook\n- Registering inputs\n- Validation rules\n- Error handling\n- Form submission' },
 ];
+
+function HamburgerButton() {
+  return (
+    <button
+      className="w-10 h-10 flex items-center justify-center hover:bg-surface-hover rounded-lg transition-colors cursor-pointer"
+      aria-label="Open menu"
+      onClick={() => window.dispatchEvent(new CustomEvent('sidemenu:open'))}
+    >
+      <Menu size={20} />
+    </button>
+  );
+}
 
 function LessonList({ selected, onSelect }: { selected: Lesson | null; onSelect: (l: Lesson) => void }) {
   return (
@@ -88,39 +101,37 @@ export function PageNavPage() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   return (
-    <div className="page-content">
-      <h1 className="heading-1 mb-2">PageNav</h1>
-      <p className="text-muted mb-6">
-        Desktop shows panels side-by-side. Resize to mobile width for iOS-style slide navigation with header.
-      </p>
-
-      <div className="card" style={{ height: '500px', padding: 0, overflow: 'hidden' }}>
-        <PageNav panels={['list', 'detail']} mobileBreakpoint={768}>
-          {({ isMobile, activePanel, isRoot, goTo, goBack, Panel, Header }) => (
-            <>
-              {isMobile && (
-                <Header
-                  title={isRoot ? 'Lessons' : selectedLesson?.title}
-                />
-              )}
-              <div className={isMobile ? 'pagenav-panels' : 'flex h-full'}>
-                <Panel id="list" className={isMobile ? '' : 'w-72 border-r border-line overflow-y-auto'}>
-                  <LessonList
-                    selected={selectedLesson}
-                    onSelect={(l) => {
-                      setSelectedLesson(l);
-                      if (isMobile) goTo('detail');
-                    }}
-                  />
-                </Panel>
-                <Panel id="detail" className={isMobile ? '' : 'flex-1 overflow-y-auto'}>
-                  <LessonContent lesson={selectedLesson} />
-                </Panel>
-              </div>
-            </>
+    <PageNav panels={['list', 'detail']} mobileBreakpoint={768} className="h-dvh">
+      {({ isMobile, isRoot, goTo, Header }) => (
+        <>
+          {isMobile && (
+            <Header
+              title={isRoot ? 'Lessons' : selectedLesson?.title}
+              startContent={isRoot ? <HamburgerButton /> : undefined}
+            />
           )}
-        </PageNav>
-      </div>
-    </div>
+          {!isMobile && (
+            <div className="px-6 py-4 border-b border-line">
+              <h1 className="heading-1">Lessons</h1>
+              <p className="text-muted">Select a lesson to view its content.</p>
+            </div>
+          )}
+          <div className={isMobile ? 'pagenav-panels' : 'flex flex-1 min-h-0'}>
+            <PageNavPanel id="list" className="w-80 border-r border-line overflow-y-auto better-scroll">
+              <LessonList
+                selected={selectedLesson}
+                onSelect={(l) => {
+                  setSelectedLesson(l);
+                  if (isMobile) goTo('detail');
+                }}
+              />
+            </PageNavPanel>
+            <PageNavPanel id="detail" className="flex-1 overflow-y-auto better-scroll">
+              <LessonContent lesson={selectedLesson} />
+            </PageNavPanel>
+          </div>
+        </>
+      )}
+    </PageNav>
   );
 }

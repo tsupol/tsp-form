@@ -3,6 +3,8 @@
         position: relative;
         width: 100%;
         height: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     .pagenav-panels {
@@ -16,26 +18,7 @@
         position: absolute;
         inset: 0;
         overflow-y: auto;
-        transition: transform 350ms cubic-bezier(0.32, 0.72, 0, 1),
-                    opacity 350ms cubic-bezier(0.32, 0.72, 0, 1);
-    }
-
-    .pagenav-panel[data-state="active"] {
-        transform: translateX(0);
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .pagenav-panel[data-state="behind"] {
-        transform: translateX(-30%);
-        opacity: 0.5;
-        pointer-events: none;
-    }
-
-    .pagenav-panel[data-state="ahead"] {
-        transform: translateX(100%);
-        opacity: 1;
-        pointer-events: none;
+        background: var(--color-pagenav-panel-bg, var(--color-surface));
     }
 
     /* Header */

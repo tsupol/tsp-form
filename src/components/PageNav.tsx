@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback, useRef, type ReactNode } from 'react';
+import { useState, useEffect, useCallback, useRef, createContext, useContext, type ReactNode } from 'react';
 import { clsx } from 'clsx';
 import { Chevron } from './Chevron';
 import '../styles/page-nav.css';
+import '../styles/scroll.css';
 
 // Ref counting for multiple PageNav instances
 let pageNavActiveCount = 0;
@@ -18,12 +19,6 @@ function setPageNavActive(active: boolean) {
   }
 }
 
-type PanelProps = {
-  id: string;
-  className?: string;
-  children?: ReactNode;
-};
-
 type HeaderProps = {
   title?: ReactNode;
   startContent?: ReactNode;
@@ -39,8 +34,14 @@ export type PageNavContext = {
   goTo: (id: string) => void;
   goBack: () => void;
   goToRoot: () => void;
-  Panel: (props: PanelProps) => ReactNode;
   Header: (props: HeaderProps) => ReactNode;
+};
+
+export type PageNavPanelProps = {
+  id: string;
+  className?: string;
+  mobileClassName?: string;
+  children?: ReactNode;
 };
 
 export type PageNavProps = {
@@ -51,6 +52,41 @@ export type PageNavProps = {
   children: (ctx: PageNavContext) => ReactNode;
 };
 
+// Internal context to pass nav state to panels
+const PageNavInternalContext = createContext<{
+  activePanel: string;
+  navStack: string[];
+  isMobile: boolean;
+} | null>(null);
+
+export function PageNavPanel({ id, className, mobileClassName, children }: PageNavPanelProps) {
+  const ctx = useContext(PageNavInternalContext);
+  if (!ctx) return null;
+
+  const { activePanel, navStack, isMobile } = ctx;
+
+  if (!isMobile) {
+    return <div className={className}>{children}</div>;
+  }
+
+  const isActive = id === activePanel;
+  const isBehind = id !== activePanel && navStack.includes(id);
+
+  return (
+    <div
+      className={clsx('pagenav-panel better-scroll', mobileClassName)}
+      style={{
+        transform: isActive ? 'translateX(0)' : isBehind ? 'translateX(-30%)' : 'translateX(100%)',
+        opacity: isBehind ? 0.5 : 1,
+        pointerEvents: isActive ? 'auto' : 'none',
+        transition: 'transform 350ms cubic-bezier(0.32, 0.72, 0, 1), opacity 350ms cubic-bezier(0.32, 0.72, 0, 1)',
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function PageNav({
   panels,
   defaultPanel,
@@ -58,7 +94,7 @@ export function PageNav({
   className,
   children,
 }: PageNavProps) {
-  const rootPanel = panels[0];
+  const rootPanel = panels[0] ?? '';
   const [navStack, setNavStack] = useState<string[]>([defaultPanel ?? rootPanel]);
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < mobileBreakpoint : false
@@ -106,35 +142,6 @@ export function PageNav({
     setNavStack([rootPanel]);
   }, [rootPanel]);
 
-  // Determine panel state for CSS transitions
-  const getPanelState = useCallback((id: string): 'active' | 'behind' | 'ahead' => {
-    const idx = panels.indexOf(id);
-    const activeIdx = panels.indexOf(activePanel);
-    if (id === activePanel) return 'active';
-    // Check if this panel is in the stack (behind)
-    if (navStack.includes(id)) return 'behind';
-    // If panel index < active index, it's behind; otherwise ahead
-    if (idx < activeIdx) return 'behind';
-    return 'ahead';
-  }, [activePanel, navStack, panels]);
-
-  const Panel = useCallback(({ id, className: panelClassName, children: panelChildren }: PanelProps) => {
-    if (!isMobile) {
-      // Desktop: plain div
-      return <div className={panelClassName}>{panelChildren}</div>;
-    }
-
-    const state = getPanelState(id);
-    return (
-      <div
-        className={clsx('pagenav-panel', panelClassName)}
-        data-state={state}
-      >
-        {panelChildren}
-      </div>
-    );
-  }, [isMobile, getPanelState]);
-
   const Header = useCallback(({ title, startContent, endContent, className: headerClassName }: HeaderProps) => {
     if (!isMobile) return null;
 
@@ -162,13 +169,14 @@ export function PageNav({
     goTo,
     goBack,
     goToRoot,
-    Panel,
     Header,
   };
 
   return (
-    <div className={clsx('pagenav', className)}>
-      {children(ctx)}
-    </div>
+    <PageNavInternalContext.Provider value={{ activePanel, navStack, isMobile }}>
+      <div className={clsx('pagenav', className)}>
+        {children(ctx)}
+      </div>
+    </PageNavInternalContext.Provider>
   );
 }
