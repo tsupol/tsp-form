@@ -22,6 +22,7 @@ export type SideMenuItemData =
 export type SideMenuItemsProps = {
   items: SideMenuItemData[];
   activeItem?: string;
+  activePath?: string;
   collapsed?: boolean;
   isMobile?: boolean;
   onSelect?: (key: string, path?: string) => void;
@@ -31,6 +32,33 @@ export type SideMenuItemsProps = {
   flyoutAlign?: 'start' | 'center' | 'end';
   className?: string;
 };
+
+// Find the item key whose path is the longest prefix match for the given URL
+function findActiveKeyByPath(items: SideMenuItemData[], activePath: string | undefined): string | undefined {
+  if (!activePath) return undefined;
+  const path = activePath;
+
+  let bestKey: string | undefined;
+  let bestLength = 0;
+
+  function walk(nodes: SideMenuItemData[]) {
+    for (const node of nodes) {
+      if (node.type === 'group' || node.type === 'separator') continue;
+      if (node.path) {
+        if (node.path === '/') {
+          if (path === '/') { bestKey = node.key; bestLength = Infinity; }
+        } else if (path.startsWith(node.path) && node.path.length > bestLength) {
+          bestKey = node.key;
+          bestLength = node.path.length;
+        }
+      }
+      if (node.children) walk(node.children);
+    }
+  }
+
+  walk(items);
+  return bestKey;
+}
 
 // Collect all ancestor keys of the active item
 function getActiveAncestors(items: SideMenuItemData[], activeKey: string | undefined): Set<string> {
@@ -58,6 +86,7 @@ function getActiveAncestors(items: SideMenuItemData[], activeKey: string | undef
 export function SideMenuItems({
   items,
   activeItem,
+  activePath,
   collapsed = false,
   isMobile = false,
   onSelect,
@@ -67,7 +96,11 @@ export function SideMenuItems({
   flyoutAlign = 'center',
   className,
 }: SideMenuItemsProps) {
-  const activeAncestors = useMemo(() => getActiveAncestors(items, activeItem), [items, activeItem]);
+  const effectiveActiveKey = useMemo(
+    () => activeItem ?? findActiveKeyByPath(items, activePath),
+    [activeItem, activePath, items],
+  );
+  const activeAncestors = useMemo(() => getActiveAncestors(items, effectiveActiveKey), [items, effectiveActiveKey]);
 
   const handleSelect = useCallback((key: string, path?: string) => {
     onSelect?.(key, path);
@@ -96,7 +129,7 @@ export function SideMenuItems({
           <SideMenuItemRow
             key={item.key}
             item={item}
-            activeItem={activeItem}
+            activeItem={effectiveActiveKey}
             activeAncestors={activeAncestors}
             collapsed={isCollapsed}
             isMobile={isMobile}

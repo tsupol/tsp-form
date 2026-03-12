@@ -159,52 +159,12 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
   );
 }
 
-// Flat list of all menu items with paths for active key lookup
-const menuItemsList = [
-  { key: 'dashboard', path: '/' },
-  { key: 'buttons', path: '/buttons' },
-  { key: 'form', path: '/form' },
-  { key: 'popover', path: '/popover' },
-  { key: 'modal', path: '/modal' },
-  { key: 'snackbar', path: '/snackbar' },
-  { key: 'tabs', path: '/tabs' },
-  { key: 'skeleton', path: '/skeleton' },
-  { key: 'tooltip', path: '/tooltip' },
-  { key: 'progress-bar', path: '/progress-bar' },
-  { key: 'pagination', path: '/pagination' },
-  { key: 'typography', path: '/typography' },
-  { key: 'select', path: '/select' },
-  { key: 'date-picker', path: '/date-picker' },
-  { key: 'custom-form', path: '/custom-form' },
-  { key: 'form-sizes', path: '/form-sizes' },
-  { key: 'context-menu', path: '/context-menu' },
-  { key: 'carousel', path: '/carousel' },
-  { key: 'image-uploader', path: '/image-uploader' },
-  { key: 'nav-modal', path: '/nav-modal' },
-  { key: 'table', path: '/table' },
-  { key: 'button-group', path: '/button-group' },
-  { key: 'badge', path: '/badge' },
-  { key: 'server-pagination', path: '/server-pagination' },
-  { key: 'alert', path: '/alert' },
-  { key: 'font-compare', path: '/font-compare' },
-  { key: 'text-shift', path: '/text-shift' },
-  { key: 'drawer', path: '/drawer' },
-  { key: 'page-nav', path: '/page-nav' },
-];
-
 const SideNav = () => {
 
   const [menuCollapsed, setMenuCollapsed] = useState(() => localStorage.getItem('sidebar-collapsed') === 'true');
   const [isMobile, setIsMobile] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-
-  // Derive active key from current path
-  const activeKey = (() => {
-    const path = location.pathname;
-    const match = menuItemsList.find(i => i.path === path);
-    return match?.key ?? 'dashboard';
-  })();
 
   const menuItems: SideMenuItemData[] = [
     { key: 'dashboard', icon: <Home size="1rem"/>, label: "Dashboard", path: '/' },
@@ -299,7 +259,7 @@ const SideNav = () => {
             <div className="side-menu-content better-scroll">
                 <SideMenuItems
                   items={menuItems}
-                  activeItem={activeKey}
+                  activePath={location.pathname}
                   collapsed={menuCollapsed}
                   isMobile={isMobile}
                   onSelect={handleSelect}
