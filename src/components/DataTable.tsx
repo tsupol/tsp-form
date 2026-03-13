@@ -657,9 +657,7 @@ export function DataTable<TData>({
               placement="top"
               align="start"
               trigger={
-                <Button variant="outline" color="default" size={controlSize} className={`btn-icon${controlSize !== 'md' ? `-${controlSize}` : ''}`} onClick={() => setMobileInfoOpen((v) => !v)}>
-                  <InfoIcon />
-                </Button>
+                <Button variant="outline" color="default" size={controlSize} className={`btn-icon${controlSize !== 'md' ? `-${controlSize}` : ''}`} onClick={() => setMobileInfoOpen((v) => !v)} startIcon={<InfoIcon />} />
               }
             >
               <div className="data-table-info-popover">

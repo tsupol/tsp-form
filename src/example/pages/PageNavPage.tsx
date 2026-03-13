@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { PageNav, PageNavPanel } from '../../components/PageNav';
 import { clsx } from 'clsx';
-import { Menu } from 'lucide-react';
+import { ArrowRightFromLine } from 'lucide-react';
 
 type Lesson = {
   id: number;
@@ -18,44 +18,69 @@ const lessons: Lesson[] = [
   { id: 4, title: 'Hooks Deep Dive', description: 'Advanced hook patterns', duration: '30 min', content: 'Hooks let you use state and other React features without writing a class. They are functions that let you "hook into" React state and lifecycle.\n\nTopics covered:\n- useCallback and useMemo\n- useRef\n- useContext\n- Custom hooks\n- Rules of hooks' },
   { id: 5, title: 'Routing & Navigation', description: 'Client-side routing with React Router', duration: '20 min', content: 'React Router enables navigation among views of various components in a React Application.\n\nTopics covered:\n- BrowserRouter setup\n- Route and Routes\n- Link and NavLink\n- URL parameters\n- Nested routes' },
   { id: 6, title: 'Forms & Validation', description: 'Building forms with react-hook-form', duration: '25 min', content: 'React Hook Form is a performant library for managing form state and validation.\n\nTopics covered:\n- useForm hook\n- Registering inputs\n- Validation rules\n- Error handling\n- Form submission' },
+  { id: 7, title: 'Performance Optimization', description: 'Techniques for faster React apps', duration: '30 min', content: 'Optimizing React applications requires understanding how React renders and updates the DOM.\n\nTopics covered:\n- React.memo and shouldComponentUpdate\n- useMemo and useCallback\n- Code splitting with lazy and Suspense\n- Virtualized lists\n- Profiling with React DevTools' },
+  { id: 8, title: 'Testing React Apps', description: 'Unit and integration testing strategies', duration: '25 min', content: 'Testing ensures your components work correctly and helps prevent regressions as your codebase grows.\n\nTopics covered:\n- Jest and React Testing Library\n- Rendering components in tests\n- Simulating user interactions\n- Mocking API calls\n- Snapshot testing' },
 ];
 
-function HamburgerButton() {
+function MenuToggleButton() {
   return (
     <button
-      className="w-10 h-10 flex items-center justify-center hover:bg-surface-hover rounded-lg transition-colors cursor-pointer"
+      className="flex items-center justify-center w-12 h-12 cursor-pointer hover:bg-surface-hover transition-colors"
       aria-label="Open menu"
       onClick={() => window.dispatchEvent(new CustomEvent('sidemenu:open'))}
     >
-      <Menu size={20} />
+      <ArrowRightFromLine size={18} />
     </button>
   );
 }
 
-function LessonList({ selected, onSelect }: { selected: Lesson | null; onSelect: (l: Lesson) => void }) {
+function LessonList({ selected, onSelect, filter, onFilterChange }: {
+  selected: Lesson | null;
+  onSelect: (l: Lesson) => void;
+  filter: string;
+  onFilterChange: (v: string) => void;
+}) {
+  const filtered = lessons.filter(
+    (l) => l.title.toLowerCase().includes(filter.toLowerCase()) || l.description.toLowerCase().includes(filter.toLowerCase())
+  );
+
   return (
-    <div className="flex flex-col">
-      {lessons.map((lesson) => (
-        <button
-          key={lesson.id}
-          className={clsx(
-            'text-left px-4 py-3 border-b border-line transition-colors cursor-pointer',
-            selected?.id === lesson.id ? 'bg-primary/10' : 'hover:bg-surface-hover'
-          )}
-          onClick={() => onSelect(lesson)}
-        >
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-sm font-medium shrink-0">
-              {lesson.id}
+    <div className="flex flex-col h-full">
+      <div className="px-4 py-3 border-b border-line shrink-0">
+        <input
+          type="text"
+          placeholder="Filter lessons..."
+          value={filter}
+          onChange={(e) => onFilterChange(e.target.value)}
+          className="w-full px-3 py-2 rounded-lg border border-line bg-surface text-sm outline-none focus:border-primary"
+        />
+      </div>
+      <div className="flex-1 overflow-y-auto better-scroll">
+        {filtered.map((lesson) => (
+          <button
+            key={lesson.id}
+            className={clsx(
+              'text-left px-4 py-8 border-b border-line transition-colors cursor-pointer w-full',
+              selected?.id === lesson.id ? 'bg-primary/10' : 'hover:bg-surface-hover'
+            )}
+            onClick={() => onSelect(lesson)}
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-sm font-medium shrink-0">
+                {lesson.id}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="font-medium truncate">{lesson.title}</div>
+                <div className="text-sm opacity-60 truncate">{lesson.description}</div>
+              </div>
+              <span className="text-xs opacity-40 shrink-0">{lesson.duration}</span>
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="font-medium truncate">{lesson.title}</div>
-              <div className="text-sm opacity-60 truncate">{lesson.description}</div>
-            </div>
-            <span className="text-xs opacity-40 shrink-0">{lesson.duration}</span>
-          </div>
-        </button>
-      ))}
+          </button>
+        ))}
+        {filtered.length === 0 && (
+          <div className="px-4 py-8 text-center opacity-40">No lessons found</div>
+        )}
+      </div>
     </div>
   );
 }
@@ -99,6 +124,7 @@ function LessonContent({ lesson }: { lesson: Lesson | null }) {
 
 export function PageNavPage() {
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [filter, setFilter] = useState('');
 
   return (
     <PageNav panels={['list', 'detail']} mobileBreakpoint={768} className="h-dvh">
@@ -107,7 +133,7 @@ export function PageNavPage() {
           {isMobile && (
             <Header
               title={isRoot ? 'Lessons' : selectedLesson?.title}
-              startContent={isRoot ? <HamburgerButton /> : undefined}
+              startContent={isRoot ? <MenuToggleButton /> : undefined}
             />
           )}
           {!isMobile && (
@@ -117,9 +143,11 @@ export function PageNavPage() {
             </div>
           )}
           <div className={isMobile ? 'pagenav-panels' : 'flex flex-1 min-h-0'}>
-            <PageNavPanel id="list" className="w-80 border-r border-line overflow-y-auto better-scroll">
+            <PageNavPanel id="list" className="w-80 border-r border-line">
               <LessonList
                 selected={selectedLesson}
+                filter={filter}
+                onFilterChange={setFilter}
                 onSelect={(l) => {
                   setSelectedLesson(l);
                   if (isMobile) goTo('detail');

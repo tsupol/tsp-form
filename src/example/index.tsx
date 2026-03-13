@@ -42,6 +42,7 @@ import { FontComparePage } from './pages/FontComparePage';
 import { TextShiftPage } from './pages/TextShiftPage';
 import { DrawerPage } from './pages/DrawerPage';
 import { PageNavPage } from './pages/PageNavPage';
+import { PageNavTablePage } from './pages/PageNavTablePage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -207,6 +208,7 @@ const SideNav = () => {
     { key: 'font-compare', icon: <Type size="1rem"/>, label: "Font Compare", path: '/font-compare' },
     { key: 'text-shift', icon: <SlidersHorizontal size="1rem"/>, label: "Text Shift", path: '/text-shift' },
     { key: 'page-nav', icon: <Columns3 size="1rem"/>, label: "PageNav", path: '/page-nav' },
+    { key: 'page-nav-table', icon: <Table2 size="1rem"/>, label: "PageNav Table", path: '/page-nav-table' },
   ];
 
   const handleSelect = (key: string, path?: string) => {
@@ -314,6 +316,7 @@ const App = () => {
                 <Route path="/text-shift" element={<TextShiftPage/>}/>
                 <Route path="/drawer" element={<DrawerPage/>}/>
                 <Route path="/page-nav" element={<PageNavPage/>}/>
+                <Route path="/page-nav-table" element={<PageNavTablePage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="heading-1 mb-4">Dashboard</h1>
