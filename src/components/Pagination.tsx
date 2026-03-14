@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import clsx from 'clsx';
 import '../styles/pagination.css';
 
@@ -41,8 +41,7 @@ export type PaginationProps = {
   onPageChange: (page: number) => void;
   className?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg';
-  siblingCount?: number;
-  mobileSiblingCount?: number;
+  siblingCount?: number | 'auto';
   showFirstLast?: boolean;
   disabled?: boolean;
   icons?: PaginationIcons;
@@ -55,29 +54,75 @@ const range = (start: number, end: number) => {
 
 const DOTS = '...';
 
+// Button min-width + horizontal padding per size (from pagination.css)
+const BUTTON_SIZES: Record<string, number> = {
+  xs: 22,  // 1.375rem
+  sm: 28,  // 1.75rem
+  md: 36,  // 2.25rem
+  lg: 44,  // 2.75rem
+};
+
+const GAP = 4; // 0.25rem gap
+
+function useAutoSiblingCount(
+  navRef: React.RefObject<HTMLElement | null>,
+  size: string,
+  showFirstLast: boolean,
+  totalPages: number,
+): number {
+  const [autoCount, setAutoCount] = useState(1);
+
+  const calculate = useCallback((width: number) => {
+    const buttonSize = BUTTON_SIZES[size] || BUTTON_SIZES.md;
+    const itemWidth = buttonSize + GAP;
+
+    // Fixed items: prev + next + currentPage + 2 dots (worst case)
+    // With showFirstLast: + first + last
+    const fixedItems = 2 + 1 + 2 + (showFirstLast ? 2 : 0); // nav buttons + current + dots + first/last pages
+    const fixedWidth = fixedItems * itemWidth;
+    const remaining = width - fixedWidth;
+
+    // Each additional sibling adds 2 buttons (one on each side)
+    const maxSiblings = Math.max(0, Math.floor(remaining / (2 * itemWidth)));
+    // Cap at a reasonable max
+    const capped = Math.min(maxSiblings, Math.floor((totalPages - 1) / 2));
+    setAutoCount(capped);
+  }, [size, showFirstLast, totalPages]);
+
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        calculate(entry.contentRect.width);
+      }
+    });
+
+    observer.observe(el);
+    // Initial calculation
+    calculate(el.getBoundingClientRect().width);
+
+    return () => observer.disconnect();
+  }, [navRef, calculate]);
+
+  return autoCount;
+}
+
 export const Pagination = ({
   currentPage,
   totalPages,
   onPageChange,
   className,
   size = 'md',
-  siblingCount = 1,
-  mobileSiblingCount = 0,
+  siblingCount = 'auto',
   showFirstLast = true,
   disabled = false,
   icons,
 }: PaginationProps) => {
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const mql = window.matchMedia('(max-width: 640px)');
-    setIsMobile(mql.matches);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
-  }, []);
-
-  const effectiveSiblingCount = isMobile ? mobileSiblingCount : siblingCount;
+  const navRef = useRef<HTMLElement>(null);
+  const autoSiblingCount = useAutoSiblingCount(navRef, size, showFirstLast, totalPages);
+  const effectiveSiblingCount = siblingCount === 'auto' ? autoSiblingCount : siblingCount;
 
   const paginationRange = useMemo(() => {
     const totalPageNumbers = effectiveSiblingCount + 5; // siblingCount + firstPage + lastPage + currentPage + 2*DOTS
@@ -143,7 +188,7 @@ export const Pagination = ({
   if (totalPages < 2) return null;
 
   return (
-    <nav className={clsx('pagination', `pagination-${size}`, className)} aria-label="Pagination">
+    <nav ref={navRef} className={clsx('pagination', `pagination-${size}`, className)} aria-label="Pagination">
       <ul className="pagination-list">
         {showFirstLast && (
           <li>

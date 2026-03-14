@@ -64,6 +64,7 @@
 
     /* Pagination bar */
     .data-table-footer {
+        container-type: inline-size;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -86,7 +87,7 @@
         width: 4.25rem;
     }
 
-    /* Mobile info button — hidden on desktop */
+    /* Compact info button — hidden by default */
     .data-table-footer-mobile {
         display: none;
     }
@@ -103,8 +104,8 @@
         white-space: nowrap;
     }
 
-    /* Mobile: show info button, hide desktop left group */
-    @media (max-width: 640px) {
+    /* When footer is narrow, collapse left group into info button */
+    @container (max-width: 480px) {
         .data-table-footer-left {
             display: none;
         }
