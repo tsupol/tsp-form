@@ -11,25 +11,34 @@ export type InputDatePickerProps = Omit<InputProps, 'value' | 'onChange' | 'endI
   endIcon?: ReactNode;
   defaultStartTime?: { hours: number; minutes: number };
   locale?: string;
+  /** 'locale' uses the locale's native calendar (e.g. Buddhist for Thai), 'gregorian' always uses Gregorian */
+  calendar?: 'locale' | 'gregorian';
   error?: boolean;
   size?: "sm" | "md" | "lg";
 };
 
-const createDateFormat = (locale: string) => (date: Date | null): string => {
-  if (!date) return '';
-  const showTime = date.getHours() !== 0 || date.getMinutes() !== 0;
-  const opts: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    ...(showTime && { hour: 'numeric', minute: '2-digit' }),
+function resolveLocale(locale: string, calendar: 'locale' | 'gregorian'): string {
+  return calendar === 'gregorian' ? `${locale}-u-ca-gregory` : locale;
+}
+
+const createDateFormat = (locale: string, calendar: 'locale' | 'gregorian') => {
+  const resolved = resolveLocale(locale, calendar);
+  return (date: Date | null): string => {
+    if (!date) return '';
+    const showTime = date.getHours() !== 0 || date.getMinutes() !== 0;
+    const opts: Intl.DateTimeFormatOptions = {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      ...(showTime && { hour: 'numeric', minute: '2-digit' }),
+    };
+    return date.toLocaleString(resolved, opts);
   };
-  return date.toLocaleString(locale, opts);
 };
 
 export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps>(
-  ({ value, onChange, datePickerProps, dateFormat, endIcon, defaultStartTime, locale = 'en-US', error, size, ...inputProps }, ref) => {
-    const formatDate = dateFormat ?? createDateFormat(locale);
+  ({ value, onChange, datePickerProps, dateFormat, endIcon, defaultStartTime, locale = 'en-US', calendar = 'locale', error, size, ...inputProps }, ref) => {
+    const formatDate = dateFormat ?? createDateFormat(locale, calendar);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleDateChange = (date: Date | null) => {
@@ -67,6 +76,7 @@ export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps
               onChange={handleDateChange}
               defaultStartTime={defaultStartTime}
               locale={locale}
+              calendar={calendar}
             />
           </div>
         </PopOver>

@@ -28,6 +28,8 @@ export interface DatePickerProps {
   defaultStartTime?: { hours: number; minutes: number };
   defaultEndTime?: { hours: number; minutes: number };
   locale?: string;
+  /** 'locale' uses the locale's native calendar (e.g. Buddhist for Thai), 'gregorian' always uses Gregorian */
+  calendar?: 'locale' | 'gregorian';
   labels?: DatePickerLabels;
 }
 
@@ -48,6 +50,12 @@ function getMonths(locale: string): { short: string; long: string }[] {
   }));
 }
 
+function getDisplayYear(gregorianYear: number, locale: string, calendar: 'locale' | 'gregorian'): string {
+  if (calendar === 'gregorian') return String(gregorianYear);
+  const fmt = new Intl.DateTimeFormat(locale, { year: 'numeric' });
+  return fmt.format(new Date(gregorianYear, 0, 1));
+}
+
 type ViewMode = 'days' | 'months' | 'years';
 
 export const DatePicker = ({
@@ -66,10 +74,12 @@ export const DatePicker = ({
   defaultStartTime = { hours: 0, minutes: 0 },
   defaultEndTime = { hours: 23, minutes: 59 },
   locale = 'en-US',
+  calendar = 'locale',
   labels,
 }: DatePickerProps) => {
   const weekdays = useMemo(() => getWeekdays(locale), [locale]);
   const months = useMemo(() => getMonths(locale), [locale]);
+  const displayYear = (year: number) => getDisplayYear(year, locale, calendar);
   const l = {
     clear: labels?.clear ?? 'Clear',
     today: labels?.today ?? 'Today',
@@ -369,7 +379,7 @@ export const DatePicker = ({
             })}
             onClick={() => handleYearSelect(year)}
           >
-            {year}
+            {displayYear(year)}
           </div>
         ))}
       </div>
@@ -449,7 +459,7 @@ export const DatePicker = ({
             onClick={() => setViewMode('months')}
             disabled={disabled}
           >
-            {months[currentMonth].long} {currentYear}
+            {months[currentMonth].long} {displayYear(currentYear)}
           </button>
           <button
             type="button"
@@ -478,7 +488,7 @@ export const DatePicker = ({
             onClick={() => setViewMode('years')}
             disabled={disabled}
           >
-            {currentYear}
+            {displayYear(currentYear)}
           </button>
           <button
             type="button"
@@ -502,7 +512,7 @@ export const DatePicker = ({
             ←
           </button>
           <div className="datepicker-header-title datepicker-header-title-static">
-            {yearsRangeStart} - {yearsRangeStart + 11}
+            {displayYear(yearsRangeStart)} - {displayYear(yearsRangeStart + 11)}
           </div>
           <button
             type="button"

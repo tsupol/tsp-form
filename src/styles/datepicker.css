@@ -264,6 +264,10 @@
             flex-direction: column;
         }
 
+        .datepicker-container {
+            margin-inline: auto;
+        }
+
         .datepicker-time-container {
             border-left: none;
             border-top: 1px solid var(--color-line);

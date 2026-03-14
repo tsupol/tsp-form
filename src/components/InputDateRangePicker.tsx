@@ -14,6 +14,8 @@ export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 
   defaultStartTime?: { hours: number; minutes: number };
   defaultEndTime?: { hours: number; minutes: number };
   locale?: string;
+  /** 'locale' uses the locale's native calendar (e.g. Buddhist for Thai), 'gregorian' always uses Gregorian */
+  calendar?: 'locale' | 'gregorian';
   error?: boolean;
   size?: "sm" | "md" | "lg";
 };
@@ -21,32 +23,39 @@ export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 
 const hasTime = (date: Date | null) =>
   date !== null && (date.getHours() !== 0 || date.getMinutes() !== 0);
 
-const createDateRangeFormat = (locale: string) => (fromDate: Date | null, toDate: Date | null): string => {
-  if (!fromDate && !toDate) return '';
+function resolveLocale(locale: string, calendar: 'locale' | 'gregorian'): string {
+  return calendar === 'gregorian' ? `${locale}-u-ca-gregory` : locale;
+}
 
-  const showTime = hasTime(fromDate) || hasTime(toDate);
+const createDateRangeFormat = (locale: string, calendar: 'locale' | 'gregorian') => {
+  const resolved = resolveLocale(locale, calendar);
+  return (fromDate: Date | null, toDate: Date | null): string => {
+    if (!fromDate && !toDate) return '';
 
-  const formatDate = (date: Date | null) => {
-    if (!date) return '';
-    const opts: Intl.DateTimeFormatOptions = {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      ...(showTime && { hour: 'numeric', minute: '2-digit' }),
+    const showTime = hasTime(fromDate) || hasTime(toDate);
+
+    const formatDate = (date: Date | null) => {
+      if (!date) return '';
+      const opts: Intl.DateTimeFormatOptions = {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        ...(showTime && { hour: 'numeric', minute: '2-digit' }),
+      };
+      return date.toLocaleString(resolved, opts);
     };
-    return date.toLocaleString(locale, opts);
+
+    const from = formatDate(fromDate);
+    const to = formatDate(toDate);
+
+    if (from && to) {
+      return `${from} - ${to}`;
+    } else if (from) {
+      return from;
+    }
+
+    return '';
   };
-
-  const from = formatDate(fromDate);
-  const to = formatDate(toDate);
-
-  if (from && to) {
-    return `${from} - ${to}`;
-  } else if (from) {
-    return from;
-  }
-
-  return '';
 };
 
 export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangePickerProps>(
@@ -61,11 +70,12 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
     defaultStartTime,
     defaultEndTime,
     locale = 'en-US',
+    calendar = 'locale',
     error,
     size,
     ...inputProps
   }, ref) => {
-    const formatRange = dateFormat ?? createDateRangeFormat(locale);
+    const formatRange = dateFormat ?? createDateRangeFormat(locale, calendar);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleFromDateChange = (date: Date | null) => {
@@ -113,6 +123,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
               defaultStartTime={defaultStartTime}
               defaultEndTime={defaultEndTime}
               locale={locale}
+              calendar={calendar}
             />
           </div>
         </PopOver>
