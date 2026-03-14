@@ -10,11 +10,12 @@ export type InputDatePickerProps = Omit<InputProps, 'value' | 'onChange' | 'endI
   dateFormat?: (date: Date | null) => string;
   endIcon?: ReactNode;
   defaultStartTime?: { hours: number; minutes: number };
+  locale?: string;
   error?: boolean;
   size?: "sm" | "md" | "lg";
 };
 
-const defaultDateFormat = (date: Date | null): string => {
+const createDateFormat = (locale: string) => (date: Date | null): string => {
   if (!date) return '';
   const showTime = date.getHours() !== 0 || date.getMinutes() !== 0;
   const opts: Intl.DateTimeFormatOptions = {
@@ -23,18 +24,19 @@ const defaultDateFormat = (date: Date | null): string => {
     day: 'numeric',
     ...(showTime && { hour: 'numeric', minute: '2-digit' }),
   };
-  return date.toLocaleString('en-US', opts);
+  return date.toLocaleString(locale, opts);
 };
 
 export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps>(
-  ({ value, onChange, datePickerProps, dateFormat = defaultDateFormat, endIcon, defaultStartTime, error, size, ...inputProps }, ref) => {
+  ({ value, onChange, datePickerProps, dateFormat, endIcon, defaultStartTime, locale = 'en-US', error, size, ...inputProps }, ref) => {
+    const formatDate = dateFormat ?? createDateFormat(locale);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleDateChange = (date: Date | null) => {
       onChange?.(date);
     };
 
-    const formattedValue = dateFormat(value || null);
+    const formattedValue = formatDate(value || null);
 
     return (
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -64,6 +66,7 @@ export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps
               selectedDate={value || null}
               onChange={handleDateChange}
               defaultStartTime={defaultStartTime}
+              locale={locale}
             />
           </div>
         </PopOver>

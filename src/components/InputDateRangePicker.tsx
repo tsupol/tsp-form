@@ -13,6 +13,7 @@ export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 
   endIcon?: ReactNode;
   defaultStartTime?: { hours: number; minutes: number };
   defaultEndTime?: { hours: number; minutes: number };
+  locale?: string;
   error?: boolean;
   size?: "sm" | "md" | "lg";
 };
@@ -20,7 +21,7 @@ export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 
 const hasTime = (date: Date | null) =>
   date !== null && (date.getHours() !== 0 || date.getMinutes() !== 0);
 
-const defaultDateRangeFormat = (fromDate: Date | null, toDate: Date | null): string => {
+const createDateRangeFormat = (locale: string) => (fromDate: Date | null, toDate: Date | null): string => {
   if (!fromDate && !toDate) return '';
 
   const showTime = hasTime(fromDate) || hasTime(toDate);
@@ -33,7 +34,7 @@ const defaultDateRangeFormat = (fromDate: Date | null, toDate: Date | null): str
       day: 'numeric',
       ...(showTime && { hour: 'numeric', minute: '2-digit' }),
     };
-    return date.toLocaleString('en-US', opts);
+    return date.toLocaleString(locale, opts);
   };
 
   const from = formatDate(fromDate);
@@ -55,14 +56,16 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
     onFromDateChange,
     onToDateChange,
     datePickerProps,
-    dateFormat = defaultDateRangeFormat,
+    dateFormat,
     endIcon,
     defaultStartTime,
     defaultEndTime,
+    locale = 'en-US',
     error,
     size,
     ...inputProps
   }, ref) => {
+    const formatRange = dateFormat ?? createDateRangeFormat(locale);
     const [isOpen, setIsOpen] = useState(false);
 
     const handleFromDateChange = (date: Date | null) => {
@@ -73,7 +76,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
       onToDateChange?.(date);
     };
 
-    const formattedValue = dateFormat(fromDate || null, toDate || null);
+    const formattedValue = formatRange(fromDate || null, toDate || null);
 
     return (
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -109,6 +112,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
               onToDateChange={handleToDateChange}
               defaultStartTime={defaultStartTime}
               defaultEndTime={defaultEndTime}
+              locale={locale}
             />
           </div>
         </PopOver>

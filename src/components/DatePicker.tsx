@@ -1,8 +1,16 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import '../styles/datepicker.css';
 import clsx from 'clsx';
 import { Button } from './Button';
 import { NumberSpinner } from './NumberSpinner';
+
+export interface DatePickerLabels {
+  clear?: string;
+  today?: string;
+  time?: string;
+  startTime?: string;
+  endTime?: string;
+}
 
 export interface DatePickerProps {
   mode?: 'single' | 'range';
@@ -19,13 +27,26 @@ export interface DatePickerProps {
   timeFormat?: '12h' | '24h';
   defaultStartTime?: { hours: number; minutes: number };
   defaultEndTime?: { hours: number; minutes: number };
+  locale?: string;
+  labels?: DatePickerLabels;
 }
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
+function getWeekdays(locale: string): string[] {
+  const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+  // Jan 4 2026 is a Sunday
+  return Array.from({ length: 7 }, (_, i) =>
+    formatter.format(new Date(2026, 0, 4 + i))
+  );
+}
+
+function getMonths(locale: string): { short: string; long: string }[] {
+  const shortFmt = new Intl.DateTimeFormat(locale, { month: 'short' });
+  const longFmt = new Intl.DateTimeFormat(locale, { month: 'long' });
+  return Array.from({ length: 12 }, (_, i) => ({
+    short: shortFmt.format(new Date(2026, i, 1)),
+    long: longFmt.format(new Date(2026, i, 1)),
+  }));
+}
 
 type ViewMode = 'days' | 'months' | 'years';
 
@@ -43,8 +64,19 @@ export const DatePicker = ({
   showTime = false,
   timeFormat = '24h',
   defaultStartTime = { hours: 0, minutes: 0 },
-  defaultEndTime = { hours: 23, minutes: 59 }
+  defaultEndTime = { hours: 23, minutes: 59 },
+  locale = 'en-US',
+  labels,
 }: DatePickerProps) => {
+  const weekdays = useMemo(() => getWeekdays(locale), [locale]);
+  const months = useMemo(() => getMonths(locale), [locale]);
+  const l = {
+    clear: labels?.clear ?? 'Clear',
+    today: labels?.today ?? 'Today',
+    time: labels?.time ?? 'Time',
+    startTime: labels?.startTime ?? 'Start Time',
+    endTime: labels?.endTime ?? 'End Time',
+  };
   const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
@@ -307,15 +339,15 @@ export const DatePicker = ({
   const renderMonthsGrid = () => {
     return (
       <div className="datepicker-months-grid">
-        {MONTHS.map((month, index) => (
+        {months.map((month, index) => (
           <div
-            key={month}
+            key={index}
             className={clsx('datepicker-month-cell', {
               'datepicker-month-cell-selected': index === currentMonth
             })}
             onClick={() => handleMonthSelect(index)}
           >
-            {month.slice(0, 3)}
+            {month.short}
           </div>
         ))}
       </div>
@@ -417,7 +449,7 @@ export const DatePicker = ({
             onClick={() => setViewMode('months')}
             disabled={disabled}
           >
-            {MONTHS[currentMonth]} {currentYear}
+            {months[currentMonth].long} {currentYear}
           </button>
           <button
             type="button"
@@ -493,8 +525,8 @@ export const DatePicker = ({
         {viewMode === 'days' && (
           <>
             <div className="datepicker-weekdays">
-              {WEEKDAYS.map((day) => (
-                <div key={day}>{day}</div>
+              {weekdays.map((day, i) => (
+                <div key={i}>{day}</div>
               ))}
             </div>
             <div className="datepicker-days-container">
@@ -514,7 +546,7 @@ export const DatePicker = ({
             onClick={handleClear}
             disabled={disabled}
           >
-            Clear
+            {l.clear}
           </Button>
           <Button
             variant="ghost"
@@ -522,7 +554,7 @@ export const DatePicker = ({
             onClick={handleToday}
             disabled={disabled}
           >
-            Today
+            {l.today}
           </Button>
         </div>
       </div>
@@ -531,7 +563,7 @@ export const DatePicker = ({
         <div className="datepicker-time-container">
           <div className="datepicker-time-section">
             <div className="datepicker-time-label">
-              {mode === 'range' ? 'Start Time' : 'Time'}
+              {mode === 'range' ? l.startTime : l.time}
             </div>
             <TimeInput
               hours={startHours}
@@ -544,7 +576,7 @@ export const DatePicker = ({
 
           {mode === 'range' && (
             <div className="datepicker-time-section">
-              <div className="datepicker-time-label">End Time</div>
+              <div className="datepicker-time-label">{l.endTime}</div>
               <TimeInput
                 hours={endHours}
                 minutes={endMinutes}
