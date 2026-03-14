@@ -193,6 +193,7 @@ type DataTableBaseProps<TData> = {
   expandOnRowClick?: boolean;
   rowExpansion?: RowExpansionState;
   onRowExpansionChange?: (updater: Updater<RowExpansionState>) => void;
+  siblingCount?: number;
   noResults?: ReactNode;
   className?: string;
   striped?: boolean;
@@ -243,6 +244,7 @@ export function DataTable<TData>({
   expandOnRowClick = false,
   rowExpansion: controlledRowExpansion,
   onRowExpansionChange,
+  siblingCount,
   noResults,
   className,
   tableClassName,
@@ -688,6 +690,7 @@ export function DataTable<TData>({
               handlePageChange(page - 1);
             }}
             size={controlSize}
+            siblingCount={siblingCount}
           />
         </div>
       )}

@@ -41,7 +41,7 @@ export type PaginationProps = {
   onPageChange: (page: number) => void;
   className?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg';
-  siblingCount?: number | 'auto';
+  siblingCount?: number;
   showFirstLast?: boolean;
   disabled?: boolean;
   icons?: PaginationIcons;
@@ -115,14 +115,14 @@ export const Pagination = ({
   onPageChange,
   className,
   size = 'md',
-  siblingCount = 'auto',
+  siblingCount,
   showFirstLast = true,
   disabled = false,
   icons,
 }: PaginationProps) => {
   const navRef = useRef<HTMLElement>(null);
   const autoSiblingCount = useAutoSiblingCount(navRef, size, showFirstLast, totalPages);
-  const effectiveSiblingCount = siblingCount === 'auto' ? autoSiblingCount : siblingCount;
+  const effectiveSiblingCount = siblingCount != null ? Math.min(siblingCount, autoSiblingCount) : autoSiblingCount;
 
   const paginationRange = useMemo(() => {
     const totalPageNumbers = effectiveSiblingCount + 5; // siblingCount + firstPage + lastPage + currentPage + 2*DOTS
