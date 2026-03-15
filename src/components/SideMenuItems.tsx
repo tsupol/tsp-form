@@ -30,6 +30,7 @@ export type SideMenuItemsProps = {
   autoCloseMobile?: boolean;
   showChevron?: boolean;
   flyoutAlign?: 'start' | 'center' | 'end';
+  disableFlyoutOnActive?: boolean;
   className?: string;
 };
 
@@ -94,6 +95,7 @@ export function SideMenuItems({
   autoCloseMobile = true,
   showChevron = true,
   flyoutAlign = 'center',
+  disableFlyoutOnActive = false,
   className,
 }: SideMenuItemsProps) {
   const effectiveActiveKey = useMemo(
@@ -136,6 +138,7 @@ export function SideMenuItems({
             onSelect={handleSelect}
             showChevron={showChevron}
             flyoutAlign={flyoutAlign}
+            disableFlyoutOnActive={disableFlyoutOnActive}
             level={0}
           />
         );
@@ -154,6 +157,7 @@ type SideMenuItemRowProps = {
   onCloseFlyout?: () => void;
   showChevron?: boolean;
   flyoutAlign?: 'start' | 'center' | 'end';
+  disableFlyoutOnActive?: boolean;
   level: number;
 };
 
@@ -167,6 +171,7 @@ function SideMenuItemRow({
   onCloseFlyout,
   showChevron,
   flyoutAlign,
+  disableFlyoutOnActive,
   level,
 }: SideMenuItemRowProps) {
   const [flyoutOpen, setFlyoutOpen] = useState(false);
@@ -178,7 +183,7 @@ function SideMenuItemRow({
   const isActiveAncestor = activeAncestors.has(item.key);
 
   const scheduleClose = useCallback(() => {
-    closeTimer.current = setTimeout(() => setFlyoutOpen(false), 200);
+    closeTimer.current = setTimeout(() => setFlyoutOpen(false), 120);
   }, []);
 
   const cancelClose = useCallback(() => {
@@ -201,18 +206,9 @@ function SideMenuItemRow({
   const handleClick = () => {
     if (item.disabled) return;
 
-    // Mobile with children: first tap opens accordion, second tap navigates
+    // Mobile with children: tap toggles accordion (parent path is not navigable)
     if (isMobile && hasChildren) {
-      if (!accordionOpen) {
-        setAccordionOpen(true);
-        return;
-      }
-      // Already open — if has path, navigate; otherwise toggle closed
-      if (item.path) {
-        onSelect?.(item.key, item.path);
-      } else {
-        setAccordionOpen(false);
-      }
+      setAccordionOpen(prev => !prev);
       return;
     }
 
@@ -232,6 +228,8 @@ function SideMenuItemRow({
     }
   };
 
+  const flyoutDisabled = disableFlyoutOnActive && (isActive || isActiveAncestor);
+
   const trigger = (
     <button
       className={clsx('side-menu-item', (isActive || isActiveAncestor) && 'active', item.disabled && 'disabled')}
@@ -241,7 +239,7 @@ function SideMenuItemRow({
     >
       {item.icon && <span className="side-menu-item-icon">{item.icon}</span>}
       {!collapsed && <span className="side-menu-item-label">{item.label}</span>}
-      {!collapsed && hasChildren && showChevron && (
+      {!collapsed && hasChildren && showChevron && !(flyoutDisabled && !isMobile) && (
         <span className="side-menu-item-chevron">
           {isMobile ? (
             <Chevron direction="right" open={accordionOpen} size={14} />
@@ -254,7 +252,7 @@ function SideMenuItemRow({
   );
 
   // Desktop: flyout via PopOver
-  if (hasChildren && !isMobile) {
+  if (hasChildren && !isMobile && !flyoutDisabled) {
     const closeFlyoutChain = () => {
       setFlyoutOpen(false);
       onCloseFlyout?.();
@@ -295,6 +293,7 @@ function SideMenuItemRow({
                 onCloseFlyout={closeFlyoutChain}
                 showChevron={showChevron}
                 flyoutAlign={flyoutAlign}
+                disableFlyoutOnActive={disableFlyoutOnActive}
                 level={level + 1}
               />
             );
@@ -329,6 +328,7 @@ function SideMenuItemRow({
                   onSelect={onSelect}
                   showChevron={showChevron}
                   flyoutAlign={flyoutAlign}
+                  disableFlyoutOnActive={disableFlyoutOnActive}
                   level={level + 1}
                 />
               );
