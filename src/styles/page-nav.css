@@ -55,7 +55,7 @@
         cursor: pointer;
         background: none;
         border: none;
-        color: var(--color-primary, #3b82f6);
+        color: inherit;
         transition: background-color 0.15s ease;
         flex-shrink: 0;
     }

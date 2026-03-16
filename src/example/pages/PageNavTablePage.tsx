@@ -1,8 +1,18 @@
+// ============================================================================
+// PageNav — Non-routed Example (useState only)
+//
+// This example uses local state to track the selected item. Selection is lost
+// on page refresh. Use this approach when the detail panel doesn't need a
+// shareable/bookmarkable URL.
+//
+// See PageNavPage for a routed example using URL search params.
+// ============================================================================
+
 import { useRef, useState } from 'react';
 import { PageNav, PageNavPanel, type PageNavContext } from '../../components/PageNav';
 import { DataTable } from '../../components/DataTable';
 import { clsx } from 'clsx';
-import { ArrowRightFromLine } from 'lucide-react';
+import { ArrowLeft, ArrowRightFromLine } from 'lucide-react';
 
 type Product = {
   id: number;
@@ -111,16 +121,24 @@ export function PageNavTablePage() {
 
   return (
     <PageNav panels={['list', 'detail']} mobileBreakpoint={768} className="h-dvh">
-      {({ isMobile, isRoot, goTo, Header }) => {
+      {({ isMobile, isRoot, goTo, goBack }) => {
         navRef.current = { isMobile, goTo };
 
         return (
           <>
             {isMobile && (
-              <Header
-                title={isRoot ? 'Products' : selected?.name}
-                startContent={isRoot ? <MenuToggleButton /> : undefined}
-              />
+              <div className="pagenav-header">
+                <div className="pagenav-header-start">
+                  {isRoot ? (
+                    <MenuToggleButton />
+                  ) : (
+                    <button className="pagenav-back-btn" onClick={goBack} aria-label="Go back">
+                      <ArrowLeft size={20} />
+                    </button>
+                  )}
+                </div>
+                <div className="pagenav-header-title">{isRoot ? 'Products' : selected?.name}</div>
+              </div>
             )}
             {!isMobile && (
               <div className="px-6 py-4 border-b border-line">

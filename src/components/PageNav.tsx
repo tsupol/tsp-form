@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback, useRef, createContext, useContext, type ReactNode } from 'react';
 import { clsx } from 'clsx';
-import { Chevron } from './Chevron';
 import '../styles/page-nav.css';
 import '../styles/scroll.css';
 
@@ -19,13 +18,6 @@ function setPageNavActive(active: boolean) {
   }
 }
 
-type HeaderProps = {
-  title?: ReactNode;
-  startContent?: ReactNode;
-  endContent?: ReactNode;
-  className?: string;
-};
-
 export type PageNavContext = {
   activePanel: string;
   parentPanel: string | null;
@@ -34,7 +26,6 @@ export type PageNavContext = {
   goTo: (id: string) => void;
   goBack: () => void;
   goToRoot: () => void;
-  Header: (props: HeaderProps) => ReactNode;
 };
 
 export type PageNavPanelProps = {
@@ -95,7 +86,13 @@ export function PageNav({
   children,
 }: PageNavProps) {
   const rootPanel = panels[0] ?? '';
-  const [navStack, setNavStack] = useState<string[]>([defaultPanel ?? rootPanel]);
+  const [navStack, setNavStack] = useState<string[]>(() => {
+    const target = defaultPanel ?? rootPanel;
+    if (target === rootPanel) return [rootPanel];
+    // Build path from root to target so isRoot is correct on deep-link/refresh
+    const idx = panels.indexOf(target);
+    return idx > 0 ? panels.slice(0, idx + 1) : [target];
+  });
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth < mobileBreakpoint : false
   );
@@ -142,25 +139,6 @@ export function PageNav({
     setNavStack([rootPanel]);
   }, [rootPanel]);
 
-  const Header = useCallback(({ title, startContent, endContent, className: headerClassName }: HeaderProps) => {
-    if (!isMobile) return null;
-
-    return (
-      <div className={clsx('pagenav-header', headerClassName)}>
-        <div className="pagenav-header-start">
-          {!isRoot && (
-            <button className="pagenav-back-btn" onClick={goBack} aria-label="Go back">
-              <Chevron direction="left" size={20} animated={false} />
-            </button>
-          )}
-          {startContent}
-        </div>
-        {title && <div className="pagenav-header-title">{title}</div>}
-        {endContent && <div className="pagenav-header-end">{endContent}</div>}
-      </div>
-    );
-  }, [isMobile, isRoot, goBack]);
-
   const ctx: PageNavContext = {
     activePanel,
     parentPanel,
@@ -169,7 +147,6 @@ export function PageNav({
     goTo,
     goBack,
     goToRoot,
-    Header,
   };
 
   return (

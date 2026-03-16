@@ -1,7 +1,28 @@
-import { useState } from 'react';
+// ============================================================================
+// PageNav — Routed Example (search params)
+//
+// This example uses URL search params (?lesson=3) to persist the selected
+// detail across page refreshes. On mobile, PageNav's slide animation handles
+// panel transitions while the URL stays in sync.
+//
+// Key patterns for routed PageNav:
+//   1. Read selection from searchParams, not local state.
+//   2. Set defaultPanel based on whether a param exists on mount — this
+//      ensures a refresh on the detail panel starts on the correct panel.
+//   3. When navigating to a child: set the search param + call goTo().
+//   4. When going back: clear the search param + call goBack().
+//   5. Build your own header — PageNav provides goBack/isRoot/isMobile
+//      but no built-in Header, so you have full control over icons, layout,
+//      and behavior (e.g. router back vs goBack).
+//
+// See PageNavTablePage for a non-routed (useState-only) example.
+// ============================================================================
+
+import { useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { PageNav, PageNavPanel } from '../../components/PageNav';
 import { clsx } from 'clsx';
-import { ArrowRightFromLine } from 'lucide-react';
+import { ArrowLeft, ArrowRightFromLine } from 'lucide-react';
 
 type Lesson = {
   id: number;
@@ -34,8 +55,8 @@ function MenuToggleButton() {
   );
 }
 
-function LessonList({ selected, onSelect, filter, onFilterChange }: {
-  selected: Lesson | null;
+function LessonList({ selectedId, onSelect, filter, onFilterChange }: {
+  selectedId: number | null;
   onSelect: (l: Lesson) => void;
   filter: string;
   onFilterChange: (v: string) => void;
@@ -61,7 +82,7 @@ function LessonList({ selected, onSelect, filter, onFilterChange }: {
             key={lesson.id}
             className={clsx(
               'text-left px-4 py-8 border-b border-line transition-colors cursor-pointer w-full',
-              selected?.id === lesson.id ? 'bg-primary/10' : 'hover:bg-surface-hover'
+              selectedId === lesson.id ? 'bg-primary/10' : 'hover:bg-surface-hover'
             )}
             onClick={() => onSelect(lesson)}
           >
@@ -123,43 +144,73 @@ function LessonContent({ lesson }: { lesson: Lesson | null }) {
 }
 
 export function PageNavPage() {
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedId = searchParams.get('lesson') ? Number(searchParams.get('lesson')) : null;
+  const selectedLesson = selectedId ? lessons.find(l => l.id === selectedId) ?? null : null;
   const [filter, setFilter] = useState('');
 
+  // Refs to call goTo from outside the render prop
+  const goToRef = useRef<(id: string) => void>();
+  const isMobileRef = useRef(false);
+
+  const selectLesson = (lesson: Lesson) => {
+    setSearchParams({ lesson: String(lesson.id) }, { replace: true });
+    if (isMobileRef.current) goToRef.current?.('detail');
+  };
+
+  const handleBack = (goBack: () => void) => {
+    // Clear the search param and navigate PageNav back to the list panel
+    setSearchParams({}, { replace: true });
+    goBack();
+  };
+
+  // If ?lesson= is present on mount (e.g. page refresh), start on detail panel
+  const initialPanel = selectedId ? 'detail' : 'list';
+
   return (
-    <PageNav panels={['list', 'detail']} mobileBreakpoint={768} className="h-dvh">
-      {({ isMobile, isRoot, goTo, Header }) => (
-        <>
-          {isMobile && (
-            <Header
-              title={isRoot ? 'Lessons' : selectedLesson?.title}
-              startContent={isRoot ? <MenuToggleButton /> : undefined}
-            />
-          )}
-          {!isMobile && (
-            <div className="px-6 py-4 border-b border-line">
-              <h1 className="heading-1">Lessons</h1>
-              <p className="text-muted">Select a lesson to view its content.</p>
+    <PageNav panels={['list', 'detail']} defaultPanel={initialPanel} mobileBreakpoint={768} className="h-dvh">
+      {({ isMobile, isRoot, goTo, goBack }) => {
+        goToRef.current = goTo;
+        isMobileRef.current = isMobile;
+
+        return (
+          <>
+            {isMobile && (
+              <div className="pagenav-header">
+                <div className="pagenav-header-start">
+                  {isRoot ? (
+                    <MenuToggleButton />
+                  ) : (
+                    <button className="pagenav-back-btn" onClick={() => handleBack(goBack)} aria-label="Go back">
+                      <ArrowLeft size={20} />
+                    </button>
+                  )}
+                </div>
+                <div className="pagenav-header-title">{isRoot ? 'Lessons' : selectedLesson?.title}</div>
+              </div>
+            )}
+            {!isMobile && (
+              <div className="px-6 py-4 border-b border-line">
+                <h1 className="heading-1">Lessons</h1>
+                <p className="text-muted">Select a lesson to view its content. Selection persists in the URL.</p>
+              </div>
+            )}
+            <div className={isMobile ? 'pagenav-panels' : 'flex flex-1 min-h-0'}>
+              <PageNavPanel id="list" className="w-80 border-r border-line">
+                <LessonList
+                  selectedId={selectedId}
+                  filter={filter}
+                  onFilterChange={setFilter}
+                  onSelect={selectLesson}
+                />
+              </PageNavPanel>
+              <PageNavPanel id="detail" className="flex-1 overflow-y-auto better-scroll">
+                <LessonContent lesson={selectedLesson} />
+              </PageNavPanel>
             </div>
-          )}
-          <div className={isMobile ? 'pagenav-panels' : 'flex flex-1 min-h-0'}>
-            <PageNavPanel id="list" className="w-80 border-r border-line">
-              <LessonList
-                selected={selectedLesson}
-                filter={filter}
-                onFilterChange={setFilter}
-                onSelect={(l) => {
-                  setSelectedLesson(l);
-                  if (isMobile) goTo('detail');
-                }}
-              />
-            </PageNavPanel>
-            <PageNavPanel id="detail" className="flex-1 overflow-y-auto better-scroll">
-              <LessonContent lesson={selectedLesson} />
-            </PageNavPanel>
-          </div>
-        </>
-      )}
+          </>
+        );
+      }}
     </PageNav>
   );
 }
