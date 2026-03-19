@@ -43,6 +43,7 @@ import { TextShiftPage } from './pages/TextShiftPage';
 import { DrawerPage } from './pages/DrawerPage';
 import { PageNavPage } from './pages/PageNavPage';
 import { PageNavTablePage } from './pages/PageNavTablePage';
+import { FileUploaderPage } from './pages/FileUploaderPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -203,6 +204,7 @@ const SideNav = () => {
     { key: 'custom-form', icon: <FileText size="1rem"/>, label: "Custom Form", path: '/custom-form' },
     { key: 'form-sizes', icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", path: '/form-sizes' },
     { key: 'image-uploader', icon: <Upload size="1rem"/>, label: "Image Uploader", path: '/image-uploader' },
+    { key: 'file-uploader', icon: <Upload size="1rem"/>, label: "File Uploader", path: '/file-uploader' },
     { key: 'nav-modal', icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", path: '/nav-modal' },
     { key: 'server-pagination', icon: <Table2 size="1rem"/>, label: "Server Pagination", path: '/server-pagination' },
     { key: 'font-compare', icon: <Type size="1rem"/>, label: "Font Compare", path: '/font-compare' },
@@ -266,6 +268,7 @@ const SideNav = () => {
                   isMobile={isMobile}
                   onSelect={handleSelect}
                   onCloseMobile={handleCloseMobile}
+                  disableFlyoutOnActive
                 />
             </div>
             <div className={clsx('border-t border-line py-2 pointer-events-auto', menuCollapsed ? 'px-0' : 'px-2')}>
@@ -306,6 +309,7 @@ const App = () => {
                 <Route path="/context-menu" element={<ContextMenuPage/>}/>
                 <Route path="/carousel" element={<CarouselPage/>}/>
                 <Route path="/image-uploader" element={<ImageUploaderPage/>}/>
+                <Route path="/file-uploader" element={<FileUploaderPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>
                 <Route path="/table" element={<TablePage/>}/>
                 <Route path="/alert" element={<AlertPage/>}/>

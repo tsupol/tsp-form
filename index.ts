@@ -40,5 +40,7 @@ export * from './src/components/Tooltip';
 export * from './src/components/ProgressBar';
 export * from './src/components/Slider';
 export * from './src/components/ImageUploader';
+export * from './src/components/FileUploader';
+export * from './src/components/ImageCropper';
 export * from './src/context/ModalContext';
 export * from './src/context/SnackbarContext';

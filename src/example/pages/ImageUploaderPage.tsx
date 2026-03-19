@@ -1,5 +1,8 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { ImageUploader, UploadedImage, RESIZE_PRESETS, ASPECT_RATIOS, ResizeOptions, CropMode, CropPosition } from '../../components/ImageUploader';
+import { ImageCropper, ImageCropperRef } from '../../components/ImageCropper';
+import { Slider } from '../../components/Slider';
+import { Button } from '../../components/Button';
 import { Select } from '../../components/Select';
 import { Input } from '../../components/Input';
 import { LabeledCheckbox } from '../../components/LabeledCheckbox';
@@ -58,6 +61,14 @@ function formatBytes(bytes: number): string {
   return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
 }
 
+const cropAspectOptions = [
+  { value: '1', label: 'Square (1:1)' },
+  { value: String(16 / 9), label: '16:9' },
+  { value: String(4 / 3), label: '4:3' },
+  { value: String(3 / 2), label: '3:2' },
+  { value: String(9 / 16), label: '9:16 (Portrait)' },
+];
+
 export function ImageUploaderPage() {
   const [images, setImages] = useState<UploadedImage[]>([]);
   const [preset, setPreset] = useState<string>('large');
@@ -69,6 +80,13 @@ export function ImageUploaderPage() {
   const [customHeight, setCustomHeight] = useState(1280);
   const [quality, setQuality] = useState(85);
   const [multiple, setMultiple] = useState(true);
+
+  // Cropper state
+  const cropperRef = useRef<ImageCropperRef>(null);
+  const [cropSrc, setCropSrc] = useState<File | null>(null);
+  const [cropAspect, setCropAspect] = useState('1');
+  const [cropZoom, setCropZoom] = useState(1);
+  const [croppedPreview, setCroppedPreview] = useState<string | null>(null);
 
   const buildResizeOptions = (): ResizeOptions => {
     const base = preset === 'custom'
@@ -288,6 +306,100 @@ export function ImageUploaderPage() {
             </details>
           </div>
         )}
+        {/* Image Cropper */}
+        <div className="card space-y-4">
+          <h2 className="heading-3">Image Cropper</h2>
+          <p className="text-sm text-muted">
+            Upload an image, then zoom and drag to crop at a fixed aspect ratio.
+          </p>
+
+          <div className="flex flex-col gap-3" style={{ maxWidth: 200 }}>
+            <label className="form-label">Aspect Ratio</label>
+            <Select
+              options={cropAspectOptions}
+              value={cropAspect}
+              onChange={(v) => setCropAspect(v as string)}
+              searchable={false}
+            />
+          </div>
+
+          {!cropSrc && (
+            <ImageUploader
+              onUpload={(imgs) => {
+                if (imgs.length > 0) setCropSrc(imgs[0].originalFile);
+              }}
+              resizeOptions={{ maxWidth: Infinity, maxHeight: Infinity, quality: 1 }}
+              placeholder={
+                <div className="image-uploader-content">
+                  <svg className="image-uploader-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                    <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <span>Upload image to crop</span>
+                </div>
+              }
+            />
+          )}
+
+          {cropSrc && (
+            <div className="flex flex-col items-center gap-3" style={{ maxWidth: 300 }}>
+              <ImageCropper
+                ref={cropperRef}
+                src={cropSrc}
+                aspectRatio={Number(cropAspect)}
+                onZoomChange={setCropZoom}
+              />
+
+              {/* Zoom slider */}
+              <div className="flex items-center gap-3 w-full">
+                <span className="text-xs text-muted whitespace-nowrap">Zoom</span>
+                <Slider
+                  min={Math.round((cropperRef.current?.minZoom ?? 0.1) * 100)}
+                  max={Math.round((cropperRef.current?.maxZoom ?? 4) * 100)}
+                  step={1}
+                  value={Math.round(cropZoom * 100)}
+                  onChange={(v) => cropperRef.current?.setZoom(v / 100)}
+                />
+              </div>
+
+              {/* Actions */}
+              <div className="flex gap-3">
+                <Button
+                  color="primary"
+                  onClick={() => cropperRef.current?.crop((blob) => {
+                    if (croppedPreview) URL.revokeObjectURL(croppedPreview);
+                    setCroppedPreview(URL.createObjectURL(blob));
+                  })}
+                >
+                  Crop
+                </Button>
+                <Button
+                  color="danger"
+                  variant="ghost"
+                  onClick={() => {
+                    setCropSrc(null);
+                    if (croppedPreview) {
+                      URL.revokeObjectURL(croppedPreview);
+                      setCroppedPreview(null);
+                    }
+                  }}
+                >
+                  Remove
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {croppedPreview && (
+            <div>
+              <h4 className="text-sm font-semibold mb-2">Cropped Result</h4>
+              <img
+                src={croppedPreview}
+                alt="Cropped"
+                style={{ maxWidth: 300, borderRadius: '0.375rem', border: '1px solid var(--border-color)' }}
+              />
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -1,0 +1,38 @@
+@layer components {
+    .image-cropper {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .image-cropper-viewport {
+        position: relative;
+        overflow: hidden;
+        border-radius: 0.375rem;
+        cursor: grab;
+        touch-action: none;
+        user-select: none;
+        background: var(--color-surface-elevated, #1a1a1a);
+    }
+
+    .image-cropper-viewport:active {
+        cursor: grabbing;
+    }
+
+    .image-cropper-viewport img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        transform-origin: 0 0;
+        pointer-events: none;
+        -webkit-user-drag: none;
+        max-width: none;
+    }
+
+    .image-cropper-overlay {
+        position: absolute;
+        inset: 0;
+        box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.5);
+        pointer-events: none;
+    }
+}
