@@ -9,13 +9,21 @@ export type SideMenuItemEntry = {
   key: string;
   icon?: ReactNode;
   label: ReactNode;
+  badge?: ReactNode;
   path?: string;
   children?: SideMenuItemData[];
   disabled?: boolean;
 };
 
+export type SideMenuItemCustom = {
+  type: 'custom';
+  key: string;
+  render: (props: { collapsed: boolean; isMobile: boolean }) => ReactNode;
+};
+
 export type SideMenuItemData =
   | SideMenuItemEntry
+  | SideMenuItemCustom
   | { type: 'group'; key: string; label: ReactNode; }
   | { type: 'separator'; key: string; };
 
@@ -44,7 +52,7 @@ function findActiveKeyByPath(items: SideMenuItemData[], activePath: string | und
 
   function walk(nodes: SideMenuItemData[]) {
     for (const node of nodes) {
-      if (node.type === 'group' || node.type === 'separator') continue;
+      if (node.type === 'group' || node.type === 'separator' || node.type === 'custom') continue;
       if (node.path) {
         if (node.path === '/') {
           if (path === '/') { bestKey = node.key; bestLength = Infinity; }
@@ -68,7 +76,7 @@ function getActiveAncestors(items: SideMenuItemData[], activeKey: string | undef
 
   function walk(nodes: SideMenuItemData[], path: string[]): boolean {
     for (const node of nodes) {
-      if (node.type === 'group' || node.type === 'separator') continue;
+      if (node.type === 'group' || node.type === 'separator' || node.type === 'custom') continue;
       if (node.key === activeKey) {
         for (const k of path) ancestors.add(k);
         return true;
@@ -124,6 +132,13 @@ export function SideMenuItems({
           return (
             <div key={item.key} className="side-menu-group-label">
               {!isCollapsed && <span className="side-menu-group-text">{item.label}</span>}
+            </div>
+          );
+        }
+        if (item.type === 'custom') {
+          return (
+            <div key={item.key} className="side-menu-custom-item">
+              {item.render({ collapsed: isCollapsed, isMobile })}
             </div>
           );
         }
@@ -239,6 +254,7 @@ function SideMenuItemRow({
     >
       {item.icon && <span className="side-menu-item-icon">{item.icon}</span>}
       {!collapsed && <span className="side-menu-item-label">{item.label}</span>}
+      {item.badge}
       {!collapsed && hasChildren && showChevron && !(flyoutDisabled && !isMobile) && (
         <span className="side-menu-item-chevron">
           {isMobile ? (

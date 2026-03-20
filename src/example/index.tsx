@@ -12,14 +12,15 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Layers, Box, ToggleLeft, Type, MessageSquare, Columns3, GalleryHorizontalEnd, Clock, Eye, BarChart3, CalendarDays, Table2 } from 'lucide-react';
+import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Layers, Box, ToggleLeft, Type, MessageSquare, Columns3, GalleryHorizontalEnd, Clock, Eye, BarChart3, CalendarDays, Table2, Bell } from 'lucide-react';
+import { Badge } from '../components/Badge';
 import { SideMenu } from '../components/SideMenu';
 import { SideMenuItems, type SideMenuItemData } from '../components/SideMenuItems';
 import { PopOver } from '../components/PopOver';
 import { MenuItem, MenuSeparator, SubMenu } from '../components/Menu';
 import { Checkmark } from '../components/Checkmark';
 import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { clsx } from 'clsx';
 import './example.css';
@@ -161,6 +162,58 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
   );
 }
 
+const mockNotifications = [
+  { id: 1, text: 'New component published: ImageCropper', time: '2 min ago' },
+  { id: 2, text: 'Build succeeded on main branch', time: '15 min ago' },
+  { id: 3, text: 'PR #42 merged: Add DateRangePicker', time: '1 hour ago' },
+  { id: 4, text: 'Issue #38 assigned to you', time: '3 hours ago' },
+];
+
+function NotificationMenuItem({ collapsed, isMobile }: { collapsed: boolean; isMobile: boolean }) {
+  const [open, setOpen] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  const dot = <span className="block w-1.5 h-1.5 rounded-full bg-primary" />;
+  const countBadge = <Badge color="primary" size="xs">{mockNotifications.length}</Badge>;
+
+  return (
+    <>
+      <button
+        ref={triggerRef}
+        className="side-menu-item"
+        onClick={() => setOpen(!open)}
+      >
+        <span className="side-menu-item-icon relative">
+          <Bell size="1rem" />
+          {collapsed && <span className="absolute -top-0 -right-0.5">{dot}</span>}
+        </span>
+        {!collapsed && <span className="side-menu-item-label">Notifications</span>}
+        {!collapsed && countBadge}
+      </button>
+      <PopOver
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        triggerRef={triggerRef}
+        placement="right"
+        align="start"
+        offset={4}
+        minWidth="260px"
+        maxWidth="320px"
+      >
+        <div className="flex flex-col py-1">
+          <div className="px-3 py-2 text-xs font-semibold text-muted uppercase tracking-wide">Notifications</div>
+          {mockNotifications.map((n) => (
+            <div key={n.id} className="px-3 py-2 hover:bg-item-hover-bg cursor-pointer transition-colors rounded">
+              <div className="text-sm">{n.text}</div>
+              <div className="text-xs text-muted mt-0.5">{n.time}</div>
+            </div>
+          ))}
+        </div>
+      </PopOver>
+    </>
+  );
+}
+
 const SideNav = () => {
 
   const [menuCollapsed, setMenuCollapsed] = useState(() => localStorage.getItem('sidebar-collapsed') === 'true');
@@ -200,6 +253,7 @@ const SideNav = () => {
     },
     { key: 'context-menu', icon: <MousePointerClick size="1rem"/>, label: "Context Menu", path: '/context-menu' },
     { key: 'carousel', icon: <Image size="1rem"/>, label: "Carousel", path: '/carousel' },
+    { type: 'custom', key: 'notifications', render: (props) => <NotificationMenuItem {...props} /> },
     { type: 'group', key: 'grp-examples', label: "Examples" },
     { key: 'custom-form', icon: <FileText size="1rem"/>, label: "Custom Form", path: '/custom-form' },
     { key: 'form-sizes', icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", path: '/form-sizes' },

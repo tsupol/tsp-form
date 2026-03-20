@@ -127,6 +127,12 @@
         align-self: stretch;
     }
 
+    /* Custom item container — minimal spacing wrapper */
+    .side-menu-custom-item {
+        display: flex;
+        flex-direction: column;
+    }
+
     /* Accordion container (mobile) — grid row animation */
     .side-menu-accordion {
         display: grid;
