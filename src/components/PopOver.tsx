@@ -44,6 +44,7 @@ export function PopOver({
   const triggerRef = externalTriggerRef ?? internalTriggerRef;
   const popoverRef = useRef<HTMLDivElement>(null);
   const mountNodeRef = useRef<HTMLElement | null>(null);
+  const cleanupRef = useRef<number>(0);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const [actualPlacement, setActualPlacement] = useState(placement);
   const [isPositioned, setIsPositioned] = useState(false);
@@ -246,11 +247,17 @@ export function PopOver({
   useLayoutEffect(() => {
     if (isOpen) {
       setIsPositioned(false);
-      // Use requestAnimationFrame to ensure DOM is fully updated
+      // Double rAF ensures portal content is fully mounted and painted
       const frame = requestAnimationFrame(() => {
-        calculatePosition();
+        const frame2 = requestAnimationFrame(() => {
+          calculatePosition();
+        });
+        cleanupRef.current = frame2;
       });
-      return () => cancelAnimationFrame(frame);
+      return () => {
+        cancelAnimationFrame(frame);
+        if (cleanupRef.current) cancelAnimationFrame(cleanupRef.current);
+      };
     } else {
       setIsPositioned(false);
     }
