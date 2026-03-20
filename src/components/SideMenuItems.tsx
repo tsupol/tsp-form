@@ -297,6 +297,11 @@ function SideMenuItemRow({
                 <span className="side-menu-group-text">{child.label}</span>
               </div>
             );
+            if (child.type === 'custom') return (
+              <div key={child.key} className="side-menu-custom-item">
+                {child.render({ collapsed: false, isMobile: false })}
+              </div>
+            );
             return (
               <SideMenuItemRow
                 key={child.key}
@@ -331,6 +336,11 @@ function SideMenuItemRow({
               if (child.type === 'group') return (
                 <div key={child.key} className="side-menu-group-label">
                   <span className="side-menu-group-text">{child.label}</span>
+                </div>
+              );
+              if (child.type === 'custom') return (
+                <div key={child.key} className="side-menu-custom-item">
+                  {child.render({ collapsed: false, isMobile: true })}
                 </div>
               );
               return (
