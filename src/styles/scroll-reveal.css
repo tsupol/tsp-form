@@ -1,0 +1,16 @@
+@layer components {
+    .scroll-reveal {
+        display: block;
+        opacity: 0;
+        transition: opacity 200ms ease;
+        pointer-events: none;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .scroll-reveal-visible {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}

@@ -46,6 +46,7 @@ import { PageNavPage } from './pages/PageNavPage';
 import { PageNavTablePage } from './pages/PageNavTablePage';
 import { FileUploaderPage } from './pages/FileUploaderPage';
 import { DebugPage } from './pages/DebugPage';
+import { MobileHeaderPage } from './pages/MobileHeaderPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -266,6 +267,7 @@ const SideNav = () => {
     { key: 'text-shift', icon: <SlidersHorizontal size="1rem"/>, label: "Text Shift", path: '/text-shift' },
     { key: 'page-nav', icon: <Columns3 size="1rem"/>, label: "PageNav", path: '/page-nav' },
     { key: 'page-nav-table', icon: <Table2 size="1rem"/>, label: "PageNav Table", path: '/page-nav-table' },
+    { key: 'mobile-header', icon: <Box size="1rem"/>, label: "Mobile Header", path: '/mobile-header' },
     { type: 'group', key: 'grp-debug', label: "Debug" },
     { key: 'debug', icon: <Settings size="1rem"/>, label: "Debug", path: '/debug' },
   ];
@@ -378,6 +380,7 @@ const App = () => {
                 <Route path="/drawer" element={<DrawerPage/>}/>
                 <Route path="/page-nav" element={<PageNavPage/>}/>
                 <Route path="/page-nav-table" element={<PageNavTablePage/>}/>
+                <Route path="/mobile-header/*" element={<MobileHeaderPage/>}/>
                 <Route path="/debug" element={<DebugPage/>}/>
                 <Route path="*" element={
                   <div className="page-content">

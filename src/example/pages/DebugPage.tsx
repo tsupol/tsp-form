@@ -47,6 +47,16 @@ export function DebugPage() {
             </div>
           </div>
         </section>
+
+        <section>
+          <h3 className="heading-3 mb-3">Ellipsis Ghost</h3>
+          <p className="text-muted mb-3">Truncated text at low opacity — does the "..." ghost show?</p>
+          <div className="card">
+            <div className="w-48 bg-surface-hover rounded px-3 h-8 flex items-center">
+              <span className="truncate opacity-0">A Very Long Title That Should Be Truncated With Ellipsis</span>
+            </div>
+          </div>
+        </section>
       </div>
     </div>
   );

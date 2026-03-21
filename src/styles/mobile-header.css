@@ -1,0 +1,48 @@
+@layer components {
+    .mobile-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        display: flex;
+        align-items: center;
+        height: var(--spacing-nav, 3rem);
+        background: var(--color-mobile-header-bg, var(--color-surface));
+        border-bottom: var(--spacing-line) solid transparent;
+        flex-shrink: 0;
+    }
+
+    .mobile-header-title {
+        flex: 1;
+        min-width: 0;
+        font-weight: 500;
+        text-align: center;
+    }
+
+    /* When title content is plain text (no ScrollReveal), truncate directly */
+    .mobile-header-title-truncate {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .mobile-header-start {
+        display: flex;
+        align-items: center;
+        z-index: 1;
+        flex-shrink: 0;
+    }
+
+    .mobile-header-end {
+        display: flex;
+        align-items: center;
+        margin-left: auto;
+        z-index: 1;
+        flex-shrink: 0;
+    }
+
+    /* Hide SideMenu's floating toggle when MobileHeader is active */
+    body[data-mobile-header] .side-menu-mobile-toggle {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
