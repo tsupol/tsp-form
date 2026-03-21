@@ -15,6 +15,7 @@ React UI component library using CSS variables (Tailwind 4 compatible). Personal
 
 ## Styling
 - Components use plain CSS files with CSS custom properties, not Tailwind utility classes
+- **Never define CSS classes in `src/styles/` that clash with Tailwind utility class names** (e.g. `.rotate-0`, `.rotate-90`, `.flex`, `.hidden`). Since component CSS is in `@layer components` and Tailwind utilities are in `@layer utilities`, both layers apply and the styles double up. Always use Tailwind's built-in utility classes directly in JSX, or use component-specific prefixed names (e.g. `.chevron-rotate-90`) if custom CSS is truly needed.
 - All component CSS in `src/styles/` is wrapped in `@layer components` so Tailwind utilities can override them
 - Variable naming follows Tailwind v4 conventions: `--color-*`, `--spacing-*`, `--radius-*`, `--text-*`
 - Component-specific customization uses `--{property}-{component}-*` variables with global fallbacks (e.g. `--color-pagination-bg` falls back to `--color-surface`)

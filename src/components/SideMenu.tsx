@@ -104,7 +104,7 @@ export const SideMenu = ({
     <>
       {/* Mobile toggle button - scroll-aware visibility */}
       {isMobile && collapsed && mobileToggleRenderer && (
-        <div className={clsx('side-menu-mobile-toggle', !toggleVisible && 'hidden')}>
+        <div className={clsx('side-menu-mobile-toggle', !toggleVisible && 'side-menu-mobile-toggle-hidden')}>
           {mobileToggleRenderer(handleToggle)}
         </div>
       )}

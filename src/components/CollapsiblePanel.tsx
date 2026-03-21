@@ -39,7 +39,7 @@ export const CollapsiblePanel = ({
       >
         <div className="cpanel-header-title">{title}</div>
         <div className="cpanel-chevron">
-          <Chevron direction="right" open={open} className="text-current cursor-pointer" size={20} {...chevronProps}/>
+          <Chevron direction="right" open={open} size={20} {...chevronProps}/>
         </div>
       </div>
 

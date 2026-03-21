@@ -45,6 +45,7 @@ import { DrawerPage } from './pages/DrawerPage';
 import { PageNavPage } from './pages/PageNavPage';
 import { PageNavTablePage } from './pages/PageNavTablePage';
 import { FileUploaderPage } from './pages/FileUploaderPage';
+import { DebugPage } from './pages/DebugPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -265,6 +266,8 @@ const SideNav = () => {
     { key: 'text-shift', icon: <SlidersHorizontal size="1rem"/>, label: "Text Shift", path: '/text-shift' },
     { key: 'page-nav', icon: <Columns3 size="1rem"/>, label: "PageNav", path: '/page-nav' },
     { key: 'page-nav-table', icon: <Table2 size="1rem"/>, label: "PageNav Table", path: '/page-nav-table' },
+    { type: 'group', key: 'grp-debug', label: "Debug" },
+    { key: 'debug', icon: <Settings size="1rem"/>, label: "Debug", path: '/debug' },
   ];
 
   const handleSelect = (key: string, path?: string) => {
@@ -375,6 +378,7 @@ const App = () => {
                 <Route path="/drawer" element={<DrawerPage/>}/>
                 <Route path="/page-nav" element={<PageNavPage/>}/>
                 <Route path="/page-nav-table" element={<PageNavTablePage/>}/>
+                <Route path="/debug" element={<DebugPage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="heading-1 mb-4">Dashboard</h1>

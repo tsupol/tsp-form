@@ -66,6 +66,13 @@ export const Drawer = ({
     }
   }, [open, isOpen, modalHook.open, modalHook.close]);
 
+  // Detect isOpen transition during render so closing is set before shouldRender check
+  if (prevIsOpenRef.current && !isOpen && !closing) {
+    setClosing(true);
+    setVisible(false);
+  }
+  prevIsOpenRef.current = isOpen;
+
   // Trigger enter animation
   useEffect(() => {
     if (isOpen) {
@@ -75,17 +82,7 @@ export const Drawer = ({
         });
       });
       return () => cancelAnimationFrame(raf);
-    } else {
-      setVisible(false);
     }
-  }, [isOpen]);
-
-  // Detect isOpen going from true → false for closing animation
-  useEffect(() => {
-    if (prevIsOpenRef.current && !isOpen) {
-      setClosing(true);
-    }
-    prevIsOpenRef.current = isOpen;
   }, [isOpen]);
 
   // Handle exit animation completion
@@ -109,7 +106,7 @@ export const Drawer = ({
         }
       };
       panel.addEventListener('transitionend', handleTransitionEnd);
-      closingTimeoutRef.current = setTimeout(finish, 250);
+      closingTimeoutRef.current = setTimeout(finish, 200);
 
       return () => {
         panel.removeEventListener('transitionend', handleTransitionEnd);

@@ -112,7 +112,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
             />
           }
         >
-          <div className="flex">
+          <div className="datepicker-popover-content">
             <DatePicker
               {...datePickerProps}
               mode="range"

@@ -468,7 +468,9 @@ export function Select({
         >
           <Chevron
             size={16}
-            className={clsx("transition-transform duration-200", isOpen && "rotate-180", disabled && "text-gray-400")}
+            direction="down"
+            open={isOpen}
+            className={clsx(disabled && "select-chevron-disabled")}
           />
         </div>
       ) : null}
@@ -528,7 +530,7 @@ export function Select({
             );
           })
         ) : (
-          <div className="px-4 py-2 text-sm text-gray-500">No options found.</div>
+          <div className="select-empty">No options found.</div>
         )}
       </div>
     </PopOver>

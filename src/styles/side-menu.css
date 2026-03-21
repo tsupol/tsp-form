@@ -1,7 +1,7 @@
 @layer components {
     .side-menu {
         height: 100dvh;
-        transition: all 0.3s ease;
+        transition: all 150ms ease;
         position: fixed;
         top: 0;
         left: 0;
@@ -72,10 +72,10 @@
         pointer-events: auto;
         padding: 0.5rem;
         opacity: 1;
-        transition: opacity 0.2s ease;
+        transition: opacity 150ms ease;
     }
 
-    .side-menu-mobile-toggle.hidden {
+    .side-menu-mobile-toggle-hidden {
         opacity: 0;
         pointer-events: none;
     }

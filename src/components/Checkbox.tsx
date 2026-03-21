@@ -42,7 +42,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
         <input
           id={uniqueId}
           type="checkbox"
-          className="sr-only checkbox-peer" // sr-only to hide visually, peer to enable sibling selection
+          className="checkbox-hidden checkbox-peer"
           ref={setRefs} // Use our combined ref setter
           checked={controlledCheckedProp}
           onChange={handleChange}

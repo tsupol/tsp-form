@@ -320,4 +320,14 @@
         background: var(--color-line);
         margin: 0.25rem 0;
     }
+
+    .select-chevron-disabled {
+        color: var(--color-fg-muted);
+    }
+
+    .select-empty {
+        padding: 0.5rem 1rem;
+        font-size: var(--text-sm, 0.875rem);
+        color: var(--color-fg-muted);
+    }
 }

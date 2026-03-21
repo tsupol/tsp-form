@@ -73,6 +73,13 @@ export const Modal = ({
     }
   }, [open, isOpen, modalHook.open, modalHook.close]);
 
+  // Detect isOpen transition during render so closing is set before shouldRender check
+  if (prevIsOpenRef.current && !isOpen && !closing) {
+    setClosing(true);
+    setVisible(false);
+  }
+  prevIsOpenRef.current = isOpen;
+
   // Trigger enter animation: flip visible on next frame so browser paints base state first
   useEffect(() => {
     if (isOpen) {
@@ -82,17 +89,7 @@ export const Modal = ({
         });
       });
       return () => cancelAnimationFrame(raf);
-    } else {
-      setVisible(false);
     }
-  }, [isOpen]);
-
-  // Detect isOpen going from true → false to trigger closing animation
-  useEffect(() => {
-    if (prevIsOpenRef.current && !isOpen) {
-      setClosing(true);
-    }
-    prevIsOpenRef.current = isOpen;
   }, [isOpen]);
 
   // Handle exit animation completion

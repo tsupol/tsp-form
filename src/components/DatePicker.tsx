@@ -528,7 +528,7 @@ export const DatePicker = ({
   };
 
   return (
-    <div className={clsx('datepicker-wrapper', { 'opacity-50': disabled }, className)}>
+    <div className={clsx('datepicker-wrapper', disabled && 'datepicker-disabled', className)}>
       <div className="datepicker-container">
         {renderHeader()}
 

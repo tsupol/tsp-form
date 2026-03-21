@@ -1,4 +1,17 @@
 @layer components {
+    .double-datepicker {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .datepicker-disabled {
+        opacity: 0.5;
+    }
+
+    .datepicker-popover-content {
+        display: flex;
+    }
+
     .datepicker-container {
         padding: 16px;
         width: 280px;

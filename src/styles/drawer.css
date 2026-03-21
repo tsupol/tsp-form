@@ -13,7 +13,7 @@
         border: 1px solid var(--color-line, rgba(222, 220, 209, 0.15));
 
         /* Animation */
-        transition: transform 200ms ease;
+        transition: transform 150ms ease;
     }
 
     /* Side positioning */
@@ -46,6 +46,7 @@
         left: 0;
         width: 100dvw;
         height: 24rem;
+        max-height: 100dvh;
         border-top: none;
         border-bottom-left-radius: 8px;
         border-bottom-right-radius: 8px;
@@ -57,6 +58,7 @@
         left: 0;
         width: 100dvw;
         height: 24rem;
+        max-height: 100dvh;
         border-bottom: none;
         border-top-left-radius: 8px;
         border-top-right-radius: 8px;

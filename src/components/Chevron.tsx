@@ -42,18 +42,6 @@ export function Chevron({
     return baseAngle[direction];
   })();
 
-  // Map to Tailwind rotation classes we actually use
-  const angleClass =
-    angle === 0
-      ? 'rotate-0'
-      : angle === 180
-        ? 'rotate-180'
-        : angle === 90
-          ? 'rotate-90'
-          : angle === -90
-            ? '-rotate-90'
-            : 'rotate-0';
-
   // Inline SVG chevron (stroke follows currentColor)
   return (
     <svg
@@ -67,11 +55,11 @@ export function Chevron({
       strokeLinecap="round"
       strokeLinejoin="round"
       className={clsx(
-        'shrink-0',
+        'chevron',
         animated && 'chevron-animated',
-        angleClass,
         className
       )}
+      style={{ transform: `rotate(${angle}deg)` }}
       aria-hidden={aria['aria-label'] ? undefined : true}
       role={aria['aria-label'] ? 'img' : undefined}
       {...aria}

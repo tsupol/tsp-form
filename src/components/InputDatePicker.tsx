@@ -69,7 +69,7 @@ export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps
           maxWidth="auto"
           maxHeight="auto"
         >
-          <div className="flex">
+          <div className="datepicker-popover-content">
             <DatePicker
               {...datePickerProps}
               selectedDate={value || null}

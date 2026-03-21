@@ -13,7 +13,7 @@ export const LabeledCheckbox = forwardRef<HTMLInputElement, LabeledCheckboxProps
     const uniqueId = id || useId(); // Ensure unique ID for label htmlFor
 
     return (
-      <div className={clsx("flex items-center gap-2", wrapperClassName)}>
+      <div className={clsx("labeled-checkbox", wrapperClassName)}>
         <Checkbox id={uniqueId} ref={ref} {...checkboxProps} />
         <label htmlFor={uniqueId} className="form-option-label">
           {label}

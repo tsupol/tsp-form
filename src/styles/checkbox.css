@@ -1,4 +1,22 @@
 @layer components {
+    .checkbox-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border-width: 0;
+    }
+
+    .labeled-checkbox {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
     .checkbox-box {
         position: relative;
         margin-top: .075rem;
@@ -25,17 +43,6 @@
         box-shadow: 0 0 0 2px var(--color-primary);
     }
 
-    .sr-only {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border-width: 0;
-    }
 
     .checkbox-mark {
         width: 1rem;

@@ -262,7 +262,7 @@ export const DoubleDatePicker = ({
   };
 
   return (
-    <div className={clsx('flex gap-4', { 'opacity-50': disabled }, className)}>
+    <div className={clsx('double-datepicker', disabled && 'datepicker-disabled', className)}>
       {/* Left Calendar */}
       <div className="datepicker-container">
         <div className="datepicker-header">
