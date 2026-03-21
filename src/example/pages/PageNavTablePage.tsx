@@ -10,6 +10,7 @@
 
 import { useRef, useState } from 'react';
 import { PageNav, PageNavPanel, type PageNavContext } from '../../components/PageNav';
+import { MobileHeader } from '../../components/MobileHeader';
 import { DataTable } from '../../components/DataTable';
 import { clsx } from 'clsx';
 import { ArrowLeft, ArrowRightFromLine } from 'lucide-react';
@@ -127,18 +128,23 @@ export function PageNavTablePage() {
         return (
           <>
             {isMobile && (
-              <div className="pagenav-header">
-                <div className="pagenav-header-start">
+              <MobileHeader className={isRoot ? 'mobile-header-bordered' : undefined}>
+                <div className="mobile-header-start">
                   {isRoot ? (
                     <MenuToggleButton />
                   ) : (
-                    <button className="pagenav-back-btn" onClick={goBack} aria-label="Go back">
+                    <button className="flex items-center justify-center w-nav h-nav cursor-pointer bg-transparent border-none text-current" onClick={goBack} aria-label="Go back">
                       <ArrowLeft size={20} />
                     </button>
                   )}
                 </div>
-                <div className="pagenav-header-title">{isRoot ? 'Products' : selected?.name}</div>
-              </div>
+                {isRoot && (
+                  <>
+                    <div className="mobile-header-title mobile-header-title-truncate">Products</div>
+                    <div className="mobile-header-end w-12" />
+                  </>
+                )}
+              </MobileHeader>
             )}
             {!isMobile && (
               <div className="px-6 py-4 border-b border-line">

@@ -62,11 +62,11 @@ body {
         margin: 1rem 0;
     }
 
-    .mobile-header-bordered {
+    .mobile-header.mobile-header-bordered {
         border-bottom: var(--spacing-line) solid var(--color-line);
     }
 
-    .mobile-header-scrolled {
+    .mobile-header.mobile-header-scrolled {
         border-bottom-color: var(--color-line);
     }
 
