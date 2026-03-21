@@ -18,7 +18,7 @@
         position: absolute;
         inset: 0;
         overflow-y: auto;
-        background: var(--color-pagenav-panel-bg, var(--color-surface));
+        background: var(--color-pagenav-panel-bg, var(--color-bg));
     }
 
     /* Header */
@@ -29,7 +29,7 @@
         display: flex;
         align-items: center;
         height: 3rem;
-        background: var(--color-pagenav-header-bg, var(--color-surface));
+        background: var(--color-pagenav-header-bg, var(--color-bg));
         border-bottom: var(--spacing-line) solid var(--color-line);
         flex-shrink: 0;
     }

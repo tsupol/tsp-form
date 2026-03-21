@@ -7,7 +7,7 @@
         align-items: center;
         height: var(--spacing-nav, 3rem);
         background: var(--color-mobile-header-bg, var(--color-surface));
-        border-bottom: var(--spacing-line) solid transparent;
+        border-bottom: none;
         flex-shrink: 0;
     }
 

@@ -25,13 +25,23 @@ import { PageNav, PageNavPanel } from '../../components/PageNav';
 import { ArrowLeft, ArrowRightFromLine, Bookmark, Code, FileText, Share2 } from 'lucide-react';
 
 // ── Scroll detection (example-level helper) ─────────────────────────────────
+// Uses IntersectionObserver on a sentinel element to detect scroll state.
 
-function useScrolled() {
+function useScrolled(sentinel: React.RefObject<Element | null>) {
   const [scrolled, setScrolled] = useState(false);
-  const onScroll = useCallback((e: React.UIEvent<HTMLElement>) => {
-    setScrolled(e.currentTarget.scrollTop > 0);
-  }, []);
-  return { scrolled, onScroll };
+
+  useEffect(() => {
+    const el = sentinel.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setScrolled(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [sentinel]);
+
+  return scrolled;
 }
 
 // ── Route Transition ────────────────────────────────────────────────────────
@@ -183,6 +193,7 @@ function TransitionPanel({
   const [style, setStyle] = useState<React.CSSProperties>({
     position: 'absolute',
     inset: 0,
+    overflowY: 'auto',
     pointerEvents: isActive ? 'auto' : 'none',
     transform: initialTransform ?? transform,
     transition: 'none',
@@ -196,6 +207,7 @@ function TransitionPanel({
           setStyle({
             position: 'absolute',
             inset: 0,
+            overflowY: 'auto',
             pointerEvents: isActive ? 'auto' : 'none',
             transform,
             transition: TRANSITION,
@@ -317,11 +329,13 @@ const codeExamples = [
 
 function ArticleList() {
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const { goForward } = useRouteTransition();
-  const { scrolled, onScroll } = useScrolled();
+  const scrolled = useScrolled(scrollRef);
 
   return (
-    <div className="h-full flex flex-col">
+    <>
+      <div ref={scrollRef} />
       <MobileHeader className={`md:hidden ${scrolled ? 'mobile-header-scrolled' : ''}`}>
         <div className="mobile-header-start">
           <button
@@ -337,40 +351,38 @@ function ArticleList() {
         </div>
       </MobileHeader>
 
-      <div className="flex-1 overflow-y-auto better-scroll" onScroll={onScroll}>
-        <div className="page-content">
-          <h1 ref={titleRef} className="heading-1 mb-1">Articles</h1>
-          <p className="text-muted mb-6">Browse recent articles and tutorials.</p>
+      <div className="page-content">
+        <h1 ref={titleRef} className="heading-1 mb-1">Articles</h1>
+        <p className="text-muted mb-6">Browse recent articles and tutorials.</p>
 
-          <div className="flex flex-col gap-3">
-            {articles.map((article) => (
-              <div
-                key={article.id}
-                className="card cursor-pointer hover:bg-surface-hover transition-colors"
-                onClick={() => goForward(`/mobile-header/article/${article.id}`)}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${categoryColor[article.category] ?? ''}`}>
-                        {article.category}
+        <div className="flex flex-col gap-3">
+          {articles.map((article) => (
+            <div
+              key={article.id}
+              className="card cursor-pointer hover:bg-surface-hover transition-colors"
+              onClick={() => goForward(`/mobile-header/article/${article.id}`)}
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${categoryColor[article.category] ?? ''}`}>
+                      {article.category}
+                    </span>
+                    {article.hasSubNav && (
+                      <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-surface-elevated opacity-60">
+                        + PageNav
                       </span>
-                      {article.hasSubNav && (
-                        <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-surface-elevated opacity-60">
-                          + PageNav
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="font-semibold mb-1">{article.title}</h3>
-                    <p className="text-sm opacity-60 line-clamp-2">{article.excerpt}</p>
+                    )}
                   </div>
+                  <h3 className="font-semibold mb-1">{article.title}</h3>
+                  <p className="text-sm opacity-60 line-clamp-2">{article.excerpt}</p>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
-    </div>
+    </>
   );
 }
 
@@ -378,11 +390,13 @@ function ArticleList() {
 
 function ArticleDetailSimple({ article }: { article: Article }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
   const { goBack } = useRouteTransition();
-  const { scrolled, onScroll } = useScrolled();
+  const scrolled = useScrolled(scrollRef);
 
   return (
-    <div className="h-full flex flex-col">
+    <>
+      <div ref={scrollRef} />
       <MobileHeader className={`md:hidden ${scrolled ? 'mobile-header-scrolled-shadow' : ''}`}>
         <div className="mobile-header-start">
           <button
@@ -406,34 +420,32 @@ function ArticleDetailSimple({ article }: { article: Article }) {
         </div>
       </MobileHeader>
 
-      <div className="flex-1 overflow-y-auto better-scroll" onScroll={onScroll}>
-        <div className="page-content">
-          <div className="flex items-center gap-2 mb-2">
-            <button
-              className="hidden md:flex items-center gap-1 text-sm opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
-              onClick={() => goBack('/mobile-header')}
-            >
-              <ArrowLeft size={14} />
-              Articles
-            </button>
-          </div>
-          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${categoryColor[article.category] ?? ''}`}>
-            {article.category}
-          </span>
-          <h1 ref={titleRef} className="heading-1 mt-2 mb-1">{article.title}</h1>
-          <p className="text-muted mb-6">{article.excerpt}</p>
-
-          {article.sections.map((section, i) => (
-            <div key={i} className="mb-6">
-              <h2 className="heading-3 mb-2">{section.heading}</h2>
-              {section.body.split('\n\n').map((p, j) => (
-                <p key={j} className="opacity-80 leading-relaxed mb-3">{p}</p>
-              ))}
-            </div>
-          ))}
+      <div className="page-content">
+        <div className="flex items-center gap-2 mb-2">
+          <button
+            className="hidden md:flex items-center gap-1 text-sm opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
+            onClick={() => goBack('/mobile-header')}
+          >
+            <ArrowLeft size={14} />
+            Articles
+          </button>
         </div>
+        <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${categoryColor[article.category] ?? ''}`}>
+          {article.category}
+        </span>
+        <h1 ref={titleRef} className="heading-1 mt-2 mb-1">{article.title}</h1>
+        <p className="text-muted mb-6">{article.excerpt}</p>
+
+        {article.sections.map((section, i) => (
+          <div key={i} className="mb-6">
+            <h2 className="heading-3 mb-2">{section.heading}</h2>
+            {section.body.split('\n\n').map((p, j) => (
+              <p key={j} className="opacity-80 leading-relaxed mb-3">{p}</p>
+            ))}
+          </div>
+        ))}
       </div>
-    </div>
+    </>
   );
 }
 
