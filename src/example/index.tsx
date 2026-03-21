@@ -12,7 +12,7 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, MousePointerClick, Image, Settings, HelpCircle, LogOut, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Upload, Layers, Box, ToggleLeft, Type, MessageSquare, Columns3, GalleryHorizontalEnd, Clock, Eye, BarChart3, CalendarDays, Table2, Bell } from 'lucide-react';
+import { Home, FileText, Settings, HelpCircle, LogOut, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Layers, Box, Type, Columns3, Table2, Bell } from 'lucide-react';
 import { Badge } from '../components/Badge';
 import { SideMenu } from '../components/SideMenu';
 import { SideMenuItems, type SideMenuItemData } from '../components/SideMenuItems';
@@ -47,6 +47,7 @@ import { PageNavTablePage } from './pages/PageNavTablePage';
 import { FileUploaderPage } from './pages/FileUploaderPage';
 import { DebugPage } from './pages/DebugPage';
 import { MobileHeaderPage } from './pages/MobileHeaderPage';
+import { ComponentsLayout } from './pages/ComponentsPage';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -225,42 +226,10 @@ const SideNav = () => {
 
   const menuItems: SideMenuItemData[] = [
     { key: 'dashboard', icon: <Home size="1rem"/>, label: "Dashboard", path: '/' },
-    {
-      key: 'components', icon: <Layers size="1rem"/>, label: "Components",
-      children: [
-        { key: 'buttons', icon: <Box size="1rem"/>, label: "Buttons", path: '/buttons' },
-        { key: 'alert', icon: <Box size="1rem"/>, label: "Alert", path: '/alert' },
-        { key: 'badge', icon: <Box size="1rem"/>, label: "Badge", path: '/badge' },
-        { key: 'button-group', icon: <Box size="1rem"/>, label: "Button Group", path: '/button-group' },
-        { key: 'form', icon: <FileText size="1rem"/>, label: "Form", path: '/form' },
-        { key: 'popover', icon: <MessageSquare size="1rem"/>, label: "PopOver", path: '/popover' },
-        { key: 'modal', icon: <Columns3 size="1rem"/>, label: "Modal", path: '/modal' },
-        { key: 'drawer', icon: <Columns3 size="1rem"/>, label: "Drawer", path: '/drawer' },
-        { key: 'snackbar', icon: <MessageSquare size="1rem"/>, label: "Snackbar", path: '/snackbar' },
-        { key: 'tabs', icon: <GalleryHorizontalEnd size="1rem"/>, label: "Tabs", path: '/tabs' },
-        {
-          key: 'feedback', icon: <Eye size="1rem"/>, label: "Feedback",
-          children: [
-            { key: 'skeleton', icon: <Clock size="1rem"/>, label: "Skeleton", path: '/skeleton' },
-            { key: 'tooltip', icon: <MessageSquare size="1rem"/>, label: "Tooltip", path: '/tooltip' },
-            { key: 'progress-bar', icon: <BarChart3 size="1rem"/>, label: "Progress Bar", path: '/progress-bar' },
-          ],
-        },
-        { key: 'select', icon: <ChevronsUpDown size="1rem"/>, label: "Select", path: '/select' },
-        { key: 'date-picker', icon: <CalendarDays size="1rem"/>, label: "Date Picker", path: '/date-picker' },
-        { key: 'pagination', icon: <ToggleLeft size="1rem"/>, label: "Pagination", path: '/pagination' },
-        { key: 'table', icon: <Table2 size="1rem"/>, label: "Table", path: '/table' },
-        { key: 'typography', icon: <Type size="1rem"/>, label: "Typography", path: '/typography' },
-      ],
-    },
-    { key: 'context-menu', icon: <MousePointerClick size="1rem"/>, label: "Context Menu", path: '/context-menu' },
-    { key: 'carousel', icon: <Image size="1rem"/>, label: "Carousel", path: '/carousel' },
-    { type: 'custom', key: 'notifications', render: (props) => <NotificationMenuItem {...props} /> },
+    { key: 'components', icon: <Layers size="1rem"/>, label: "Components", path: '/components' },
     { type: 'group', key: 'grp-examples', label: "Examples" },
     { key: 'custom-form', icon: <FileText size="1rem"/>, label: "Custom Form", path: '/custom-form' },
     { key: 'form-sizes', icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", path: '/form-sizes' },
-    { key: 'image-uploader', icon: <Upload size="1rem"/>, label: "Image Uploader", path: '/image-uploader' },
-    { key: 'file-uploader', icon: <Upload size="1rem"/>, label: "File Uploader", path: '/file-uploader' },
     { key: 'nav-modal', icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", path: '/nav-modal' },
     { key: 'server-pagination', icon: <Table2 size="1rem"/>, label: "Server Pagination", path: '/server-pagination' },
     { key: 'font-compare', icon: <Type size="1rem"/>, label: "Font Compare", path: '/font-compare' },
@@ -268,6 +237,7 @@ const SideNav = () => {
     { key: 'page-nav', icon: <Columns3 size="1rem"/>, label: "PageNav", path: '/page-nav' },
     { key: 'page-nav-table', icon: <Table2 size="1rem"/>, label: "PageNav Table", path: '/page-nav-table' },
     { key: 'mobile-header', icon: <Box size="1rem"/>, label: "Mobile Header", path: '/mobile-header' },
+    { type: 'custom', key: 'notifications', render: (props) => <NotificationMenuItem {...props} /> },
     { type: 'group', key: 'grp-debug', label: "Debug" },
     { key: 'debug', icon: <Settings size="1rem"/>, label: "Debug", path: '/debug' },
   ];
@@ -350,34 +320,36 @@ const App = () => {
             <SideNav/>
             <div className="w-full overflow-y-auto">
               <Routes>
-                <Route path="/buttons" element={<ExampleButtons/>}/>
-                <Route path="/form" element={<ExampleForm/>}/>
-                <Route path="/popover" element={<ExamplePopOver/>}/>
-                <Route path="/modal" element={<ExampleModal/>}/>
-                <Route path="/snackbar" element={<ExampleSnackbar/>}/>
-                <Route path="/tabs" element={<ExampleTabs/>}/>
-                <Route path="/skeleton" element={<ExampleSkeleton/>}/>
-                <Route path="/tooltip" element={<ExampleTooltip/>}/>
-                <Route path="/progress-bar" element={<ExampleProgressBar/>}/>
-                <Route path="/pagination" element={<ExamplePagination/>}/>
-                <Route path="/typography" element={<ExampleTypography/>}/>
-                <Route path="/select" element={<SelectPage/>}/>
-                <Route path="/date-picker" element={<DatePickerPage/>}/>
+                <Route path="/components/*" element={<ComponentsLayout/>}>
+                  <Route path="buttons" element={<ExampleButtons/>}/>
+                  <Route path="form" element={<ExampleForm/>}/>
+                  <Route path="popover" element={<ExamplePopOver/>}/>
+                  <Route path="modal" element={<ExampleModal/>}/>
+                  <Route path="snackbar" element={<ExampleSnackbar/>}/>
+                  <Route path="tabs" element={<ExampleTabs/>}/>
+                  <Route path="skeleton" element={<ExampleSkeleton/>}/>
+                  <Route path="tooltip" element={<ExampleTooltip/>}/>
+                  <Route path="progress-bar" element={<ExampleProgressBar/>}/>
+                  <Route path="pagination" element={<ExamplePagination/>}/>
+                  <Route path="typography" element={<ExampleTypography/>}/>
+                  <Route path="select" element={<SelectPage/>}/>
+                  <Route path="date-picker" element={<DatePickerPage/>}/>
+                  <Route path="context-menu" element={<ContextMenuPage/>}/>
+                  <Route path="carousel" element={<CarouselPage/>}/>
+                  <Route path="image-uploader" element={<ImageUploaderPage/>}/>
+                  <Route path="file-uploader" element={<FileUploaderPage/>}/>
+                  <Route path="table" element={<TablePage/>}/>
+                  <Route path="alert" element={<AlertPage/>}/>
+                  <Route path="badge" element={<BadgePage/>}/>
+                  <Route path="button-group" element={<ButtonGroupPage/>}/>
+                  <Route path="drawer" element={<DrawerPage/>}/>
+                </Route>
                 <Route path="/custom-form" element={<CustomFormPage/>}/>
                 <Route path="/form-sizes" element={<FormSizesPage/>}/>
-                <Route path="/context-menu" element={<ContextMenuPage/>}/>
-                <Route path="/carousel" element={<CarouselPage/>}/>
-                <Route path="/image-uploader" element={<ImageUploaderPage/>}/>
-                <Route path="/file-uploader" element={<FileUploaderPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>
-                <Route path="/table" element={<TablePage/>}/>
-                <Route path="/alert" element={<AlertPage/>}/>
-                <Route path="/badge" element={<BadgePage/>}/>
-                <Route path="/button-group" element={<ButtonGroupPage/>}/>
                 <Route path="/server-pagination" element={<ServerPaginationPage/>}/>
                 <Route path="/font-compare" element={<FontComparePage/>}/>
                 <Route path="/text-shift" element={<TextShiftPage/>}/>
-                <Route path="/drawer" element={<DrawerPage/>}/>
                 <Route path="/page-nav" element={<PageNavPage/>}/>
                 <Route path="/page-nav-table" element={<PageNavTablePage/>}/>
                 <Route path="/mobile-header/*" element={<MobileHeaderPage/>}/>
