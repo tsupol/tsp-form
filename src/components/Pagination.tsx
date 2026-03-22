@@ -83,7 +83,7 @@ function useAutoSiblingCount(
     const remaining = width - fixedWidth;
 
     // Each additional sibling adds 2 buttons (one on each side)
-    const maxSiblings = Math.max(0, Math.floor(remaining / (2 * itemWidth)));
+    const maxSiblings = Math.max(0, Math.floor(remaining / (2 * itemWidth)) - 2);
     // Cap at a reasonable max
     const capped = Math.min(maxSiblings, Math.floor((totalPages - 1) / 2));
     setAutoCount(capped);

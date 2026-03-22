@@ -3,7 +3,7 @@ import { type ColumnDef, type SortingState } from '../../components/DataTable';
 import { DataTable, DataTableColumnHeader } from '../../components/DataTable';
 import { Badge } from '../../components/Badge';
 
-// ── Fake server dataset (73 products) ──────────────────────────────
+// ── Fake server dataset (500 products) ──────────────────────────────
 
 type Product = {
   id: number;
@@ -15,7 +15,7 @@ type Product = {
 
 const categories = ['Electronics', 'Clothing', 'Books', 'Home', 'Sports'];
 
-const allProducts: Product[] = Array.from({ length: 73 }, (_, i) => ({
+const allProducts: Product[] = Array.from({ length: 500 }, (_, i) => ({
   id: i + 1,
   name: `Product ${i + 1}`,
   category: categories[i % 5],
@@ -112,7 +112,7 @@ export const ServerPaginationPage = () => {
       <section className="flex-1 min-h-0 flex flex-col">
         <h2 className="heading-3 mb-4 flex-none">Simulated Server Fetch</h2>
         <p className="text-muted mb-4 flex-none">
-          73 products total — only {pageSize} loaded per page.
+          {totalCount} products total — only {pageSize} loaded per page.
           Page {pageIndex + 1} of {Math.ceil(totalCount / pageSize)}.
         </p>
         <DataTable
@@ -135,6 +135,7 @@ export const ServerPaginationPage = () => {
             setPageIndex(pi);
             setPageSize(ps);
           }}
+          siblingCount={2}
           className="flex-1 min-h-0"
         />
       </section>
