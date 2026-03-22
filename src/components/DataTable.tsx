@@ -165,6 +165,106 @@ function getAccessorValue(row: any, accessorKey: string): any {
   return row[accessorKey];
 }
 
+// ── DataTableFooter (standalone) ─────────────────────────────────────
+
+export type DataTableFooterProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+  pageSize: number;
+  pageSizeOptions: number[];
+  onPageSizeChange: (pageSize: number) => void;
+  totalRows: number;
+  selectedCount?: number;
+  controlSize?: 'xs' | 'sm' | 'md' | 'lg';
+  siblingCount?: number;
+  className?: string;
+};
+
+export function DataTableFooter({
+  currentPage,
+  totalPages,
+  onPageChange,
+  pageSize,
+  pageSizeOptions,
+  onPageSizeChange,
+  totalRows,
+  selectedCount,
+  controlSize = 'sm',
+  siblingCount,
+  className,
+}: DataTableFooterProps) {
+  const [mobileInfoOpen, setMobileInfoOpen] = useState(false);
+
+  const pageSizeSelectOptions: SelectItem[] = useMemo(
+    () => pageSizeOptions.map((s) => ({ value: String(s), label: String(s) })),
+    [pageSizeOptions],
+  );
+
+  if (totalPages < 1) return null;
+
+  return (
+    <div className={clsx('data-table-footer', className)}>
+      <div className="data-table-footer-left">
+        <Select
+          options={pageSizeSelectOptions}
+          value={String(pageSize)}
+          onChange={(v) => onPageSizeChange(Number(v))}
+          size={controlSize}
+          searchable={false}
+          showChevron
+          className="data-table-page-size-select"
+        />
+        <div className="data-table-footer-info">
+          {selectedCount != null ? (
+            <span>{selectedCount} of {totalRows} row(s) selected</span>
+          ) : (
+            <span>{totalRows} row(s)</span>
+          )}
+        </div>
+      </div>
+      <div className="data-table-footer-mobile">
+        <PopOver
+          isOpen={mobileInfoOpen}
+          onClose={() => setMobileInfoOpen(false)}
+          placement="top"
+          align="start"
+          trigger={
+            <Button variant="outline" color="default" size={controlSize} className={`btn-icon${controlSize !== 'md' ? `-${controlSize}` : ''}`} onClick={() => setMobileInfoOpen((v) => !v)} startIcon={<InfoIcon />} />
+          }
+        >
+          <div className="data-table-info-popover">
+            <div className="data-table-info-popover-row-info">
+              {selectedCount != null
+                ? `${selectedCount} of ${totalRows} row(s) selected`
+                : `${totalRows} row(s)`}
+            </div>
+            <MenuSeparator />
+            {pageSizeOptions.map((s) => (
+              <MenuItem
+                key={s}
+                label={`${s} per page`}
+                active={pageSize === s}
+                onClick={() => {
+                  onPageSizeChange(s);
+                  setMobileInfoOpen(false);
+                }}
+              />
+            ))}
+          </div>
+        </PopOver>
+      </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        size={controlSize}
+        siblingCount={siblingCount}
+      />
+    </div>
+  );
+}
+
 // ── DataTable ───────────────────────────────────────────────────────
 
 type DataTableBaseProps<TData> = {
@@ -258,7 +358,6 @@ export function DataTable<TData>({
   const [internalGlobalFilter, setInternalGlobalFilter] = useState('');
   const [internalPageIndex, setInternalPageIndex] = useState(0);
   const [internalPageSize, setInternalPageSize] = useState(pageSize);
-  const [mobileInfoOpen, setMobileInfoOpen] = useState(false);
 
   const sorting = controlledSorting ?? internalSorting;
   const columnVisibility = controlledColumnVisibility ?? internalColumnVisibility;
@@ -498,11 +597,6 @@ export function DataTable<TData>({
     });
   };
 
-  const pageSizeSelectOptions: SelectItem[] = useMemo(
-    () => pageSizeOptions.map((s) => ({ value: String(s), label: String(s) })),
-    [pageSizeOptions],
-  );
-
   const isFreeform = !!renderRow;
 
   // Render header for a column
@@ -630,69 +724,19 @@ export function DataTable<TData>({
         )}
       </div>
 
-      {enablePagination && totalPages > 0 && (
-        <div className="data-table-footer">
-          <div className="data-table-footer-left">
-            <Select
-              options={pageSizeSelectOptions}
-              value={String(effectivePageSize)}
-              onChange={(v) => {
-                handlePageSizeChange(Number(v));
-              }}
-              size={controlSize}
-              searchable={false}
-              showChevron
-              className="data-table-page-size-select"
-            />
-            <div className="data-table-footer-info">
-              {enableRowSelection ? (
-                <span>{selectedCount} of {totalRows} row(s) selected</span>
-              ) : (
-                <span>{totalRows} row(s)</span>
-              )}
-            </div>
-          </div>
-          <div className="data-table-footer-mobile">
-            <PopOver
-              isOpen={mobileInfoOpen}
-              onClose={() => setMobileInfoOpen(false)}
-              placement="top"
-              align="start"
-              trigger={
-                <Button variant="outline" color="default" size={controlSize} className={`btn-icon${controlSize !== 'md' ? `-${controlSize}` : ''}`} onClick={() => setMobileInfoOpen((v) => !v)} startIcon={<InfoIcon />} />
-              }
-            >
-              <div className="data-table-info-popover">
-                <div className="data-table-info-popover-row-info">
-                  {enableRowSelection
-                    ? `${selectedCount} of ${totalRows} row(s) selected`
-                    : `${totalRows} row(s)`}
-                </div>
-                <MenuSeparator />
-                {pageSizeOptions.map((s) => (
-                  <MenuItem
-                    key={s}
-                    label={`${s} per page`}
-                    active={effectivePageSize === s}
-                    onClick={() => {
-                      handlePageSizeChange(s);
-                      setMobileInfoOpen(false);
-                    }}
-                  />
-                ))}
-              </div>
-            </PopOver>
-          </div>
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => {
-              handlePageChange(page - 1);
-            }}
-            size={controlSize}
-            siblingCount={siblingCount}
-          />
-        </div>
+      {enablePagination && (
+        <DataTableFooter
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={(page) => handlePageChange(page - 1)}
+          pageSize={effectivePageSize}
+          pageSizeOptions={pageSizeOptions}
+          onPageSizeChange={handlePageSizeChange}
+          totalRows={totalRows}
+          selectedCount={enableRowSelection ? selectedCount : undefined}
+          controlSize={controlSize}
+          siblingCount={siblingCount}
+        />
       )}
     </div>
   );
