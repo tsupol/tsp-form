@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Select, type Option, type SelectItem } from '../../components/Select';
 import { Apple, Cherry, Grape, Citrus, Banana, Leaf, Globe, Star } from 'lucide-react';
+import { AsyncSelectSection } from '../custom-page-sections/AsyncSelectSection';
+import { UnstyledSelectSection } from '../custom-page-sections/UnstyledSelectSection';
 
 const fruitOptions: Option[] = [
   { value: 'apple', label: 'Apple', icon: <Apple size={16} /> },
@@ -350,6 +352,16 @@ export function SelectPage() {
               }}
             />
           </div>
+        </div>
+
+        {/* Async Search Select */}
+        <div className="card space-y-3">
+          <AsyncSelectSection />
+        </div>
+
+        {/* Unstyled Select */}
+        <div className="card space-y-3">
+          <UnstyledSelectSection />
         </div>
 
       </div>

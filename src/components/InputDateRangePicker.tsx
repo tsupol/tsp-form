@@ -97,6 +97,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
           align="end"
           maxWidth="auto"
           maxHeight="auto"
+          triggerClassName="w-full"
           trigger={
             <Input
               ref={ref}

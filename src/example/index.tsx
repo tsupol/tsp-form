@@ -12,7 +12,7 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, FileText, Settings, HelpCircle, LogOut, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Layers, Box, Type, Columns3, Table2, Bell } from 'lucide-react';
+import { Home, Settings, HelpCircle, LogOut, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Layers, Box, Type, Columns3, Table2, Bell } from 'lucide-react';
 import { Badge } from '../components/Badge';
 import { SideMenu } from '../components/SideMenu';
 import { SideMenuItems, type SideMenuItemData } from '../components/SideMenuItems';
@@ -26,7 +26,7 @@ import { clsx } from 'clsx';
 import './example.css';
 import './styles/typography.css';
 import './styles/layout.css';
-import { CustomFormPage } from './pages/CustomFormPage';
+
 import { ContextMenuPage } from './pages/ContextMenuPage';
 import { CarouselPage } from './pages/CarouselPage';
 import { SettingsModalPage } from './pages/SettingsModalPage';
@@ -46,6 +46,7 @@ import { PageNavPage } from './pages/PageNavPage';
 import { PageNavTablePage } from './pages/PageNavTablePage';
 import { FileUploaderPage } from './pages/FileUploaderPage';
 import { NumberSpinnerPage } from './pages/NumberSpinnerPage';
+
 import { DebugPage } from './pages/DebugPage';
 import { MobileHeaderPage } from './pages/MobileHeaderPage';
 import { ComponentsLayout } from './pages/ComponentsPage';
@@ -229,7 +230,6 @@ const SideNav = () => {
     { key: 'dashboard', icon: <Home size="1rem"/>, label: "Dashboard", path: '/' },
     { key: 'components', icon: <Layers size="1rem"/>, label: "Components", path: '/components' },
     { type: 'group', key: 'grp-examples', label: "Examples" },
-    { key: 'custom-form', icon: <FileText size="1rem"/>, label: "Custom Form", path: '/custom-form' },
     { key: 'form-sizes', icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", path: '/form-sizes' },
     { key: 'nav-modal', icon: <SlidersHorizontal size="1rem"/>, label: "Nav Modal", path: '/nav-modal' },
     { key: 'server-pagination', icon: <Table2 size="1rem"/>, label: "Server Pagination", path: '/server-pagination' },
@@ -346,7 +346,6 @@ const App = () => {
                   <Route path="drawer" element={<DrawerPage/>}/>
                   <Route path="number-spinner" element={<NumberSpinnerPage/>}/>
                 </Route>
-                <Route path="/custom-form" element={<CustomFormPage/>}/>
                 <Route path="/form-sizes" element={<FormSizesPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>
                 <Route path="/server-pagination" element={<ServerPaginationPage/>}/>
