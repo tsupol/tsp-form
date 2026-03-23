@@ -2,11 +2,12 @@
     .better-scroll {
         overflow-y: auto;
         scrollbar-width: thin; /* Firefox */
+        scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox */
     }
 
     /* Webkit scrollbar styling */
     .better-scroll::-webkit-scrollbar {
-        width: 8px; /* Make it thin */
+        width: 8px;
     }
 
     .better-scroll::-webkit-scrollbar-track {
@@ -22,10 +23,16 @@
         background: rgba(255, 255, 255, 0.5);
     }
 
-    .better-scroll {
-        overflow-y: auto;
-        scrollbar-width: thin; /* Firefox */
-        scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox */
+    /* Hide scrollbar on mobile */
+    @media (max-width: 767px) {
+        .better-scroll {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .better-scroll::-webkit-scrollbar {
+            display: none;
+        }
     }
 
     /* Hidden scrollbar but still scrollable */

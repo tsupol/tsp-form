@@ -38,7 +38,7 @@ export function TextShiftPage() {
               className="w-48"
             />
             <Button size="sm">Button</Button>
-            <Button size="sm" variant="outline"><Search size={14} />Outline</Button>
+            <Button size="sm" variant="outline" startIcon={<Search size={14} />}>Outline</Button>
             <Badge size="sm">Badge</Badge>
             <Badge size="sm" variant="outline" color="primary">Outline</Badge>
           </div>
@@ -52,7 +52,7 @@ export function TextShiftPage() {
               onChange={(v) => setSelSm(v as string | null)}
               className="w-48"
             />
-            <Button size="sm" color="primary">Primary<ChevronRight size={14} /></Button>
+            <Button size="sm" color="primary" endIcon={<ChevronRight size={14} />}>Primary</Button>
             <Button size="sm" variant="ghost">Ghost</Button>
             <Badge size="sm" color="success">Success</Badge>
             <Badge size="sm" color="danger">Danger</Badge>
@@ -71,7 +71,7 @@ export function TextShiftPage() {
               className="w-48"
             />
             <Button>Button</Button>
-            <Button variant="outline"><Search size={16} />Outline</Button>
+            <Button variant="outline" startIcon={<Search size={16} />}>Outline</Button>
             <Badge>Badge</Badge>
             <Badge variant="outline" color="primary">Outline</Badge>
           </div>
@@ -84,7 +84,7 @@ export function TextShiftPage() {
               onChange={(v) => setSelMd(v as string | null)}
               className="w-48"
             />
-            <Button color="primary">Primary<ChevronRight size={16} /></Button>
+            <Button color="primary" endIcon={<ChevronRight size={16} />}>Primary</Button>
             <Button variant="ghost">Ghost</Button>
             <Badge color="success">Success</Badge>
             <Badge color="danger">Danger</Badge>
@@ -104,7 +104,7 @@ export function TextShiftPage() {
               className="w-48"
             />
             <Button size="lg">Button</Button>
-            <Button size="lg" variant="outline"><Search size={20} />Outline</Button>
+            <Button size="lg" variant="outline" startIcon={<Search size={20} />}>Outline</Button>
             <Badge size="lg">Badge</Badge>
             <Badge size="lg" variant="outline" color="primary">Outline</Badge>
           </div>
@@ -118,7 +118,7 @@ export function TextShiftPage() {
               onChange={(v) => setSelLg(v as string | null)}
               className="w-48"
             />
-            <Button size="lg" color="primary">Primary<ChevronRight size={20} /></Button>
+            <Button size="lg" color="primary" endIcon={<ChevronRight size={20} />}>Primary</Button>
             <Button size="lg" variant="ghost">Ghost</Button>
             <Badge size="lg" color="success">Success</Badge>
             <Badge size="lg" color="danger">Danger</Badge>
