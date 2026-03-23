@@ -45,6 +45,7 @@ import { DrawerPage } from './pages/DrawerPage';
 import { PageNavPage } from './pages/PageNavPage';
 import { PageNavTablePage } from './pages/PageNavTablePage';
 import { FileUploaderPage } from './pages/FileUploaderPage';
+import { NumberSpinnerPage } from './pages/NumberSpinnerPage';
 import { DebugPage } from './pages/DebugPage';
 import { MobileHeaderPage } from './pages/MobileHeaderPage';
 import { ComponentsLayout } from './pages/ComponentsPage';
@@ -343,6 +344,7 @@ const App = () => {
                   <Route path="badge" element={<BadgePage/>}/>
                   <Route path="button-group" element={<ButtonGroupPage/>}/>
                   <Route path="drawer" element={<DrawerPage/>}/>
+                  <Route path="number-spinner" element={<NumberSpinnerPage/>}/>
                 </Route>
                 <Route path="/custom-form" element={<CustomFormPage/>}/>
                 <Route path="/form-sizes" element={<FormSizesPage/>}/>

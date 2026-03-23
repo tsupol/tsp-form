@@ -2,7 +2,7 @@ import { useNavigate, useLocation, Outlet } from 'react-router-dom';
 import {
   Box, FileText, MessageSquare, Columns3, GalleryHorizontalEnd,
   Eye, Clock, BarChart3, ChevronsUpDown, CalendarDays, ToggleLeft,
-  Table2, Type, MousePointerClick, Image, Upload,
+  Table2, Type, MousePointerClick, Image, Upload, Hash,
 } from 'lucide-react';
 import { type ReactNode } from 'react';
 import { clsx } from 'clsx';
@@ -37,6 +37,7 @@ const components: ComponentEntry[] = [
   { label: 'Carousel', path: '/components/carousel', icon: <Image size={16} />, description: 'Image and content slider' },
   { label: 'Image Uploader', path: '/components/image-uploader', icon: <Upload size={16} />, description: 'Image upload with preview' },
   { label: 'File Uploader', path: '/components/file-uploader', icon: <Upload size={16} />, description: 'File upload mechanics' },
+  { label: 'Number Spinner', path: '/components/number-spinner', icon: <Hash size={16} />, description: 'Numeric input with +/- buttons' },
 ];
 
 function ComponentsIndex() {
