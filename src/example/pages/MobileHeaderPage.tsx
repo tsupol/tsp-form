@@ -17,12 +17,27 @@
 //   5. Route transitions slide in/out like PageNav panels on mobile
 // ============================================================================
 
-import { useRef, useState, useEffect, useCallback, createContext, useContext, type ReactNode } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useRef, useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { MobileHeader } from '../../components/MobileHeader';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { PageNav, PageNavPanel } from '../../components/PageNav';
+import { RouteTransition, useRouteTransition } from '../../components/RouteTransition';
 import { ArrowLeft, ArrowRightFromLine, Bookmark, Code, FileText, Share2 } from 'lucide-react';
+
+// ── Navigation helper (bridges RouteTransition + React Router) ──────────────
+// RouteTransition is router-agnostic — it signals direction only.
+// This hook combines direction signaling with React Router's navigate.
+
+function useTransitionNavigate() {
+  const navigate = useNavigate();
+  const { goForward, goBack } = useRouteTransition();
+
+  return {
+    forward: (path: string) => { goForward(); navigate(path); },
+    back: (path: string) => { goBack(); navigate(path); },
+  };
+}
 
 // ── Scroll detection (example-level helper) ─────────────────────────────────
 // Uses IntersectionObserver on a sentinel element to detect scroll state.
@@ -44,203 +59,10 @@ function useScrolled(sentinel: React.RefObject<Element | null>) {
   return scrolled;
 }
 
-// ── Route Transition ────────────────────────────────────────────────────────
-// Manages iOS-style slide transitions between route-level pages.
-// Both old and new pages stay mounted during the animation.
-
-type Direction = 'forward' | 'back';
-
-const TRANSITION = 'transform 350ms cubic-bezier(0.32, 0.72, 0, 1)';
-
-type RouteTransitionContextValue = {
-  direction: Direction;
-  goForward: (path: string) => void;
-  goBack: (path: string) => void;
-};
-
-const RouteTransitionContext = createContext<RouteTransitionContextValue>({
-  direction: 'forward',
-  goForward: () => {},
-  goBack: () => {},
-});
-
-function useRouteTransition() {
-  return useContext(RouteTransitionContext);
-}
-
-function RouteTransition({ children, mobileBreakpoint = 768 }: { children: (location: ReturnType<typeof useLocation>) => ReactNode; mobileBreakpoint?: number }) {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < mobileBreakpoint);
-  const [pages, setPages] = useState<{ location: ReturnType<typeof useLocation>; direction: Direction }[]>([
-    { location, direction: 'forward' },
-  ]);
-  const [transitioning, setTransitioning] = useState(false);
-  const directionRef = useRef<Direction>('forward');
-
-  useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${mobileBreakpoint - 1}px)`);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    setIsMobile(mql.matches);
-    mql.addEventListener('change', handler);
-    return () => mql.removeEventListener('change', handler);
-  }, [mobileBreakpoint]);
-
-  const goForward = useCallback((path: string) => {
-    directionRef.current = 'forward';
-    navigate(path);
-  }, [navigate]);
-
-  const goBack = useCallback((path: string) => {
-    directionRef.current = 'back';
-    navigate(path);
-  }, [navigate]);
-
-  // When location changes, push a new page entry for transition
-  useEffect(() => {
-    setPages(prev => {
-      const last = prev[prev.length - 1];
-      if (last && last.location.pathname === location.pathname && last.location.search === location.search) return prev;
-      return [...prev, { location, direction: directionRef.current }];
-    });
-    if (isMobile) {
-      setTransitioning(true);
-    }
-  }, [location, isMobile]);
-
-  // After transition ends, keep only the latest page
-  const handleTransitionEnd = useCallback(() => {
-    setTransitioning(false);
-    setPages(prev => prev.length > 1 ? [prev[prev.length - 1]] : prev);
-  }, []);
-
-  const ctxValue: RouteTransitionContextValue = {
-    direction: directionRef.current,
-    goForward,
-    goBack,
-  };
-
-  // Desktop: no transition, just render current
-  if (!isMobile) {
-    return (
-      <RouteTransitionContext.Provider value={ctxValue}>
-        {children(location)}
-      </RouteTransitionContext.Provider>
-    );
-  }
-
-  // Mobile: render all pages in stack with slide animation
-  // Forward: new slides in from right (+100%), old slides out to left (-100%)
-  // Back:    new slides in from left (-100%), old slides out to right (+100%)
-  return (
-    <RouteTransitionContext.Provider value={ctxValue}>
-      <div style={{ position: 'relative', width: '100%', height: '100%', overflow: 'hidden' }}>
-        {pages.map((page, i) => {
-          const isLatest = i === pages.length - 1;
-          const isOld = !isLatest;
-          // direction is on the NEW page entry — tells us which way navigation went
-          const latestDir = pages[pages.length - 1].direction;
-
-          let transform: string;
-
-          if (!transitioning || pages.length === 1) {
-            transform = 'translateX(0)';
-          } else if (isLatest) {
-            // New page slides to center
-            transform = 'translateX(0)';
-          } else if (isOld && latestDir === 'forward') {
-            // Old page exits left
-            transform = 'translateX(-100%)';
-          } else {
-            // Old page exits right
-            transform = 'translateX(100%)';
-          }
-
-          // Initial position for entering page (before transition starts)
-          const needsInitial = transitioning && isLatest && pages.length > 1;
-
-          return (
-            <TransitionPanel
-              key={page.location.pathname + page.location.search}
-              transform={transform}
-              initialTransform={needsInitial ? (latestDir === 'forward' ? 'translateX(100%)' : 'translateX(-100%)') : undefined}
-              isActive={isLatest}
-              onTransitionEnd={isLatest ? handleTransitionEnd : undefined}
-            >
-              {children(page.location)}
-            </TransitionPanel>
-          );
-        })}
-      </div>
-    </RouteTransitionContext.Provider>
-  );
-}
-
-function TransitionPanel({
-  children,
-  transform,
-  initialTransform,
-  isActive,
-  onTransitionEnd,
-}: {
-  children: ReactNode;
-  transform: string;
-  initialTransform?: string;
-  isActive: boolean;
-  onTransitionEnd?: () => void;
-}) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [style, setStyle] = useState<React.CSSProperties>({
-    position: 'absolute',
-    inset: 0,
-    overflowY: 'auto',
-    pointerEvents: isActive ? 'auto' : 'none',
-    transform: initialTransform ?? transform,
-    transition: 'none',
-  });
-
-  useEffect(() => {
-    if (initialTransform != null) {
-      // Start at initial position, then animate to target on next frame
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          setStyle({
-            position: 'absolute',
-            inset: 0,
-            overflowY: 'auto',
-            pointerEvents: isActive ? 'auto' : 'none',
-            transform,
-            transition: TRANSITION,
-          });
-        });
-      });
-    } else {
-      setStyle(prev => ({
-        ...prev,
-        pointerEvents: isActive ? 'auto' : 'none',
-        transform,
-        transition: TRANSITION,
-      }));
-    }
-  }, [transform, isActive]);
-
-  return (
-    <div
-      ref={ref}
-      style={style}
-      onTransitionEnd={onTransitionEnd ? (e) => {
-        if (e.target === ref.current) onTransitionEnd();
-      } : undefined}
-    >
-      {children}
-    </div>
-  );
-}
-
 // ── Route Resolver ──────────────────────────────────────────────────────────
-// Matches location to the right component (replaces <Routes> for transition)
 
-function ResolveRoute({ location }: { location: ReturnType<typeof useLocation> }) {
+function ResolveRoute() {
+  const location = useLocation();
   const match = location.pathname.match(/^\/mobile-header\/article\/(\d+)$/);
   if (match) {
     return <ArticleDetail id={Number(match[1])} />;
@@ -330,7 +152,7 @@ const codeExamples = [
 function ArticleList() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { goForward } = useRouteTransition();
+  const { forward } = useTransitionNavigate();
   const scrolled = useScrolled(scrollRef);
 
   return (
@@ -360,7 +182,7 @@ function ArticleList() {
             <div
               key={article.id}
               className="card cursor-pointer hover:bg-surface-hover transition-colors"
-              onClick={() => goForward(`/mobile-header/article/${article.id}`)}
+              onClick={() => forward(`/mobile-header/article/${article.id}`)}
             >
               <div className="flex items-start gap-3">
                 <div className="flex-1 min-w-0">
@@ -391,20 +213,20 @@ function ArticleList() {
 function ArticleDetailSimple({ article }: { article: Article }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { goBack } = useRouteTransition();
+  const { back } = useTransitionNavigate();
   const scrolled = useScrolled(scrollRef);
 
   return (
     <>
-      <div ref={scrollRef} />
+      <div ref={scrollRef}/>
       <MobileHeader className={`md:hidden ${scrolled ? 'mobile-header-scrolled-shadow' : ''}`}>
         <div className="mobile-header-start">
           <button
             className="flex items-center justify-center w-nav h-nav cursor-pointer hover:bg-surface-hover transition-colors"
             aria-label="Go back"
-            onClick={() => goBack('/mobile-header')}
+            onClick={() => back('/mobile-header')}
           >
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20}/>
           </button>
         </div>
         <div className="mobile-header-title">
@@ -412,10 +234,10 @@ function ArticleDetailSimple({ article }: { article: Article }) {
         </div>
         <div className="mobile-header-end">
           <button className="flex items-center justify-center pl-3 pr-2 h-nav cursor-pointer hover:bg-surface-hover transition-colors" aria-label="Bookmark">
-            <Bookmark size={18} />
+            <Bookmark size={18}/>
           </button>
           <button className="flex items-center justify-center pl-2 pr-4 h-nav cursor-pointer hover:bg-surface-hover transition-colors" aria-label="Share">
-            <Share2 size={18} />
+            <Share2 size={18}/>
           </button>
         </div>
       </MobileHeader>
@@ -424,9 +246,9 @@ function ArticleDetailSimple({ article }: { article: Article }) {
         <div className="flex items-center gap-2 mb-2">
           <button
             className="hidden md:flex items-center gap-1 text-sm opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
-            onClick={() => goBack('/mobile-header')}
+            onClick={() => back('/mobile-header')}
           >
-            <ArrowLeft size={14} />
+            <ArrowLeft size={14}/>
             Articles
           </button>
         </div>
@@ -452,7 +274,7 @@ function ArticleDetailSimple({ article }: { article: Article }) {
 // ── Article Detail with PageNav (child page — has sub-navigation) ───────────
 
 function ArticleDetailWithPageNav({ article }: { article: Article }) {
-  const { goBack } = useRouteTransition();
+  const { back } = useTransitionNavigate();
 
   return (
     <PageNav panels={['content', 'examples']} className="h-full">
@@ -465,7 +287,7 @@ function ArticleDetailWithPageNav({ article }: { article: Article }) {
                 aria-label="Go back"
                 onClick={() => {
                   if (isRoot) {
-                    goBack('/mobile-header');
+                    back('/mobile-header');
                   } else {
                     pageNavBack();
                   }
@@ -491,7 +313,7 @@ function ArticleDetailWithPageNav({ article }: { article: Article }) {
               <div className="flex items-center gap-2 mb-2">
                 <button
                   className="flex items-center gap-1 text-sm opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
-                  onClick={() => goBack('/mobile-header')}
+                  onClick={() => back('/mobile-header')}
                 >
                   <ArrowLeft size={14} />
                   Articles
@@ -554,14 +376,14 @@ function ArticleDetailWithPageNav({ article }: { article: Article }) {
 // ── Article Detail Route ────────────────────────────────────────────────────
 
 function ArticleDetail({ id }: { id: number }) {
-  const { goBack } = useRouteTransition();
+  const { back } = useTransitionNavigate();
   const article = articles.find((a) => a.id === id);
 
   if (!article) {
     return (
       <div className="page-content">
         <p className="text-muted">Article not found.</p>
-        <button className="text-primary cursor-pointer mt-2" onClick={() => goBack('/mobile-header')}>
+        <button className="text-primary cursor-pointer mt-2" onClick={() => back('/mobile-header')}>
           Back to articles
         </button>
       </div>
@@ -578,9 +400,11 @@ function ArticleDetail({ id }: { id: number }) {
 // ── Root export ─────────────────────────────────────────────────────────────
 
 export function MobileHeaderPage() {
+  const location = useLocation();
+
   return (
-    <RouteTransition>
-      {(location) => <ResolveRoute location={location} />}
+    <RouteTransition locationKey={location.pathname + location.search}>
+      <ResolveRoute />
     </RouteTransition>
   );
 }

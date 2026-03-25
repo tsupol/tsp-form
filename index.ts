@@ -33,6 +33,7 @@ export * from './src/components/Switch';
 export * from './src/components/NumberSpinner';
 export * from './src/components/MobileHeader';
 export * from './src/components/PageNav';
+export * from './src/components/RouteTransition';
 export * from './src/components/Pagination';
 export * from './src/components/Table';
 export * from './src/components/DataTable';
