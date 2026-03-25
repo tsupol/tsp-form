@@ -84,8 +84,8 @@ export function ButtonGroupPage() {
             </div>
           </div>
           <div className="flex gap-4 flex-wrap items-center card">
-            <div className="input-group">
-              <div className="w-[6rem]">
+            <div className="input-group w-1/2">
+              <div className="w-[5.5rem] flex-shrink-0">
                 <Select searchable={false} options={[{ value: 'USD', label: 'USD' }, { value: 'EUR', label: 'EUR' }, { value: 'GBP', label: 'GBP' }]} value={currency} onChange={setCurrency}
                         placeholder="Currency"/>
               </div>
