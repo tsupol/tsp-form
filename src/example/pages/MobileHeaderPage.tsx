@@ -23,6 +23,7 @@ import { MobileHeader } from '../../components/MobileHeader';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { PageNav, PageNavPanel } from '../../components/PageNav';
 import { AnimatedOutlet } from '../../components/AnimatedOutlet';
+import { Input } from '../../components/Input';
 import { ArrowLeft, ArrowRightFromLine, Bookmark, Code, FileText, Share2 } from 'lucide-react';
 
 // ── Scroll detection (example-level helper) ─────────────────────────────────
@@ -217,6 +218,7 @@ function ArticleDetailSimple({ article }: { article: Article }) {
       </MobileHeader>
 
       <div className="page-content">
+        <Input placeholder="Focus outline test" className="mb-4" />
         <div className="flex items-center gap-2 mb-2">
           <button
             className="hidden md:flex items-center gap-1 text-sm opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
