@@ -48,7 +48,7 @@ import { FileUploaderPage } from './pages/FileUploaderPage';
 import { NumberSpinnerPage } from './pages/NumberSpinnerPage';
 
 import { DebugPage } from './pages/DebugPage';
-import { MobileHeaderPage } from './pages/MobileHeaderPage';
+import { MobileHeaderPage, ArticleDetailPage } from './pages/MobileHeaderPage';
 import { ComponentsLayout } from './pages/ComponentsPage';
 
 // Theme hook
@@ -353,7 +353,9 @@ const App = () => {
                 <Route path="/text-shift" element={<TextShiftPage/>}/>
                 <Route path="/page-nav" element={<PageNavPage/>}/>
                 <Route path="/page-nav-table" element={<PageNavTablePage/>}/>
-                <Route path="/mobile-header/*" element={<MobileHeaderPage/>}/>
+                <Route path="/mobile-header" element={<MobileHeaderPage/>}>
+                  <Route path="article/:id" element={<ArticleDetailPage/>}/>
+                </Route>
                 <Route path="/debug" element={<DebugPage/>}/>
                 <Route path="*" element={
                   <div className="page-content">

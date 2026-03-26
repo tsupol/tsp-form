@@ -14,33 +14,18 @@
 //   2. Child page: MobileHeader with back button + article title
 //   3. Child with PageNav: MobileHeader header adapts when in sub-panels
 //   4. All headers hidden on desktop via `md:hidden`
-//   5. Route transitions slide in/out like PageNav panels on mobile
+//   5. AnimatedOutlet slides child route in/out on mobile
 // ============================================================================
 
 import { useRef, useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { MobileHeader } from '../../components/MobileHeader';
 import { ScrollReveal } from '../../components/ScrollReveal';
 import { PageNav, PageNavPanel } from '../../components/PageNav';
-import { RouteTransition, useRouteTransition } from '../../components/RouteTransition';
+import { AnimatedOutlet } from '../../components/AnimatedOutlet';
 import { ArrowLeft, ArrowRightFromLine, Bookmark, Code, FileText, Share2 } from 'lucide-react';
 
-// ── Navigation helper (bridges RouteTransition + React Router) ──────────────
-// RouteTransition is router-agnostic — it signals direction only.
-// This hook combines direction signaling with React Router's navigate.
-
-function useTransitionNavigate() {
-  const navigate = useNavigate();
-  const { goForward, goBack } = useRouteTransition();
-
-  return {
-    forward: (path: string) => { goForward(); navigate(path); },
-    back: (path: string) => { goBack(); navigate(path); },
-  };
-}
-
 // ── Scroll detection (example-level helper) ─────────────────────────────────
-// Uses IntersectionObserver on a sentinel element to detect scroll state.
 
 function useScrolled(sentinel: React.RefObject<Element | null>) {
   const [scrolled, setScrolled] = useState(false);
@@ -57,17 +42,6 @@ function useScrolled(sentinel: React.RefObject<Element | null>) {
   }, [sentinel]);
 
   return scrolled;
-}
-
-// ── Route Resolver ──────────────────────────────────────────────────────────
-
-function ResolveRoute() {
-  const location = useLocation();
-  const match = location.pathname.match(/^\/mobile-header\/article\/(\d+)$/);
-  if (match) {
-    return <ArticleDetail id={Number(match[1])} />;
-  }
-  return <ArticleList />;
 }
 
 // ── Data ────────────────────────────────────────────────────────────────────
@@ -147,12 +121,12 @@ const codeExamples = [
   { title: 'Mapped Types', code: 'type Readonly<T> = {\n  readonly [K in keyof T]: T[K];\n};\n\ntype Partial<T> = {\n  [K in keyof T]?: T[K];\n};\n\ntype Pick<T, K extends keyof T> = {\n  [P in K]: T[P];\n};' },
 ];
 
-// ── Article List (parent page) ──────────────────────────────────────────────
+// ── Article List (parent view — rendered as fallback in AnimatedOutlet) ──────
 
 function ArticleList() {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { forward } = useTransitionNavigate();
+  const navigate = useNavigate();
   const scrolled = useScrolled(scrollRef);
 
   return (
@@ -182,7 +156,7 @@ function ArticleList() {
             <div
               key={article.id}
               className="card cursor-pointer hover:bg-surface-hover transition-colors"
-              onClick={() => forward(`/mobile-header/article/${article.id}`)}
+              onClick={() => navigate(`/mobile-header/article/${article.id}`)}
             >
               <div className="flex items-start gap-3">
                 <div className="flex-1 min-w-0">
@@ -213,7 +187,7 @@ function ArticleList() {
 function ArticleDetailSimple({ article }: { article: Article }) {
   const titleRef = useRef<HTMLHeadingElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { back } = useTransitionNavigate();
+  const navigate = useNavigate();
   const scrolled = useScrolled(scrollRef);
 
   return (
@@ -224,7 +198,7 @@ function ArticleDetailSimple({ article }: { article: Article }) {
           <button
             className="flex items-center justify-center w-nav h-nav cursor-pointer hover:bg-surface-hover transition-colors"
             aria-label="Go back"
-            onClick={() => back('/mobile-header')}
+            onClick={() => navigate('/mobile-header')}
           >
             <ArrowLeft size={20}/>
           </button>
@@ -246,7 +220,7 @@ function ArticleDetailSimple({ article }: { article: Article }) {
         <div className="flex items-center gap-2 mb-2">
           <button
             className="hidden md:flex items-center gap-1 text-sm opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
-            onClick={() => back('/mobile-header')}
+            onClick={() => navigate('/mobile-header')}
           >
             <ArrowLeft size={14}/>
             Articles
@@ -274,7 +248,7 @@ function ArticleDetailSimple({ article }: { article: Article }) {
 // ── Article Detail with PageNav (child page — has sub-navigation) ───────────
 
 function ArticleDetailWithPageNav({ article }: { article: Article }) {
-  const { back } = useTransitionNavigate();
+  const navigate = useNavigate();
 
   return (
     <PageNav panels={['content', 'examples']} className="h-full">
@@ -287,7 +261,7 @@ function ArticleDetailWithPageNav({ article }: { article: Article }) {
                 aria-label="Go back"
                 onClick={() => {
                   if (isRoot) {
-                    back('/mobile-header');
+                    navigate('/mobile-header');
                   } else {
                     pageNavBack();
                   }
@@ -313,7 +287,7 @@ function ArticleDetailWithPageNav({ article }: { article: Article }) {
               <div className="flex items-center gap-2 mb-2">
                 <button
                   className="flex items-center gap-1 text-sm opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
-                  onClick={() => back('/mobile-header')}
+                  onClick={() => navigate('/mobile-header')}
                 >
                   <ArrowLeft size={14} />
                   Articles
@@ -373,17 +347,18 @@ function ArticleDetailWithPageNav({ article }: { article: Article }) {
   );
 }
 
-// ── Article Detail Route ────────────────────────────────────────────────────
+// ── Article Detail Route (child route component) ────────────────────────────
 
-function ArticleDetail({ id }: { id: number }) {
-  const { back } = useTransitionNavigate();
-  const article = articles.find((a) => a.id === id);
+export function ArticleDetailPage() {
+  const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const article = articles.find((a) => a.id === Number(id));
 
   if (!article) {
     return (
       <div className="page-content">
         <p className="text-muted">Article not found.</p>
-        <button className="text-primary cursor-pointer mt-2" onClick={() => back('/mobile-header')}>
+        <button className="text-primary cursor-pointer mt-2" onClick={() => navigate('/mobile-header')}>
           Back to articles
         </button>
       </div>
@@ -397,14 +372,10 @@ function ArticleDetail({ id }: { id: number }) {
   return <ArticleDetailSimple article={article} />;
 }
 
-// ── Root export ─────────────────────────────────────────────────────────────
+// ── Root export (parent route — uses AnimatedOutlet for child routes) ────────
 
 export function MobileHeaderPage() {
-  const location = useLocation();
-
   return (
-    <RouteTransition locationKey={location.pathname + location.search}>
-      <ResolveRoute />
-    </RouteTransition>
+    <AnimatedOutlet fallback={<ArticleList />} />
   );
 }
