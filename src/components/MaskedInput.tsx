@@ -111,7 +111,9 @@ function countPlaceholders(mask: string, maskChar: string): number {
 
 export type MaskedInputProps = Omit<InputProps, 'value' | 'onChange'> & {
   /** Pattern mask like '###-###-####' or 'number' for thousand-separator mode */
-  mask: string;
+  mask?: string;
+  /** Dynamic mask function — receives raw digits and returns a mask pattern. Overrides `mask` when provided. */
+  dynamicMask?: (rawDigits: string) => string;
   /** Character representing a digit slot in pattern mode (default '#') */
   maskChar?: string;
   /** Thousand separator for number mode (default ',') */
@@ -134,7 +136,8 @@ export type MaskedInputProps = Omit<InputProps, 'value' | 'onChange'> & {
 
 export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
   ({
-    mask,
+    mask: maskProp,
+    dynamicMask,
     maskChar = '#',
     thousandSeparator = ',',
     decimalSeparator = '.',
@@ -147,8 +150,12 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
     placeholder,
     ...inputProps
   }, ref) => {
-    const isNumber = mask === 'number';
-    const maxDigits = isNumber ? Infinity : countPlaceholders(mask, maskChar);
+    const mask = maskProp ?? ''; // fallback when dynamicMask is used
+    const isNumber = mask === 'number' && !dynamicMask;
+    const resolveMask = useCallback((raw: string): string => {
+      return dynamicMask ? dynamicMask(raw) : mask;
+    }, [dynamicMask, mask]);
+    const maxDigits = isNumber ? Infinity : (dynamicMask ? Infinity : countPlaceholders(mask, maskChar));
 
     const inputElRef = useRef<HTMLInputElement | null>(null);
     const caretBeforeRef = useRef(0);
@@ -167,8 +174,9 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
       if (isNumber) {
         return formatNumber(raw, thousandSeparator, decimalSeparator, prefix, suffix);
       }
-      return formatPattern(raw, mask, maskChar);
-    }, [isNumber, mask, maskChar, thousandSeparator, decimalSeparator, prefix, suffix]);
+      const resolvedMask = resolveMask(raw);
+      return formatPattern(raw, resolvedMask, maskChar);
+    }, [isNumber, resolveMask, maskChar, thousandSeparator, decimalSeparator, prefix, suffix]);
 
     const extract = useCallback((s: string): string => {
       if (isNumber) {
@@ -237,10 +245,11 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
       if (!isNumber && el.selectionStart === el.selectionEnd) {
         const pos = el.selectionStart ?? 0;
         const currentDisplay = el.value;
+        const currentMask = resolveMask(rawRef.current);
 
         if (e.key === 'Backspace' && pos > 0) {
           // If char before cursor is a separator, skip back to the digit before it
-          if (pos <= mask.length && !isDigit(currentDisplay[pos - 1])) {
+          if (pos <= currentMask.length && !isDigit(currentDisplay[pos - 1])) {
             let newPos = pos - 1;
             while (newPos > 0 && !isDigit(currentDisplay[newPos - 1])) newPos--;
             if (newPos < pos - 1) {
@@ -251,7 +260,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
         }
 
         if (e.key === 'Delete' && pos < currentDisplay.length) {
-          if (pos < mask.length && !isDigit(currentDisplay[pos])) {
+          if (pos < currentMask.length && !isDigit(currentDisplay[pos])) {
             let newPos = pos + 1;
             while (newPos < currentDisplay.length && !isDigit(currentDisplay[newPos])) newPos++;
             if (newPos > pos + 1) {
@@ -278,7 +287,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
       }
 
       inputProps.onKeyDown?.(e);
-    }, [isNumber, mask, thousandSeparator, inputProps.onKeyDown]);
+    }, [isNumber, resolveMask, thousandSeparator, inputProps.onKeyDown]);
 
     // ── onInput: main formatting pipeline ──
     const handleInput = useCallback((e: FormEvent<HTMLInputElement>) => {
@@ -294,8 +303,11 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
       let newRaw = extract(browserValue);
 
       // Clamp for pattern mode
-      if (!isNumber && newRaw.length > maxDigits) {
-        newRaw = newRaw.slice(0, maxDigits);
+      if (!isNumber) {
+        const resolvedMax = dynamicMask ? countPlaceholders(resolveMask(newRaw), maskChar) : maxDigits;
+        if (newRaw.length > resolvedMax) {
+          newRaw = newRaw.slice(0, resolvedMax);
+        }
       }
 
       // Format
@@ -315,7 +327,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
       el.setSelectionRange(newCaret, newCaret);
       // Also schedule for after React commit
       restoreCaret(newCaret);
-    }, [extract, format, computeCaret, isNumber, maxDigits, isControlled, onChange, restoreCaret]);
+    }, [extract, format, computeCaret, isNumber, maxDigits, dynamicMask, resolveMask, maskChar, isControlled, onChange, restoreCaret]);
 
     // ── onPaste ──
     const handlePaste = useCallback((e: ClipboardEvent<HTMLInputElement>) => {
@@ -342,8 +354,11 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
       let newRaw = oldRaw.slice(0, rawStart) + pastedDigits + oldRaw.slice(rawEnd);
 
       // Clamp for pattern mode
-      if (!isNumber && newRaw.length > maxDigits) {
-        newRaw = newRaw.slice(0, maxDigits);
+      if (!isNumber) {
+        const resolvedMax = dynamicMask ? countPlaceholders(resolveMask(newRaw), maskChar) : maxDigits;
+        if (newRaw.length > resolvedMax) {
+          newRaw = newRaw.slice(0, resolvedMax);
+        }
       }
 
       const formatted = format(newRaw);
@@ -360,7 +375,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
       el.value = formatted;
       el.setSelectionRange(newCaret, newCaret);
       restoreCaret(newCaret);
-    }, [isNumber, decimalSeparator, decimalScale, allowNegative, format, maxDigits, isControlled, onChange, restoreCaret]);
+    }, [isNumber, decimalSeparator, decimalScale, allowNegative, format, maxDigits, dynamicMask, resolveMask, maskChar, isControlled, onChange, restoreCaret]);
 
     // ── Composition events (for IME) ──
     const handleCompositionStart = useCallback(() => { composingRef.current = true; }, []);
@@ -371,7 +386,7 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
     }, [handleInput]);
 
     // Default placeholder
-    const defaultPlaceholder = !isNumber
+    const defaultPlaceholder = !isNumber && !dynamicMask
       ? mask.replace(new RegExp(`\\${maskChar}`, 'g'), '_')
       : undefined;
 

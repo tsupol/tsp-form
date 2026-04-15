@@ -118,20 +118,17 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
       triggerClassName="w-full"
       trigger={
         <button
-          className="flex items-center gap-2 py-2 px-2 rounded-lg transition-all text-item-fg hover:bg-item-hover-bg w-full cursor-pointer"
+          className={clsx('flex items-center gap-2 py-2.5 transition-all text-item-fg hover:bg-item-hover-bg w-full cursor-pointer', collapsed ? 'px-1.5' : 'px-4')}
           onClick={() => setOpen(!open)}
         >
-          <div className="w-7.5 h-7.5 rounded-full bg-primary flex items-center justify-center text-primary-contrast text-xs font-semibold shrink-0">
+          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-contrast text-sm font-semibold shrink-0">
             JD
           </div>
-          {!collapsed && (
-            <>
-              <div className="flex-1 text-left truncate">
-                <span className="text-sm font-medium">John Doe</span>
-              </div>
-              <ChevronsUpDown size={14} className="opacity-50 shrink-0" />
-            </>
-          )}
+          <div className="flex-1 text-left truncate">
+            <div className="text-sm font-medium leading-tight">John Doe</div>
+            <div className="text-xs text-muted leading-tight">Administrator</div>
+          </div>
+          <ChevronsUpDown size={14} className="opacity-50 shrink-0" />
         </button>
       }
     >
@@ -319,7 +316,7 @@ const SideNav = () => {
                   disableFlyoutOnActive
                 />
             </div>
-            <div className={clsx('border-t border-line py-2 pointer-events-auto', menuCollapsed ? 'px-0' : 'px-2')}>
+            <div className="border-t border-line pointer-events-auto">
               <UserMenu collapsed={menuCollapsed} />
             </div>
           </div>
