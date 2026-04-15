@@ -23,6 +23,8 @@ import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { clsx } from 'clsx';
+import './i18n/config';
+import { useTranslation } from 'react-i18next';
 import './example.css';
 import './styles/typography.css';
 import './styles/layout.css';
@@ -46,6 +48,8 @@ import { PageNavPage } from './pages/PageNavPage';
 import { PageNavTablePage } from './pages/PageNavTablePage';
 import { FileUploaderPage } from './pages/FileUploaderPage';
 import { NumberSpinnerPage } from './pages/NumberSpinnerPage';
+import { SwitchPage } from './pages/SwitchPage';
+import { CheckboxPage } from './pages/CheckboxPage';
 
 import { DebugPage } from './pages/DebugPage';
 import { MobileHeaderPage, ArticleDetailPage } from './pages/MobileHeaderPage';
@@ -90,6 +94,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
   const [open, setOpen] = useState(false);
   const { addSnackbar } = useSnackbarContext();
   const { theme, setTheme } = useTheme();
+  const { i18n } = useTranslation();
 
   const handleAction = (action: string) => {
     addSnackbar({ message: action });
@@ -147,6 +152,18 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
               rightIcon={theme === 'system' ? <Checkmark width={14} height={14} /> : undefined}
               label="System"
               onClick={() => handleTheme('system')}
+            />
+          </SubMenu>
+          <SubMenu label="Language">
+            <MenuItem
+              rightIcon={i18n.language === 'en' ? <Checkmark width={14} height={14} /> : undefined}
+              label="English"
+              onClick={() => { i18n.changeLanguage('en'); setOpen(false); }}
+            />
+            <MenuItem
+              rightIcon={i18n.language === 'th' ? <Checkmark width={14} height={14} /> : undefined}
+              label="ไทย"
+              onClick={() => { i18n.changeLanguage('th'); setOpen(false); }}
             />
           </SubMenu>
         </SubMenu>
@@ -345,6 +362,8 @@ const App = () => {
                   <Route path="button-group" element={<ButtonGroupPage/>}/>
                   <Route path="drawer" element={<DrawerPage/>}/>
                   <Route path="number-spinner" element={<NumberSpinnerPage/>}/>
+                  <Route path="switch" element={<SwitchPage/>}/>
+                  <Route path="checkbox" element={<CheckboxPage/>}/>
                 </Route>
                 <Route path="/form-sizes" element={<FormSizesPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>

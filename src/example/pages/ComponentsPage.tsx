@@ -38,6 +38,8 @@ const components: ComponentEntry[] = [
   { label: 'Image Uploader', path: '/components/image-uploader', icon: <Upload size={16} />, description: 'Image upload with preview' },
   { label: 'File Uploader', path: '/components/file-uploader', icon: <Upload size={16} />, description: 'File upload mechanics' },
   { label: 'Number Spinner', path: '/components/number-spinner', icon: <Hash size={16} />, description: 'Numeric input with +/- buttons' },
+  { label: 'Switch (Toggle)', path: '/components/switch', icon: <ToggleLeft size={16} />, description: 'Toggle switch controls' },
+  { label: 'Checkbox', path: '/components/checkbox', icon: <Box size={16} />, description: 'Checkbox form controls' },
 ];
 
 function ComponentsIndex() {

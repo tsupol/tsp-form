@@ -87,11 +87,12 @@ export const DatePicker = ({
     startTime: labels?.startTime ?? 'Start Time',
     endTime: labels?.endTime ?? 'End Time',
   };
-  const [currentMonth, setCurrentMonth] = useState(new Date().getMonth());
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const initialDate = selectedDate || fromDate || new Date();
+  const [currentMonth, setCurrentMonth] = useState(initialDate.getMonth());
+  const [currentYear, setCurrentYear] = useState(initialDate.getFullYear());
   const [hoverDate, setHoverDate] = useState<Date | null>(null);
   const [viewMode, setViewMode] = useState<ViewMode>('days');
-  const [yearsRangeStart, setYearsRangeStart] = useState(Math.floor(new Date().getFullYear() / 12) * 12);
+  const [yearsRangeStart, setYearsRangeStart] = useState(Math.floor(initialDate.getFullYear() / 12) * 12);
 
   // Get initial time from date or use defaults
   const getInitialStartTime = () => {

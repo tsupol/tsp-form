@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { DatePicker } from '../../components/DatePicker';
 import { DoubleDatePicker } from '../../components/DoubleDatePicker';
 import { InputDatePicker } from '../../components/InputDatePicker';
@@ -14,6 +15,8 @@ export function DatePickerPage() {
   // Pure DoubleDatePicker
   const [doubleFrom, setDoubleFrom] = useState<Date | null>(null);
   const [doubleTo, setDoubleTo] = useState<Date | null>(null);
+
+  const { i18n } = useTranslation();
 
   // InputDatePicker
   const [basicDate, setBasicDate] = useState<Date | null>(null);
@@ -48,6 +51,8 @@ export function DatePickerPage() {
               onChange={setBasicDate}
               placeholder="Select a date"
               endIcon={<Calendar size={18} />}
+              locale={i18n.language}
+              calendar="gregorian"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -57,6 +62,8 @@ export function DatePickerPage() {
               onChange={setWithTime}
               placeholder="Select date & time"
               endIcon={<Calendar size={18} />}
+              locale={i18n.language}
+              calendar="gregorian"
               datePickerProps={{
                 showTime: true,
                 timeFormat: '12h',
@@ -70,6 +77,8 @@ export function DatePickerPage() {
               onChange={setWithMinMax}
               placeholder="Select a date"
               endIcon={<Calendar size={18} />}
+              locale={i18n.language}
+              calendar="gregorian"
               datePickerProps={{
                 minDate: today,
                 maxDate: maxDate,
@@ -90,6 +99,8 @@ export function DatePickerPage() {
               onToDateChange={setRangeTo}
               placeholder="Select date range"
               endIcon={<Calendar size={18} />}
+              locale={i18n.language}
+              calendar="gregorian"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -101,6 +112,8 @@ export function DatePickerPage() {
               onToDateChange={setRangeTimeTo}
               placeholder="Select date & time range"
               endIcon={<Calendar size={18} />}
+              locale={i18n.language}
+              calendar="gregorian"
               defaultStartTime={{ hours: 9, minutes: 0 }}
               defaultEndTime={{ hours: 17, minutes: 0 }}
               datePickerProps={{
@@ -118,6 +131,8 @@ export function DatePickerPage() {
               onToDateChange={setPrefilledTo}
               placeholder="Select date range"
               endIcon={<Calendar size={18} />}
+              locale={i18n.language}
+              calendar="gregorian"
             />
           </div>
         </div>
@@ -132,6 +147,8 @@ export function DatePickerPage() {
               <DatePicker
                 selectedDate={pureDate}
                 onChange={setPureDate}
+                locale={i18n.language}
+                calendar="gregorian"
               />
               {pureDate && <span className="text-sm text-muted">{pureDate.toLocaleDateString()}</span>}
             </div>
@@ -143,6 +160,8 @@ export function DatePickerPage() {
                 toDate={pureRangeTo}
                 onChange={setPureRangeFrom}
                 onToDateChange={setPureRangeTo}
+                locale={i18n.language}
+                calendar="gregorian"
               />
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { forwardRef, useState, ReactNode } from 'react';
+import { forwardRef, useState, useRef, ReactNode } from 'react';
 import { Input, InputProps } from './Input';
 import { PopOver } from './PopOver';
 import { DatePicker, DatePickerProps } from './DatePicker';
@@ -77,6 +77,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
   }, ref) => {
     const formatRange = dateFormat ?? createDateRangeFormat(locale, calendar);
     const [isOpen, setIsOpen] = useState(false);
+    const openCountRef = useRef(0);
 
     const handleFromDateChange = (date: Date | null) => {
       onFromDateChange?.(date);
@@ -104,9 +105,9 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
               {...inputProps}
               value={formattedValue}
               readOnly
-              onClick={() => setIsOpen(true)}
+              onClick={() => { openCountRef.current++; setIsOpen(true); }}
               endIcon={endIcon}
-              onEndIconClick={endIcon ? () => setIsOpen(!isOpen) : undefined}
+              onEndIconClick={endIcon ? () => { if (!isOpen) openCountRef.current++; setIsOpen(!isOpen); } : undefined}
               style={{ cursor: 'pointer' }}
               error={error}
               size={size}
@@ -115,6 +116,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
         >
           <div className="datepicker-popover-content">
             <DatePicker
+              key={openCountRef.current}
               {...datePickerProps}
               mode="range"
               fromDate={fromDate || null}
