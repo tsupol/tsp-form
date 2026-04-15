@@ -40,6 +40,7 @@ const components: ComponentEntry[] = [
   { label: 'Number Spinner', path: '/components/number-spinner', icon: <Hash size={16} />, description: 'Numeric input with +/- buttons' },
   { label: 'Switch (Toggle)', path: '/components/switch', icon: <ToggleLeft size={16} />, description: 'Toggle switch controls' },
   { label: 'Checkbox', path: '/components/checkbox', icon: <Box size={16} />, description: 'Checkbox form controls' },
+  { label: 'Masked Input', path: '/components/masked-input', icon: <Hash size={16} />, description: 'Pattern and number formatting' },
 ];
 
 function ComponentsIndex() {

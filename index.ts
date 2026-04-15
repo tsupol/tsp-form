@@ -30,6 +30,7 @@ export * from './src/components/SideMenu';
 export * from './src/components/SideMenuItems';
 export * from './src/components/Skeleton';
 export * from './src/components/Switch';
+export * from './src/components/MaskedInput';
 export * from './src/components/NumberSpinner';
 export * from './src/components/MobileHeader';
 export * from './src/components/PageNav';

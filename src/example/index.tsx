@@ -50,6 +50,7 @@ import { FileUploaderPage } from './pages/FileUploaderPage';
 import { NumberSpinnerPage } from './pages/NumberSpinnerPage';
 import { SwitchPage } from './pages/SwitchPage';
 import { CheckboxPage } from './pages/CheckboxPage';
+import { MaskedInputPage } from './pages/MaskedInputPage';
 
 import { DebugPage } from './pages/DebugPage';
 import { MobileHeaderPage, ArticleDetailPage } from './pages/MobileHeaderPage';
@@ -364,6 +365,7 @@ const App = () => {
                   <Route path="number-spinner" element={<NumberSpinnerPage/>}/>
                   <Route path="switch" element={<SwitchPage/>}/>
                   <Route path="checkbox" element={<CheckboxPage/>}/>
+                  <Route path="masked-input" element={<MaskedInputPage/>}/>
                 </Route>
                 <Route path="/form-sizes" element={<FormSizesPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>
