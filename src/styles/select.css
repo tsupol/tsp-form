@@ -86,7 +86,6 @@
     .select.disabled {
         opacity: 0.5;
         pointer-events: none;
-        color: #6b7280;
         cursor: not-allowed;
     }
 

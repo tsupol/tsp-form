@@ -53,6 +53,7 @@ import { CheckboxPage } from './pages/CheckboxPage';
 import { MaskedInputPage } from './pages/MaskedInputPage';
 
 import { DebugPage } from './pages/DebugPage';
+import { DisabledStatePage } from './pages/DisabledStatePage';
 import { MobileHeaderPage, ArticleDetailPage } from './pages/MobileHeaderPage';
 import { ComponentsLayout } from './pages/ComponentsPage';
 
@@ -256,6 +257,7 @@ const SideNav = () => {
     { type: 'custom', key: 'notifications', render: (props) => <NotificationMenuItem {...props} /> },
     { type: 'group', key: 'grp-debug', label: "Debug" },
     { key: 'debug', icon: <Settings size="1rem"/>, label: "Debug", path: '/debug' },
+    { key: 'disabled-state', icon: <Settings size="1rem"/>, label: "Disabled State", path: '/debug/disabled-state' },
   ];
 
   const handleSelect = (key: string, path?: string) => {
@@ -375,6 +377,7 @@ const App = () => {
                   <Route path="article/:id" element={<ArticleDetailPage/>}/>
                 </Route>
                 <Route path="/debug" element={<DebugPage/>}/>
+                <Route path="/debug/disabled-state" element={<DisabledStatePage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="heading-1 mb-4">Dashboard</h1>
