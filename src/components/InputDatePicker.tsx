@@ -10,6 +10,7 @@ export type InputDatePickerProps = Omit<InputProps, 'value' | 'onChange' | 'endI
   datePickerProps?: Omit<DatePickerProps, 'selectedDate' | 'onChange' | 'mode'>;
   dateFormat?: (date: Date | null) => string;
   endIcon?: ReactNode;
+  onEndIconClick?: () => void;
   defaultStartTime?: { hours: number; minutes: number };
   locale?: string;
   /** 'locale' uses the locale's native calendar (e.g. Buddhist for Thai), 'gregorian' always uses Gregorian */
@@ -24,6 +25,8 @@ export type InputDatePickerProps = Omit<InputProps, 'value' | 'onChange' | 'endI
   typingMask?: string;
   /** Parse the raw digits from the mask into a Date. Return null if invalid. */
   parseTypedDate?: (rawDigits: string) => Date | null;
+  /** Placeholder shown in the MaskedInput during typing mode (e.g. 'DD/MM/YYYY' or 'วว/ดด/ปปปป') */
+  typingPlaceholder?: string;
 };
 
 function resolveLocale(locale: string, calendar: 'locale' | 'gregorian'): string {
@@ -49,7 +52,7 @@ export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps
   ({
     value, onChange, datePickerProps, dateFormat, endIcon, onEndIconClick, defaultStartTime,
     locale = 'en-US', calendar = 'locale', error, size,
-    typingMode, onTypingModeChange, typingMask, parseTypedDate,
+    typingMode, onTypingModeChange, typingMask, parseTypedDate, typingPlaceholder,
     ...inputProps
   }, ref) => {
     const formatDate = dateFormat ?? createDateFormat(locale, calendar);
@@ -149,6 +152,7 @@ export const InputDatePicker = forwardRef<HTMLInputElement, InputDatePickerProps
               onChange={(raw) => setTypedRaw(raw)}
               onKeyDown={handleMaskedKeyDown}
               onBlur={commitTyping}
+              placeholder={typingPlaceholder}
               error={error}
               size={size}
               style={{ width: '100%', height: '100%', background: 'var(--color-surface, #fff)' }}
