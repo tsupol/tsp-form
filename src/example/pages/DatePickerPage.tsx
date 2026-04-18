@@ -4,7 +4,7 @@ import { DatePicker } from '../../components/DatePicker';
 import { DoubleDatePicker } from '../../components/DoubleDatePicker';
 import { InputDatePicker } from '../../components/InputDatePicker';
 import { InputDateRangePicker } from '../../components/InputDateRangePicker';
-import { Calendar } from 'lucide-react';
+import { Calendar, Keyboard } from 'lucide-react';
 
 export function DatePickerPage() {
   // Pure DatePicker
@@ -22,6 +22,10 @@ export function DatePickerPage() {
   const [basicDate, setBasicDate] = useState<Date | null>(null);
   const [withTime, setWithTime] = useState<Date | null>(null);
   const [withMinMax, setWithMinMax] = useState<Date | null>(null);
+
+  // Typing mode
+  const [typingDate, setTypingDate] = useState<Date | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
 
   // InputDateRangePicker
   const [rangeFrom, setRangeFrom] = useState<Date | null>(null);
@@ -82,6 +86,39 @@ export function DatePickerPage() {
               datePickerProps={{
                 minDate: today,
                 maxDate: maxDate,
+              }}
+            />
+          </div>
+        </div>
+
+        {/* InputDatePicker with Typing Mode */}
+        <div className="card space-y-3">
+          <h2 className="heading-3">InputDatePicker — Typing Mode</h2>
+          <p className="text-muted">Type digits to enter a date via keyboard, or click to use the calendar. Press Enter to confirm, Escape to cancel.</p>
+          <div className="flex flex-col gap-1">
+            <label className="form-label">DD/MM/YYYY</label>
+            <InputDatePicker
+              value={typingDate}
+              onChange={setTypingDate}
+              placeholder="Select or type a date"
+              endIcon={<Keyboard size={18} />}
+              onEndIconClick={() => setIsTyping(t => !t)}
+              locale={i18n.language}
+              calendar="gregorian"
+              typingMode={isTyping}
+              onTypingModeChange={setIsTyping}
+              typingMask="##/##/####"
+              parseTypedDate={(raw) => {
+                if (raw.length !== 8) return null;
+                const day = parseInt(raw.slice(0, 2), 10);
+                const month = parseInt(raw.slice(2, 4), 10);
+                let year = parseInt(raw.slice(4, 8), 10);
+                // Support Buddhist Era input — years above 2400 are assumed BE
+                if (year > 2400) year -= 543;
+                if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+                const d = new Date(year, month - 1, day);
+                if (d.getFullYear() !== year || d.getMonth() !== month - 1 || d.getDate() !== day) return null;
+                return d;
               }}
             />
           </div>
