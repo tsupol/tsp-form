@@ -38,6 +38,7 @@ export type SideMenuItemsProps = {
   autoCloseMobile?: boolean;
   showChevron?: boolean;
   flyoutAlign?: 'start' | 'center' | 'end';
+  flyoutOpenDelay?: number;
   disableFlyoutOnActive?: boolean;
   className?: string;
 };
@@ -103,6 +104,7 @@ export function SideMenuItems({
   autoCloseMobile = true,
   showChevron = true,
   flyoutAlign = 'center',
+  flyoutOpenDelay = 250,
   disableFlyoutOnActive = false,
   className,
 }: SideMenuItemsProps) {
@@ -153,6 +155,7 @@ export function SideMenuItems({
             onSelect={handleSelect}
             showChevron={showChevron}
             flyoutAlign={flyoutAlign}
+            flyoutOpenDelay={flyoutOpenDelay}
             disableFlyoutOnActive={disableFlyoutOnActive}
             level={0}
           />
@@ -172,6 +175,7 @@ type SideMenuItemRowProps = {
   onCloseFlyout?: () => void;
   showChevron?: boolean;
   flyoutAlign?: 'start' | 'center' | 'end';
+  flyoutOpenDelay?: number;
   disableFlyoutOnActive?: boolean;
   level: number;
 };
@@ -186,12 +190,14 @@ function SideMenuItemRow({
   onCloseFlyout,
   showChevron,
   flyoutAlign,
+  flyoutOpenDelay = 250,
   disableFlyoutOnActive,
   level,
 }: SideMenuItemRowProps) {
   const [flyoutOpen, setFlyoutOpen] = useState(false);
   const [accordionOpen, setAccordionOpen] = useState(false);
   const closeTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const openTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   const hasChildren = !!(item.children && item.children.length > 0);
   const isActive = activeItem === item.key;
@@ -205,16 +211,25 @@ function SideMenuItemRow({
     if (closeTimer.current) clearTimeout(closeTimer.current);
   }, []);
 
+  const cancelOpen = useCallback(() => {
+    if (openTimer.current) clearTimeout(openTimer.current);
+  }, []);
+
+  useEffect(() => () => { cancelClose(); cancelOpen(); }, [cancelClose, cancelOpen]);
+
   const isTouchDevice = typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches;
 
   const handleMouseEnter = () => {
     if (isMobile || isTouchDevice) return;
     cancelClose();
-    if (hasChildren) setFlyoutOpen(true);
+    if (hasChildren) {
+      openTimer.current = setTimeout(() => setFlyoutOpen(true), flyoutOpenDelay);
+    }
   };
 
   const handleMouseLeave = () => {
     if (isMobile || isTouchDevice) return;
+    cancelOpen();
     scheduleClose();
   };
 
@@ -287,7 +302,7 @@ function SideMenuItemRow({
       >
         <div
           className="side-menu-flyout"
-          onMouseEnter={() => { cancelClose(); }}
+          onMouseEnter={() => { cancelClose(); cancelOpen(); }}
           onMouseLeave={() => { scheduleClose(); }}
         >
           {item.children!.map((child) => {
@@ -314,6 +329,7 @@ function SideMenuItemRow({
                 onCloseFlyout={closeFlyoutChain}
                 showChevron={showChevron}
                 flyoutAlign={flyoutAlign}
+                flyoutOpenDelay={flyoutOpenDelay}
                 disableFlyoutOnActive={disableFlyoutOnActive}
                 level={level + 1}
               />
