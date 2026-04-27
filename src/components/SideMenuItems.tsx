@@ -104,7 +104,7 @@ export function SideMenuItems({
   autoCloseMobile = true,
   showChevron = true,
   flyoutAlign = 'center',
-  flyoutOpenDelay = 250,
+  flyoutOpenDelay = 200,
   disableFlyoutOnActive = false,
   className,
 }: SideMenuItemsProps) {
@@ -190,7 +190,7 @@ function SideMenuItemRow({
   onCloseFlyout,
   showChevron,
   flyoutAlign,
-  flyoutOpenDelay = 250,
+  flyoutOpenDelay = 200,
   disableFlyoutOnActive,
   level,
 }: SideMenuItemRowProps) {

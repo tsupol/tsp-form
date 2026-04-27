@@ -8,7 +8,9 @@
       "Edit",
       "Glob",
       "Grep",
-      "WebFetch(*)"
+      "WebFetch(*)",
+      "mcp__paas-dock__*",
+      "mcp__playwright__*"
     ]
   }
 }
