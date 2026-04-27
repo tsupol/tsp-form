@@ -39,3 +39,4 @@ ehthumbs.db
 # Misc
 .cache/
 .eslintcache
+.playwright-mcp/
