@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useLayoutEffect, ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import '../styles/tooltip.css';
 
 export type TooltipProps = {
@@ -146,19 +147,21 @@ export const Tooltip = ({
         {children}
       </span>
 
-      {isVisible && (
-        <div
-          ref={tooltipRef}
-          className={`tooltip tooltip-${actualPlacement} ${className}`}
-          style={{
-            top: position.top,
-            left: position.left,
-          }}
-          role="tooltip"
-        >
-          {content}
-        </div>
-      )}
+      {isVisible &&
+        createPortal(
+          <div
+            ref={tooltipRef}
+            className={`tooltip tooltip-${actualPlacement} ${className}`}
+            style={{
+              top: position.top,
+              left: position.left,
+            }}
+            role="tooltip"
+          >
+            {content}
+          </div>,
+          document.body,
+        )}
     </>
   );
 };
