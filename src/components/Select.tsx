@@ -11,6 +11,7 @@ export interface Option {
   value: string;
   label: string;
   icon?: ReactNode;
+  disabled?: boolean;
 }
 
 export interface OptionGroup {
@@ -200,6 +201,7 @@ export function Select({
 
   const handleSelect = useCallback((option: Option) => {
     if (disabled) return;
+    if (option.disabled) return;
 
     let newValue: string | string[] | null;
 
@@ -313,16 +315,27 @@ export function Select({
       return;
     }
 
+    const findNextEnabled = (start: number, direction: 1 | -1): number => {
+      const len = selectableOptions.length;
+      if (len === 0) return -1;
+      for (let i = 0; i < len; i++) {
+        const idx = ((start + direction * i) % len + len) % len;
+        if (!selectableOptions[idx].disabled) return idx;
+      }
+      return -1;
+    };
+
     if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (!isOpen) {
         setIsOpen(true);
-        setHighlightedIndex(0);
+        setHighlightedIndex(findNextEnabled(0, 1));
         return;
       }
-      setHighlightedIndex(prev =>
-        prev < selectableOptions.length - 1 ? prev + 1 : 0
-      );
+      setHighlightedIndex(prev => {
+        const next = prev < selectableOptions.length - 1 ? prev + 1 : 0;
+        return findNextEnabled(next, 1);
+      });
       return;
     }
 
@@ -330,12 +343,13 @@ export function Select({
       e.preventDefault();
       if (!isOpen) {
         setIsOpen(true);
-        setHighlightedIndex(selectableOptions.length - 1);
+        setHighlightedIndex(findNextEnabled(selectableOptions.length - 1, -1));
         return;
       }
-      setHighlightedIndex(prev =>
-        prev > 0 ? prev - 1 : selectableOptions.length - 1
-      );
+      setHighlightedIndex(prev => {
+        const next = prev > 0 ? prev - 1 : selectableOptions.length - 1;
+        return findNextEnabled(next, -1);
+      });
       return;
     }
 
@@ -516,10 +530,13 @@ export function Select({
                 className={clsx(
                   'select-popover-item',
                   isSelected && 'selected',
-                  optionIndex === highlightedIndex && 'highlighted',
+                  item.disabled && 'select-popover-item-disabled',
+                  !item.disabled && optionIndex === highlightedIndex && 'highlighted',
                 )}
                 onClick={() => handleSelect(item)}
-                onMouseEnter={() => setHighlightedIndex(optionIndex)}
+                onMouseEnter={() => {
+                  if (!item.disabled) setHighlightedIndex(optionIndex);
+                }}
               >
                 {renderOption
                   ? renderOption(item, { selected: isSelected })

@@ -300,6 +300,15 @@
         font-weight: 600;
     }
 
+    .select-popover-item.select-popover-item-disabled {
+        color: var(--color-fg-muted);
+        cursor: not-allowed;
+    }
+
+    .select-popover-item.select-popover-item-disabled:hover {
+        background-color: transparent;
+    }
+
     .select-check {
         margin-left: auto;
         flex-shrink: 0;
