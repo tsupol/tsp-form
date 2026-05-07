@@ -149,6 +149,10 @@
     --color-button-default-bg: #212225;
     --color-button-default-border: #43484e;
     --color-button-outline-border: #43484e;
+    --color-button-default-hover-bg: #2e3135;
+    --color-button-default-hover-fg: var(--color-fg);
+    --color-button-ghost-hover-bg: #2e3135;
+    --color-button-ghost-hover-fg: var(--color-fg);
 
     /* added */
     --spacing-nav: 3rem;
@@ -229,7 +233,7 @@
 [data-theme="light"] {
     --color-fg: #1c2024;
     --color-fg-contrast: #ffffff;
-    --color-bg: #fcfcfd;
+    --color-bg: #f3f3f6;
     --color-bg-contrast: #1c2024;
 
     --color-line: rgba(0, 0, 0, 0.12);
@@ -273,6 +277,10 @@
     --color-button-default-bg: #ffffff;
     --color-button-default-border: #cdced6;
     --color-button-outline-border: #cdced6;
+    --color-button-default-hover-bg: #e0e1e6;
+    --color-button-default-hover-fg: #1c2024;
+    --color-button-ghost-hover-bg: #e0e1e6;
+    --color-button-ghost-hover-fg: #1c2024;
 
     /* side menu */
     --color-side-menu-bg: #f0f0f3;

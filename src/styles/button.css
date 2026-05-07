@@ -3,9 +3,9 @@
     --color-text: var(--color-fg);
     --color-bg: var(--color-button-default-bg, var(--color-surface-elevated));
     --color-border: var(--color-button-default-border, var(--color-surface-elevated));
-    --color-bg-hover: var(--color-fg);
-    --color-border-hover: var(--color-fg);
-    --color-text-hover: var(--color-fg-contrast);
+    --color-bg-hover: var(--color-button-default-hover-bg, var(--color-fg));
+    --color-text-hover: var(--color-button-default-hover-fg, var(--color-fg-contrast));
+    --color-border-hover: var(--color-bg-hover);
     padding: 0.25rem 1rem;
     font-size: var(--text-control, 0.875rem);
     line-height: var(--text-control--line-height, 1.4);
@@ -144,24 +144,36 @@
     --color-text: var(--color-primary-contrast);
     --color-bg: var(--color-primary);
     --color-border: var(--color-primary);
+    --color-bg-hover: var(--color-primary-hover);
+    --color-text-hover: var(--color-primary-contrast);
+    --color-border-hover: var(--color-primary-hover);
 }
 
 .btn-secondary {
     --color-text: var(--color-secondary-contrast);
     --color-bg: var(--color-secondary);
     --color-border: var(--color-secondary);
+    --color-bg-hover: var(--color-secondary-hover);
+    --color-text-hover: var(--color-secondary-contrast);
+    --color-border-hover: var(--color-secondary-hover);
 }
 
 .btn-danger {
     --color-text: var(--color-danger-contrast);
     --color-bg: var(--color-danger);
     --color-border: var(--color-danger);
+    --color-bg-hover: var(--color-danger-hover);
+    --color-text-hover: var(--color-danger-contrast);
+    --color-border-hover: var(--color-danger-hover);
 }
 
 .btn-success {
     --color-text: var(--color-success-contrast);
     --color-bg: var(--color-success);
     --color-border: var(--color-success);
+    --color-bg-hover: var(--color-success-hover);
+    --color-text-hover: var(--color-success-contrast);
+    --color-border-hover: var(--color-success-hover);
 }
 
 .btn-outline-default {
@@ -206,44 +218,23 @@
     --color-border-hover: var(--color-success);
 }
 
-.btn-ghost-default {
-    --color-text: var(--color-fg);
-    --color-bg: transparent;
-    --color-border: transparent;
-    --color-text-hover: var(--color-fg);
-    --color-bg-hover: var(--color-surface-elevated);
-    --color-border-hover: var(--color-surface-elevated);
-}
-
-.btn-ghost-primary {
-    --color-text: var(--color-primary);
-    --color-bg: transparent;
-    --color-border: transparent;
-    --color-text-hover: var(--color-fg);
-    --color-bg-hover: var(--color-surface-elevated);
-    --color-border-hover: var(--color-surface-elevated);
-}
-
-.btn-ghost-secondary {
-    --color-text: var(--color-secondary);
-    --color-bg: transparent;
-    --color-border: transparent;
-    --color-text-hover: var(--color-fg);
-    --color-bg-hover: var(--color-surface-elevated);
-    --color-border-hover: var(--color-surface-elevated);
-}
-
-.btn-ghost-danger {
-    --color-text: var(--color-danger);
-    --color-bg: transparent;
-    --color-border: transparent;
-}
-
+.btn-ghost-default,
+.btn-ghost-primary,
+.btn-ghost-secondary,
+.btn-ghost-danger,
 .btn-ghost-success {
-    --color-text: var(--color-success);
     --color-bg: transparent;
     --color-border: transparent;
+    --color-bg-hover: var(--color-button-ghost-hover-bg, var(--color-surface-elevated));
+    --color-text-hover: var(--color-button-ghost-hover-fg, var(--color-fg));
+    --color-border-hover: var(--color-bg-hover);
 }
+
+.btn-ghost-default { --color-text: var(--color-fg); }
+.btn-ghost-primary { --color-text: var(--color-primary); }
+.btn-ghost-secondary { --color-text: var(--color-secondary); }
+.btn-ghost-danger { --color-text: var(--color-danger); }
+.btn-ghost-success { --color-text: var(--color-success); }
 
 /* Button group */
 .btn-group {
