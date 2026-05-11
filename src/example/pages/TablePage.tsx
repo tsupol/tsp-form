@@ -170,7 +170,7 @@ export const TablePage = () => {
       {/* ── Section 1: Basic Table ── */}
       <section className="mb-12">
         <h2 className="heading-3 mb-4">Basic Table</h2>
-        <p className="text-muted mb-4">
+        <p className="text-subtle mb-4">
           Presentational Table primitives wrapping native HTML table elements.
         </p>
         <Table>
@@ -205,7 +205,7 @@ export const TablePage = () => {
       {/* ── Section 2: DataTable (columns mode) ── */}
       <section className="mb-12">
         <h2 className="heading-3 mb-4">DataTable — Columns Mode</h2>
-        <p className="text-muted mb-4">
+        <p className="text-subtle mb-4">
           Full-featured data table with sorting, filtering, pagination, and row selection.
         </p>
         <div className="data-table-toolbar">
@@ -231,7 +231,7 @@ export const TablePage = () => {
         />
 
         <h3 className="heading-4 mt-8 mb-2">Scrollable (fixed-height container)</h3>
-        <p className="text-muted mb-4">
+        <p className="text-subtle mb-4">
           When placed in a height-constrained parent, the header stays sticky at the top,
           the body scrolls, and the pagination footer stays at the bottom.
         </p>
@@ -250,7 +250,7 @@ export const TablePage = () => {
       {/* ── Section 3: DataTable (freeform mode) ── */}
       <section className="mb-12">
         <h2 className="heading-3 mb-4">DataTable — Freeform Mode</h2>
-        <p className="text-muted mb-4">
+        <p className="text-subtle mb-4">
           Card-style rows using <code>renderRow</code> with div-based layout.
         </p>
         <DataTable
@@ -303,7 +303,7 @@ export const TablePage = () => {
       {/* ── Section 4: Expandable Rows ── */}
       <section className="mb-12">
         <h2 className="heading-3 mb-4">Expandable Rows</h2>
-        <p className="text-muted mb-4">
+        <p className="text-subtle mb-4">
           Use <code>renderExpandedRow</code> and <code>createExpandColumn</code> to add
           collapsible detail rows with a chevron toggle.
         </p>
@@ -357,7 +357,7 @@ export const TablePage = () => {
       {/* ── Section 4b: Expand on Row Click + Actions Menu ── */}
       <section className="mb-12">
         <h2 className="heading-3 mb-4">Expand on Row Click + Actions Menu</h2>
-        <p className="text-muted mb-4">
+        <p className="text-subtle mb-4">
           Use <code>expandOnRowClick</code> to expand rows by clicking anywhere on the row.
           Add an actions column with a menu button — <code>e.stopPropagation()</code> prevents the click from expanding the row.
         </p>

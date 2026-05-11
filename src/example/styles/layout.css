@@ -73,4 +73,10 @@ body {
     .mobile-header.mobile-header-scrolled-shadow {
         background: linear-gradient(to bottom, var(--color-mobile-header-bg, var(--color-surface)) 80%, transparent) !important;
     }
+
+    .panel-datatable .data-table-footer {
+        padding-inline: 0.5rem;
+        padding-block: 0.5rem;
+        border-top: 1px solid var(--color-line);
+    }
 }

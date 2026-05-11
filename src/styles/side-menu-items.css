@@ -111,7 +111,7 @@
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        color: var(--color-muted);
+        color: var(--color-subtle);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;

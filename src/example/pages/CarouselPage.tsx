@@ -47,7 +47,7 @@ export function CarouselPage() {
         {/* Basic Carousel */}
         <div className="card space-y-4">
           <h2 className="heading-3">Basic Carousel</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             A simple carousel with default settings. Drag to swipe or use arrows/dots.
           </p>
           <div className="h-64">
@@ -68,7 +68,7 @@ export function CarouselPage() {
         {/* Configurable Carousel */}
         <div className="card space-y-4">
           <h2 className="heading-3">Configurable Carousel</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Toggle options to see different carousel behaviors.
           </p>
 
@@ -152,7 +152,7 @@ export function CarouselPage() {
         {/* Controlled Mode */}
         <div className="card space-y-4">
           <h2 className="heading-3">Controlled Mode</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Use external state to control the active slide.
           </p>
 
@@ -190,7 +190,7 @@ export function CarouselPage() {
             </Carousel>
           </div>
 
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Current index: <span className="font-mono font-bold">{controlledIndex}</span>
           </p>
         </div>
@@ -198,7 +198,7 @@ export function CarouselPage() {
         {/* Custom Arrows */}
         <div className="card space-y-4">
           <h2 className="heading-3">Custom Arrows</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Provide custom content for the prev/next arrows.
           </p>
 
@@ -227,7 +227,7 @@ export function CarouselPage() {
         {/* Image Content Example - Cover */}
         <div className="card space-y-4">
           <h2 className="heading-3">Images with objectFit="cover"</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Images fill the slide and may be cropped (default).
           </p>
 
@@ -252,7 +252,7 @@ export function CarouselPage() {
         {/* Image Content Example - Contain */}
         <div className="card space-y-4">
           <h2 className="heading-3">Images with objectFit="contain"</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Images fit entirely within the slide, may have letterboxing.
           </p>
 
@@ -277,7 +277,7 @@ export function CarouselPage() {
         {/* Thumbnail Navigation - Bottom, scrollable (align right) */}
         <div className="card space-y-4">
           <h2 className="heading-3">Thumbnails (Bottom, Scroll Right)</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Thumbnails at bottom, aligned right, horizontally scrollable.
           </p>
 
@@ -314,7 +314,7 @@ export function CarouselPage() {
         {/* Thumbnail Navigation - Bottom, wrapped (align left) */}
         <div className="card space-y-4">
           <h2 className="heading-3">Thumbnails (Bottom, Wrap Left)</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Thumbnails at bottom, aligned left, wrapping to multiple rows.
           </p>
 

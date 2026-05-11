@@ -67,7 +67,7 @@
 }
 
 .alert-description {
-    color: var(--color-alert-description, var(--color-fg-muted));
+    color: var(--color-alert-description, var(--color-subtle));
     font-size: var(--text-alert-description, 0.8125rem);
     line-height: 1.5;
     margin-top: 0.125rem;

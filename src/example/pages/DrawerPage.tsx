@@ -12,7 +12,7 @@ export const DrawerPage = () => {
   return (
     <div className="page-content">
       <h1 className="heading-1 mb-1">Drawer</h1>
-      <p className="text-muted mb-6">Side panel that slides in from any edge. Uses ModalContext for backdrop, stacking, scroll lock, and escape key.</p>
+      <p className="text-subtle mb-6">Side panel that slides in from any edge. Uses ModalContext for backdrop, stacking, scroll lock, and escape key.</p>
 
       <h3 className="heading-3 mb-3">All Sides</h3>
       <div className="card mb-6">
@@ -37,7 +37,7 @@ export const DrawerPage = () => {
             <button className="drawer-close-btn" onClick={() => setOpenSide(null)}>&times;</button>
           </div>
           <div className="drawer-content">
-            <p className="text-muted mb-4">This drawer slides in from the <strong>{side}</strong>.</p>
+            <p className="text-subtle mb-4">This drawer slides in from the <strong>{side}</strong>.</p>
             <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</p>
           </div>
           <div className="drawer-footer">
@@ -64,7 +64,7 @@ export const DrawerPage = () => {
           <button className="drawer-close-btn" onClick={() => setWideOpen(false)}>&times;</button>
         </div>
         <div className="drawer-content">
-          <p className="text-muted mb-4">This drawer uses <code>className="w-160 max-sm:w-full"</code> for responsive sizing.</p>
+          <p className="text-subtle mb-4">This drawer uses <code>className="w-160 max-sm:w-full"</code> for responsive sizing.</p>
           <p>Use Tailwind width/height classes on the Drawer to customize size. Responsive variants like <code>max-sm:</code> work naturally.</p>
         </div>
       </Drawer>
@@ -86,7 +86,7 @@ export const DrawerPage = () => {
           <button className="drawer-close-btn" onClick={() => setTallOpen(false)}>&times;</button>
         </div>
         <div className="drawer-content">
-          <p className="text-muted mb-4">This bottom drawer uses <code>className="h-[60dvh]"</code>.</p>
+          <p className="text-subtle mb-4">This bottom drawer uses <code>className="h-[60dvh]"</code>.</p>
           <p>Use Tailwind height classes on top/bottom drawers to customize the panel height.</p>
         </div>
       </Drawer>

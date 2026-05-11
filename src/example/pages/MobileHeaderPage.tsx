@@ -150,7 +150,7 @@ function ArticleList() {
 
       <div className="page-content">
         <h1 ref={titleRef} className="heading-1 mb-1">Articles</h1>
-        <p className="text-muted mb-6">Browse recent articles and tutorials.</p>
+        <p className="text-subtle mb-6">Browse recent articles and tutorials.</p>
 
         <div className="flex flex-col gap-3">
           {articles.map((article) => (
@@ -232,7 +232,7 @@ function ArticleDetailSimple({ article }: { article: Article }) {
           {article.category}
         </span>
         <h1 ref={titleRef} className="heading-1 mt-2 mb-1">{article.title}</h1>
-        <p className="text-muted mb-6">{article.excerpt}</p>
+        <p className="text-subtle mb-6">{article.excerpt}</p>
 
         {article.sections.map((section, i) => (
           <div key={i} className="mb-6">
@@ -305,7 +305,7 @@ function ArticleDetailWithPageNav({ article }: { article: Article }) {
           <div className={isMobile ? 'pagenav-panels' : 'flex flex-1 min-h-0'}>
             <PageNavPanel id="content" className="flex-1 overflow-y-auto better-scroll">
               <div className="p-6">
-                <p className="text-muted mb-6">{article.excerpt}</p>
+                <p className="text-subtle mb-6">{article.excerpt}</p>
                 {article.sections.map((section, i) => (
                   <div key={i} className="mb-6">
                     <h2 className="heading-3 mb-2">{section.heading}</h2>
@@ -315,7 +315,7 @@ function ArticleDetailWithPageNav({ article }: { article: Article }) {
                   </div>
                 ))}
                 <button
-                  className="flex items-center gap-2 mt-2 px-4 py-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors cursor-pointer"
+                  className="flex items-center gap-2 mt-2 px-4 py-2 rounded-lg bg-primary/10 text-primary-fg hover:bg-primary/20 transition-colors cursor-pointer"
                   onClick={() => goTo('examples')}
                 >
                   <Code size={16} />
@@ -359,8 +359,8 @@ export function ArticleDetailPage() {
   if (!article) {
     return (
       <div className="page-content">
-        <p className="text-muted">Article not found.</p>
-        <button className="text-primary cursor-pointer mt-2" onClick={() => navigate('/mobile-header')}>
+        <p className="text-subtle">Article not found.</p>
+        <button className="text-primary-fg cursor-pointer mt-2" onClick={() => navigate('/mobile-header')}>
           Back to articles
         </button>
       </div>

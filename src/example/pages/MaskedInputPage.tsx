@@ -36,7 +36,7 @@ export function MaskedInputPage() {
                 onChange={(raw) => setPhone(raw)}
                 placeholder="0X-XXX-XXXX"
               />
-              <span className="text-xs text-muted">Raw: {phone}</span>
+              <span className="text-xs text-subtle">Raw: {phone}</span>
             </div>
             <div className="flex flex-col gap-1">
               <label className="form-label">SSN (###-##-####)</label>
@@ -45,7 +45,7 @@ export function MaskedInputPage() {
                 value={ssn}
                 onChange={(raw) => setSsn(raw)}
               />
-              <span className="text-xs text-muted">Raw: {ssn}</span>
+              <span className="text-xs text-subtle">Raw: {ssn}</span>
             </div>
             <div className="flex flex-col gap-1">
               <label className="form-label">Credit Card (#### #### #### ####)</label>
@@ -69,7 +69,7 @@ export function MaskedInputPage() {
                 onChange={(raw) => setAmount(raw)}
                 decimalScale={0}
               />
-              <span className="text-xs text-muted">Raw: {amount}</span>
+              <span className="text-xs text-subtle">Raw: {amount}</span>
             </div>
             <div className="flex flex-col gap-1">
               <label className="form-label">Price (2 decimal places)</label>
@@ -79,7 +79,7 @@ export function MaskedInputPage() {
                 onChange={(raw) => setDecimal(raw)}
                 decimalScale={2}
               />
-              <span className="text-xs text-muted">Raw: {decimal}</span>
+              <span className="text-xs text-subtle">Raw: {decimal}</span>
             </div>
             <div className="flex flex-col gap-1">
               <label className="form-label">Currency with prefix</label>
@@ -90,7 +90,7 @@ export function MaskedInputPage() {
                 prefix="฿ "
                 decimalScale={2}
               />
-              <span className="text-xs text-muted">Raw: {prefixed}</span>
+              <span className="text-xs text-subtle">Raw: {prefixed}</span>
             </div>
           </div>
         </section>

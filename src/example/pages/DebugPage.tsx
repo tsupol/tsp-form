@@ -22,7 +22,7 @@ export function DebugPage() {
     <div className="page-content">
       <div className="grid gap-4">
         <h1 className="heading-1">Debug</h1>
-        <p className="text-muted">Tailwind CSS class debugging playground.</p>
+        <p className="text-subtle">Tailwind CSS class debugging playground.</p>
 
         <section>
           <h3 className="heading-3 mb-3">Rotation</h3>
@@ -40,7 +40,7 @@ export function DebugPage() {
                     style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
                   >
                     <div className={`${cls} w-6 h-6 bg-primary flex items-center justify-center text-primary-contrast text-xs font-bold`}>A</div>
-                    <span className="text-xs text-muted">{cls}</span>
+                    <span className="text-xs text-subtle">{cls}</span>
                   </div>
                 );
               })}
@@ -50,7 +50,7 @@ export function DebugPage() {
 
         <section>
           <h3 className="heading-3 mb-3">Ellipsis Ghost</h3>
-          <p className="text-muted mb-3">Truncated text at low opacity — does the "..." ghost show?</p>
+          <p className="text-subtle mb-3">Truncated text at low opacity — does the "..." ghost show?</p>
           <div className="card">
             <div className="w-48 bg-surface-hover rounded px-3 h-8 flex items-center">
               <span className="truncate opacity-0">A Very Long Title That Should Be Truncated With Ellipsis</span>

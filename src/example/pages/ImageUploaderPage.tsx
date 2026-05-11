@@ -137,7 +137,7 @@ export function ImageUploaderPage() {
         {/* Settings */}
         <div className="card space-y-4">
           <h2 className="heading-3">Settings</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Upload images with client-side resizing, cropping, and format conversion.
           </p>
 
@@ -309,7 +309,7 @@ export function ImageUploaderPage() {
         {/* Image Cropper */}
         <div className="card space-y-4">
           <h2 className="heading-3">Image Cropper</h2>
-          <p className="text-sm text-muted">
+          <p className="text-sm text-subtle">
             Upload an image, then zoom and drag to crop at a fixed aspect ratio.
           </p>
 
@@ -351,7 +351,7 @@ export function ImageUploaderPage() {
 
               {/* Zoom slider */}
               <div className="flex items-center gap-3 w-full">
-                <span className="text-xs text-muted whitespace-nowrap">Zoom</span>
+                <span className="text-xs text-subtle whitespace-nowrap">Zoom</span>
                 <Slider
                   min={Math.round((cropperRef.current?.minZoom ?? 0.1) * 100)}
                   max={Math.round((cropperRef.current?.maxZoom ?? 4) * 100)}

@@ -4,7 +4,7 @@ export function ExampleTypography() {
       {/* Headings */}
       <section className="card space-y-4">
         <h2 className="heading-3">Headings</h2>
-        <p className="text-sm text-muted">
+        <p className="text-sm text-subtle">
           Use <code>.heading-1</code> through <code>.heading-4</code> for consistent heading styles driven by CSS variables.
         </p>
         <div className="space-y-3">
@@ -18,20 +18,20 @@ export function ExampleTypography() {
       {/* Text Muted */}
       <section className="card space-y-4">
         <h2 className="heading-3">Muted Text</h2>
-        <p className="text-sm text-muted">
-          Use <code>.text-muted</code> for secondary, de-emphasized text. Uses <code>--color-fg-muted</code> which adapts to light/dark theme.
+        <p className="text-sm text-subtle">
+          Use <code>text-subtle</code> for secondary, de-emphasized text. Uses <code>--color-subtle</code> which adapts to light/dark theme.
         </p>
         <div className="space-y-2">
           <p>This is normal text.</p>
-          <p className="text-muted">This is muted text — great for descriptions and secondary info.</p>
-          <p className="text-small text-muted">This is small muted text — for captions and footnotes.</p>
+          <p className="text-subtle">This is muted text — great for descriptions and secondary info.</p>
+          <p className="text-small text-subtle">This is small muted text — for captions and footnotes.</p>
         </div>
       </section>
 
       {/* Text Small */}
       <section className="card space-y-4">
         <h2 className="heading-3">Small Text</h2>
-        <p className="text-sm text-muted">
+        <p className="text-sm text-subtle">
           Use <code>.text-small</code> for smaller body text (0.8125rem).
         </p>
         <div className="space-y-2">
@@ -43,7 +43,7 @@ export function ExampleTypography() {
       {/* Card */}
       <section className="card space-y-4">
         <h2 className="heading-3">Card Layout</h2>
-        <p className="text-sm text-muted">
+        <p className="text-sm text-subtle">
           Use <code>.card</code> to replace <code>border border-line bg-surface p-card rounded-lg</code>.
         </p>
         <div className="card">
@@ -54,7 +54,7 @@ export function ExampleTypography() {
       {/* Divider */}
       <section className="card space-y-4">
         <h2 className="heading-3">Dividers</h2>
-        <p className="text-sm text-muted">
+        <p className="text-sm text-subtle">
           Use <code>.divider</code> (2rem margin) or <code>.divider-sm</code> (1rem margin) for horizontal rules.
         </p>
         <div>
@@ -69,7 +69,7 @@ export function ExampleTypography() {
       {/* CSS Variables */}
       <section className="card space-y-4">
         <h2 className="heading-3">CSS Variables</h2>
-        <p className="text-sm text-muted">
+        <p className="text-sm text-subtle">
           All typography classes are driven by CSS custom properties, making them easy to override.
         </p>
         <div className="overflow-x-auto">
@@ -81,7 +81,7 @@ export function ExampleTypography() {
                 <th className="text-left py-2 font-semibold">Used by</th>
               </tr>
             </thead>
-            <tbody className="text-muted">
+            <tbody className="text-subtle">
               <tr className="border-b border-line">
                 <td className="py-2 pr-4 font-mono text-xs">--text-h1</td>
                 <td className="py-2 pr-4">1.5rem / 700</td>
@@ -108,9 +108,9 @@ export function ExampleTypography() {
                 <td className="py-2">.text-small</td>
               </tr>
               <tr>
-                <td className="py-2 pr-4 font-mono text-xs">--color-fg-muted</td>
+                <td className="py-2 pr-4 font-mono text-xs">--color-subtle</td>
                 <td className="py-2 pr-4">#8b8d98 / #60646c</td>
-                <td className="py-2">.text-muted, Slider, ImageUploader</td>
+                <td className="py-2">text-subtle, Slider, ImageUploader</td>
               </tr>
             </tbody>
           </table>

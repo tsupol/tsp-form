@@ -28,7 +28,7 @@ function FileList({ files, onRemove }: { files: UploadedFile[]; onRemove: (f: Up
           <FileText size={16} className="opacity-50 shrink-0" />
           <div className="flex-1 min-w-0">
             <div className="text-sm font-medium truncate">{f.name}</div>
-            <div className="text-xs text-muted">{formatBytes(f.size)}{f.type ? ` · ${f.type}` : ''}</div>
+            <div className="text-xs text-subtle">{formatBytes(f.size)}{f.type ? ` · ${f.type}` : ''}</div>
           </div>
           <button
             type="button"
@@ -60,7 +60,7 @@ export function FileUploaderPage() {
         {/* Basic */}
         <div className="card space-y-4">
           <h3 className="heading-3">Basic Upload</h3>
-          <p className="text-muted text-sm">Single file upload with no restrictions.</p>
+          <p className="text-subtle text-sm">Single file upload with no restrictions.</p>
           <FileUploader
             value={basicFiles}
             onUpload={(files) => setBasicFiles(prev => [...prev, ...files])}
@@ -73,7 +73,7 @@ export function FileUploaderPage() {
         {/* Multiple with validation */}
         <div className="card space-y-4">
           <h3 className="heading-3">Multiple with Validation</h3>
-          <p className="text-muted text-sm">
+          <p className="text-subtle text-sm">
             Max 5 files, 1 MB per file. Accepts images and PDFs only.
           </p>
           <FileUploader

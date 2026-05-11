@@ -103,7 +103,7 @@ export const ServerPaginationPage = () => {
   return (
     <div className="page-content h-dvh max-h-dvh max-w-[64rem] flex flex-col overflow-hidden">
       <h1 className="heading-1 mb-2 flex-none">Server-Side Pagination</h1>
-      <p className="text-muted mb-4 flex-none">
+      <p className="text-subtle mb-4 flex-none">
         DataTable receives only the current page of data. Controlled <code>pageIndex</code> and
         {' '}<code>manualSorting</code> let the consumer own pagination and sort state.
         Sorting resets to page 1 and data is sorted server-side before slicing.
@@ -111,7 +111,7 @@ export const ServerPaginationPage = () => {
 
       <section className="flex-1 min-h-0 flex flex-col">
         <h2 className="heading-3 mb-4 flex-none">Simulated Server Fetch</h2>
-        <p className="text-muted mb-4 flex-none">
+        <p className="text-subtle mb-4 flex-none">
           {totalCount} products total — only {pageSize} loaded per page.
           Page {pageIndex + 1} of {Math.ceil(totalCount / pageSize)}.
         </p>

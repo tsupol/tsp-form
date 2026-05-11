@@ -56,6 +56,8 @@
     --color-primary-fade: #60a5fa;
     --color-primary-contrast: #ffffff;
     --color-primary-light: rgba(37, 99, 235, 0.1);
+    --color-primary-fg: var(--color-primary);
+    --color-warning-fg: var(--color-warning);
 
     /* ── Secondary (Teal) ─────────────────────────────────────────────── */
 
@@ -159,7 +161,7 @@
     --color-mobile-header-bg: var(--color-bg);
 
     /* side menu */
-    --spacing-side-menu: 280px;
+    --spacing-side-menu: 250px;
     --spacing-side-menu-min: 3.075rem;
     --color-side-menu-bg: #111113;
 
@@ -210,8 +212,8 @@
     --text-small: 0.8125rem;
     --text-small--line-height: 1.5;
 
-    /* Muted text — used by library components (slider, image-uploader) */
-    --color-fg-muted: #8b8d98;
+    /* Subtle text — used by library components (slider, image-uploader, etc.) */
+    --color-subtle: #8b8d98;
 
     /* Section spacing */
     --spacing-section: 2rem;
@@ -219,7 +221,8 @@
     /* pagination */
     --color-pagination-border: transparent;
     --color-pagination-bg: transparent;
-    --color-pagination-hover-bg: var(--color-surface-elevated);
+    --color-pagination-hover-bg: var(--color-button-ghost-hover-bg, var(--color-surface-elevated));
+    --color-pagination-hover-fg: var(--color-button-ghost-hover-fg, var(--color-fg));
     --color-pagination-hover-border: transparent;
     --color-pagination-active-bg: var(--color-button-default-bg);
     --color-pagination-active-fg: var(--color-fg);
@@ -271,13 +274,13 @@
     --color-control-bg: #ffffff;
     --color-control-placeholder: #80838d;
     --color-control-label: #60646c;
-    --color-fg-muted: #60646c;
+    --color-subtle: #60646c;
 
     /* default button */
-    --color-button-default-bg: #ffffff;
-    --color-button-default-border: #cdced6;
+    --color-button-default-bg: #eeeef1;
+    --color-button-default-border: #c4c6cf;
     --color-button-outline-border: #cdced6;
-    --color-button-default-hover-bg: #e0e1e6;
+    --color-button-default-hover-bg: #d9d9e0;
     --color-button-default-hover-fg: #1c2024;
     --color-button-ghost-hover-bg: #e0e1e6;
     --color-button-ghost-hover-fg: #1c2024;
@@ -286,7 +289,7 @@
     --color-side-menu-bg: #f0f0f3;
 
     --color-item-bg: transparent;
-    --color-item-fg: #60646c;
+    --color-item-fg: #333;
     --color-item-border: transparent;
 
     --color-item-hover-bg: #e0e1e6;

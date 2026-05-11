@@ -101,7 +101,7 @@
         cursor: pointer;
         padding: 0.75rem 1rem;
         margin: -0.75rem -1rem -0.75rem 0;
-        color: var(--color-fg-muted, #999);
+        color: var(--color-subtle, #999);
         transition: color 150ms ease;
     }
 

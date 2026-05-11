@@ -12,14 +12,14 @@ import { ExampleTooltip } from './main-sections/ExampleTooltip';
 import { ExampleProgressBar } from './main-sections/ExampleProgressBar';
 import { ModalProvider } from '../context/ModalContext';
 import { SnackbarProvider, useSnackbarContext } from '../context/SnackbarContext';
-import { Home, Settings, HelpCircle, LogOut, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Layers, Box, Type, Columns3, Table2, Bell } from 'lucide-react';
+import { Home, Settings, HelpCircle, LogOut, SlidersHorizontal, ArrowLeftFromLine, ArrowRightFromLine, ChevronsUpDown, Layers, Box, Type, Columns3, Table2, Bell, FolderTree, ClipboardList, Users } from 'lucide-react';
 import { Badge } from '../components/Badge';
 import { SideMenu } from '../components/SideMenu';
 import { SideMenuItems, type SideMenuItemData } from '../components/SideMenuItems';
 import { PopOver } from '../components/PopOver';
 import { MenuItem, MenuSeparator, SubMenu } from '../components/Menu';
 import { Checkmark } from '../components/Checkmark';
-import { useNavigate, useLocation, Routes, Route } from 'react-router-dom';
+import { useNavigate, useLocation, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { clsx } from 'clsx';
@@ -56,6 +56,10 @@ import { DebugPage } from './pages/DebugPage';
 import { DisabledStatePage } from './pages/DisabledStatePage';
 import { MobileHeaderPage, ArticleDetailPage } from './pages/MobileHeaderPage';
 import { ComponentsLayout } from './pages/ComponentsPage';
+import { PurchaseOrdersExample } from './pages/page-examples/PurchaseOrdersExample';
+import { AssetsExample } from './pages/page-examples/AssetsExample';
+import { UsersExample } from './pages/page-examples/UsersExample';
+import { PageExamplesLayout } from './pages/page-examples/PageExamplesLayout';
 
 // Theme hook
 type Theme = 'light' | 'dark' | 'system';
@@ -127,7 +131,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
           </div>
           <div className="flex-1 text-left truncate">
             <div className="text-sm font-medium leading-tight">John Doe</div>
-            <div className="text-xs text-muted leading-tight">Administrator</div>
+            <div className="text-xs text-subtle leading-tight">Administrator</div>
           </div>
           <ChevronsUpDown size={14} className="opacity-50 shrink-0" />
         </button>
@@ -222,11 +226,11 @@ function NotificationMenuItem({ collapsed, isMobile }: { collapsed: boolean; isM
         maxWidth="320px"
       >
         <div className="flex flex-col py-1">
-          <div className="px-3 py-2 text-xs font-semibold text-muted uppercase tracking-wide">Notifications</div>
+          <div className="px-3 py-2 text-xs font-semibold text-subtle uppercase tracking-wide">Notifications</div>
           {mockNotifications.map((n) => (
             <div key={n.id} className="px-3 py-2 hover:bg-item-hover-bg cursor-pointer transition-colors rounded">
               <div className="text-sm">{n.text}</div>
-              <div className="text-xs text-muted mt-0.5">{n.time}</div>
+              <div className="text-xs text-subtle mt-0.5">{n.time}</div>
             </div>
           ))}
         </div>
@@ -276,6 +280,13 @@ const SideNav = () => {
     { key: 'page-nav', icon: <Columns3 size="1rem"/>, label: "PageNav", path: '/page-nav' },
     { key: 'page-nav-table', icon: <Table2 size="1rem"/>, label: "PageNav Table", path: '/page-nav-table' },
     { key: 'mobile-header', icon: <Box size="1rem"/>, label: "Mobile Header", path: '/mobile-header' },
+    { key: 'page-examples', icon: <FolderTree size="1rem"/>, label: "Page Examples", path: '/page-examples', children: [
+      { type: 'group', key: 'grp-pe-pagenav', label: "PageNav patterns" },
+      { key: 'pe-list-detail', icon: <ClipboardList size="1rem"/>, label: "List + Detail", path: '/page-examples/list-detail' },
+      { key: 'pe-list-detail-filters', icon: <Box size="1rem"/>, label: "List + Detail w/ Filters", path: '/page-examples/list-detail-filters' },
+      { type: 'group', key: 'grp-pe-admin', label: "Admin" },
+      { key: 'pe-users', icon: <Users size="1rem"/>, label: "Users", path: '/page-examples/users' },
+    ]},
     { type: 'custom', key: 'notifications', render: (props) => <NotificationMenuItem {...props} /> },
     { type: 'group', key: 'grp-debug', label: "Debug" },
     { key: 'debug', icon: <Settings size="1rem"/>, label: "Debug", path: '/debug' },
@@ -356,9 +367,9 @@ const App = () => {
     <ModalProvider>
       <SnackbarProvider>
         <BrowserRouter>
-          <div className="flex">
+          <div className="flex h-dvh">
             <SideNav/>
-            <div className="w-full overflow-y-auto">
+            <div className="flex-grow w-full better-scroll">
               <Routes>
                 <Route path="/components/*" element={<ComponentsLayout/>}>
                   <Route path="buttons" element={<ExampleButtons/>}/>
@@ -398,12 +409,20 @@ const App = () => {
                 <Route path="/mobile-header" element={<MobileHeaderPage/>}>
                   <Route path="article/:id" element={<ArticleDetailPage/>}/>
                 </Route>
+                <Route path="/page-examples" element={<PageExamplesLayout/>}>
+                  <Route index element={<Navigate to="/page-examples/list-detail" replace/>}/>
+                  <Route path="list-detail" element={<PurchaseOrdersExample/>}/>
+                  <Route path="list-detail/:poId" element={<PurchaseOrdersExample/>}/>
+                  <Route path="list-detail-filters" element={<AssetsExample/>}/>
+                  <Route path="list-detail-filters/:assetId" element={<AssetsExample/>}/>
+                  <Route path="users" element={<UsersExample/>}/>
+                </Route>
                 <Route path="/debug" element={<DebugPage/>}/>
                 <Route path="/debug/disabled-state" element={<DisabledStatePage/>}/>
                 <Route path="*" element={
                   <div className="page-content">
                     <h1 className="heading-1 mb-4">Dashboard</h1>
-                    <p className="text-muted">Select a component from the sidebar to view its example.</p>
+                    <p className="text-subtle">Select a component from the sidebar to view its example.</p>
                   </div>
                 }/>
               </Routes>

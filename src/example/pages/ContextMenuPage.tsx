@@ -31,7 +31,7 @@ export function ContextMenuPage() {
       <div className="grid gap-4">
         <div className="card space-y-4 w-full max-w-[700px]">
           <h1 className="heading-1 mb-2">Context Menu (Nested)</h1>
-          <p className="text-sm text-muted mb-4">
+          <p className="text-sm text-subtle mb-4">
             Right-click inside the area below to open a context menu with nested submenus.
           </p>
 
@@ -40,7 +40,7 @@ export function ContextMenuPage() {
             className="border-2 border-dashed border-line rounded-lg p-4 min-h-[150px] flex flex-col items-center justify-center select-none cursor-context-menu"
             onContextMenu={handleContextMenu}
           >
-            <p className="text-muted text-sm">{lastAction}</p>
+            <p className="text-subtle text-sm">{lastAction}</p>
           </div>
 
           {/* Context menu anchored to click position using a hidden trigger */}

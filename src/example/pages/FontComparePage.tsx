@@ -48,7 +48,7 @@ export function FontComparePage() {
   return (
     <div className="page-content">
       <h1 className="heading-1 mb-2">Font Comparison</h1>
-      <p className="text-muted mb-6">Each section shows the same component in every font.</p>
+      <p className="text-subtle mb-6">Each section shows the same component in every font.</p>
 
       <div className="grid gap-6">
         {/* Button sm */}
@@ -58,7 +58,7 @@ export function FontComparePage() {
             {fonts.map(f => (
               <div key={f} className="flex flex-col items-center gap-1" style={ff(f)}>
                 <Button size="sm">Button</Button>
-                <span className="text-xs text-muted">{f}</span>
+                <span className="text-xs text-subtle">{f}</span>
               </div>
             ))}
           </div>
@@ -71,7 +71,7 @@ export function FontComparePage() {
             {fonts.map(f => (
               <div key={f} className="flex flex-col items-center gap-1" style={ff(f)}>
                 <Badge color="primary" size="sm">Badge</Badge>
-                <span className="text-xs text-muted">{f}</span>
+                <span className="text-xs text-subtle">{f}</span>
               </div>
             ))}
           </div>
@@ -94,7 +94,7 @@ export function FontComparePage() {
                       <div
                         style={{ ...ff(f), fontSize: `${size}px`, lineHeight: 1, background: 'var(--color-surface-hover)' }}
                       >Test</div>
-                      <span className="text-muted" style={{ fontSize: '7px', lineHeight: 1 }}>{f}</span>
+                      <span className="text-subtle" style={{ fontSize: '7px', lineHeight: 1 }}>{f}</span>
                     </div>
                   ))}
                 </div>

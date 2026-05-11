@@ -23,8 +23,8 @@
         min-width: var(--height-control, 2.25rem);
         height: var(--height-control, 2.25rem);
         padding: 0 0.375rem;
-        border: 1px solid var(--color-pagination-border, var(--color-line));
-        background: var(--color-pagination-bg, var(--color-surface));
+        border: 1px solid var(--color-pagination-border, transparent);
+        background: var(--color-pagination-bg, transparent);
         color: var(--color-pagination-fg, var(--color-fg));
         border-radius: var(--radius-pagination, var(--radius-control));
         font-size: var(--text-control, 0.875rem);
@@ -37,16 +37,25 @@
     }
 
     @media (hover: hover) and (pointer: fine) {
-        .pagination-item:hover:not(.disabled):not(.pagination-dots) {
-            background: var(--color-pagination-hover-bg, var(--color-surface-elevated));
-            border-color: var(--color-pagination-hover-border, var(--color-primary));
+        .pagination-item:hover:not(.disabled):not(.pagination-dots):not(.active) {
+            background: var(--color-pagination-hover-bg, var(--color-button-ghost-hover-bg, var(--color-surface-elevated)));
+            color: var(--color-pagination-hover-fg, var(--color-button-ghost-hover-fg, var(--color-fg)));
+            border-color: var(--color-pagination-hover-border, transparent);
         }
     }
 
     .pagination-item.active {
-        background: var(--color-pagination-active-bg, var(--color-primary));
-        color: var(--color-pagination-active-fg, var(--color-primary-contrast));
-        border-color: var(--color-pagination-active-border, var(--color-primary));
+        background: var(--color-pagination-active-bg, var(--color-button-default-bg, var(--color-surface-elevated)));
+        color: var(--color-pagination-active-fg, var(--color-fg));
+        border-color: var(--color-pagination-active-border, var(--color-button-default-border, var(--color-surface-elevated)));
+    }
+
+    @media (hover: hover) and (pointer: fine) {
+        .pagination-item.active:hover:not(.disabled) {
+            background: var(--color-pagination-active-hover-bg, var(--color-button-default-hover-bg, var(--color-fg)));
+            color: var(--color-pagination-active-hover-fg, var(--color-button-default-hover-fg, var(--color-fg-contrast)));
+            border-color: var(--color-pagination-active-hover-bg, var(--color-button-default-hover-bg, var(--color-fg)));
+        }
     }
 
     .pagination-item.disabled {

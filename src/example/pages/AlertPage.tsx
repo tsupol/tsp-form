@@ -10,7 +10,7 @@ export function AlertPage() {
     <div className="page-content">
       <div className="grid gap-4">
         <h1 className="heading-1">Alert</h1>
-        <p className="text-muted">CSS-only alert classes for inline messages and snackbar content.</p>
+        <p className="text-subtle">CSS-only alert classes for inline messages and snackbar content.</p>
 
         {/* All variants */}
         <section>
@@ -101,7 +101,7 @@ export function AlertPage() {
         {/* Snackbar integration */}
         <section>
           <h3 className="heading-3 mb-3">Snackbar Integration</h3>
-          <p className="text-muted mb-3">Alert content inside snackbar notifications.</p>
+          <p className="text-subtle mb-3">Alert content inside snackbar notifications.</p>
           <div className="flex gap-2 flex-wrap card">
             <Button variant="outline" onClick={() => addSnackbar({
               message: (

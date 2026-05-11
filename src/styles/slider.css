@@ -151,7 +151,7 @@
     /* Labels */
     .slider-min-max-label {
         font-size: var(--text-control, 0.875rem);
-        color: var(--color-fg-muted);
+        color: var(--color-subtle);
         min-width: 2rem;
         text-align: center;
     }

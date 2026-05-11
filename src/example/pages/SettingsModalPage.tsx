@@ -94,7 +94,7 @@ function SelectMenuItem({ icon, label, value, options, onChange }: {
             key={option.value}
             className={clsx(
               'w-full text-left px-4 py-2 text-sm hover:bg-surface-hover transition-colors cursor-pointer',
-              value === option.value && 'text-primary'
+              value === option.value && 'text-primary-fg'
             )}
             onClick={() => {
               onChange(option.value);
@@ -149,7 +149,7 @@ function SettingsModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => vo
           <div className="text-sm opacity-60">Plan</div>
           <div>Pro</div>
         </div>
-        <button className="w-full text-left px-4 py-3 text-primary hover:bg-surface-hover transition-colors">
+        <button className="w-full text-left px-4 py-3 text-primary-fg hover:bg-surface-hover transition-colors">
           Change password
         </button>
       </div>
@@ -310,7 +310,7 @@ export function SettingsModalPage() {
       <div className="grid gap-4">
         <div className="card space-y-4 w-full max-w-[700px]">
           <h1 className="heading-1 mb-2">iOS-Style Navigation Modal</h1>
-          <p className="text-sm text-muted mb-4">
+          <p className="text-sm text-subtle mb-4">
             A modal with sliding page navigation, similar to iOS settings. Click items with chevrons to navigate deeper, use back button to return.
           </p>
 

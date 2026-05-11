@@ -48,7 +48,7 @@ export function DisabledStatePage() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="heading-1">Disabled States</h1>
-            <p className="text-muted">All form components in their disabled state.</p>
+            <p className="text-subtle">All form components in their disabled state.</p>
           </div>
           <div className="flex items-center gap-2">
             <label className="form-label !mb-0">Disabled</label>

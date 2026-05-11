@@ -33,15 +33,15 @@ export function ExampleSkeleton() {
         <h3 className="heading-3 mb-3">Animation Types</h3>
         <div className="card space-y-4">
           <div>
-            <div className="text-sm text-muted mb-2">Pulse (default)</div>
+            <div className="text-sm text-subtle mb-2">Pulse (default)</div>
             <Skeleton animation="pulse" width="100%" height={40} />
           </div>
           <div>
-            <div className="text-sm text-muted mb-2">Wave</div>
+            <div className="text-sm text-subtle mb-2">Wave</div>
             <Skeleton animation="wave" width="100%" height={40} />
           </div>
           <div>
-            <div className="text-sm text-muted mb-2">None</div>
+            <div className="text-sm text-subtle mb-2">None</div>
             <Skeleton animation="none" width="100%" height={40} />
           </div>
         </div>

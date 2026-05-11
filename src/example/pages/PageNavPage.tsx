@@ -88,7 +88,7 @@ function LessonList({ selectedId, onSelect, filter, onFilterChange }: {
             onClick={() => onSelect(lesson)}
           >
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-sm font-medium shrink-0">
+              <div className="w-8 h-8 rounded-full bg-primary/15 text-primary-fg flex items-center justify-center text-sm font-medium shrink-0">
                 {lesson.id}
               </div>
               <div className="flex-1 min-w-0">
@@ -119,7 +119,7 @@ function LessonContent({ lesson }: { lesson: Lesson | null }) {
   return (
     <div className="p-6">
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-primary/15 text-primary flex items-center justify-center font-medium">
+        <div className="w-10 h-10 rounded-full bg-primary/15 text-primary-fg flex items-center justify-center font-medium">
           {lesson.id}
         </div>
         <div>
@@ -198,7 +198,7 @@ export function PageNavPage() {
             {!isMobile && (
               <div className="px-6 py-4 border-b border-line">
                 <h1 className="heading-1">Lessons</h1>
-                <p className="text-muted">Select a lesson to view its content. Selection persists in the URL.</p>
+                <p className="text-subtle">Select a lesson to view its content. Selection persists in the URL.</p>
               </div>
             )}
             <div className={isMobile ? 'pagenav-panels' : 'flex flex-1 min-h-0'}>

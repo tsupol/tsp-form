@@ -65,7 +65,7 @@ function ProductDetail({ product }: { product: Product | null }) {
   return (
     <div className="p-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-12 h-12 rounded-lg bg-primary/15 text-primary flex items-center justify-center font-semibold text-lg">
+        <div className="w-12 h-12 rounded-lg bg-primary/15 text-primary-fg flex items-center justify-center font-semibold text-lg">
           {product.id}
         </div>
         <div>
@@ -149,7 +149,7 @@ export function PageNavTablePage() {
             {!isMobile && (
               <div className="px-6 py-4 border-b border-line">
                 <h1 className="heading-1">Products</h1>
-                <p className="text-muted">Browse and manage product inventory.</p>
+                <p className="text-subtle">Browse and manage product inventory.</p>
               </div>
             )}
             <div className={isMobile ? 'pagenav-panels' : 'flex flex-1 min-h-0'}>
@@ -182,7 +182,7 @@ export function PageNavTablePage() {
                           if (navRef.current.isMobile) navRef.current.goTo('detail');
                         }}
                       >
-                        <div className="w-8 h-8 rounded-full bg-primary/15 text-primary flex items-center justify-center text-sm font-medium shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-primary/15 text-primary-fg flex items-center justify-center text-sm font-medium shrink-0">
                           {p.id}
                         </div>
                         <div className="flex-1 min-w-0">

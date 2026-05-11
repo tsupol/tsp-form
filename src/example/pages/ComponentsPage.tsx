@@ -49,7 +49,7 @@ function ComponentsIndex() {
   return (
     <div className="page-content">
       <h1 className="heading-1 mb-1">Components</h1>
-      <p className="text-muted mb-6">Browse all available components.</p>
+      <p className="text-subtle mb-6">Browse all available components.</p>
       <div className="grid grid-cols-[repeat(auto-fill,minmax(12rem,1fr))] gap-3">
         {components.map((c) => (
           <button
@@ -79,7 +79,7 @@ function ComponentNav() {
           className={clsx(
             'flex items-center gap-2 w-full px-4 py-2 text-sm text-left cursor-pointer transition-colors',
             location.pathname === c.path
-              ? 'bg-primary/10 text-primary font-medium'
+              ? 'bg-primary/10 text-primary-fg font-medium'
               : 'hover:bg-surface-hover'
           )}
           onClick={() => navigate(c.path)}

@@ -2,7 +2,7 @@
     .better-scroll {
         overflow-y: auto;
         scrollbar-width: thin; /* Firefox */
-        scrollbar-color: rgba(255, 255, 255, 0.3) transparent; /* Firefox */
+        scrollbar-color: var(--color-scrollbar-thumb) transparent; /* Firefox */
     }
 
     /* Webkit scrollbar styling */

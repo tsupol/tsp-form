@@ -137,7 +137,7 @@ export function SelectPage() {
         {/* Multi select - show selected in list */}
         <div className="card space-y-3">
           <h2 className="heading-3">Multi Select (Show Selected in List)</h2>
-          <p className="text-sm text-muted">Selected items stay in the dropdown with a highlight instead of being removed.</p>
+          <p className="text-sm text-subtle">Selected items stay in the dropdown with a highlight instead of being removed.</p>
           <div className="flex flex-col gap-1">
             <label className="form-label">Pick languages</label>
             <Select
@@ -154,7 +154,7 @@ export function SelectPage() {
         {/* Long labels - truncation */}
         <div className="card space-y-3">
           <h2 className="heading-3">Chip Truncation</h2>
-          <p className="text-sm text-muted">Long labels are truncated in chips. Customize max width with <code>--max-width-select-chip</code>.</p>
+          <p className="text-sm text-subtle">Long labels are truncated in chips. Customize max width with <code>--max-width-select-chip</code>.</p>
           <div className="flex flex-col gap-1">
             <label className="form-label">Default max width (10rem)</label>
             <Select
@@ -181,7 +181,7 @@ export function SelectPage() {
         {/* Max select */}
         <div className="card space-y-3">
           <h2 className="heading-3">Max Select (3)</h2>
-          <p className="text-sm text-muted">Cannot select more than 3 items.</p>
+          <p className="text-sm text-subtle">Cannot select more than 3 items.</p>
           <div className="flex flex-col gap-1">
             <label className="form-label">Pick up to 3 languages</label>
             <Select
@@ -262,7 +262,7 @@ export function SelectPage() {
         {/* Custom renderOption - user list */}
         <div className="card space-y-3">
           <h2 className="heading-3">Custom Option Rendering</h2>
-          <p className="text-sm text-muted">Use <code>renderOption</code> to fully customize how dropdown items look.</p>
+          <p className="text-sm text-subtle">Use <code>renderOption</code> to fully customize how dropdown items look.</p>
 
           <div className="flex flex-col gap-1">
             <label className="form-label">User picker</label>

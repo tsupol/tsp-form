@@ -20,7 +20,7 @@ export function TextShiftPage() {
     <div className="page-content">
       <div className="grid gap-6 max-w-[900px]">
         <h1 className="heading-1">Text Shift Adjusting</h1>
-        <p className="text-muted">
+        <p className="text-subtle">
           Verifies vertical text alignment across Input, Select, Button, and Badge at each size.
           The <code>--text-shift-y</code> variable compensates for font baseline offset.
         </p>

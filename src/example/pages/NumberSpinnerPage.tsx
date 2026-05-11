@@ -17,7 +17,7 @@ export function NumberSpinnerPage() {
     <div className="page-content">
       <div className="grid gap-6 max-w-[900px]">
         <h1 className="heading-1">NumberSpinner</h1>
-        <p className="text-muted">
+        <p className="text-subtle">
           Numeric input with increment/decrement buttons. Supports two variants: <code>default</code> and <code>diagonal</code>.
         </p>
 
@@ -77,7 +77,7 @@ export function NumberSpinnerPage() {
         {/* Custom width */}
         <section className="card">
           <h3 className="heading-3 mb-4">Custom Width</h3>
-          <p className="text-muted mb-3">Use Tailwind width classes via <code>className</code>.</p>
+          <p className="text-subtle mb-3">Use Tailwind width classes via <code>className</code>.</p>
           <div className="flex items-end gap-6 flex-wrap">
             <div className="flex flex-col">
               <label className="form-label">w-40</label>

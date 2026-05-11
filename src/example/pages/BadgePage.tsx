@@ -13,7 +13,12 @@ export function BadgePage() {
         {/* Solid variant */}
         <section>
           <h3 className="heading-3 mb-3">Solid (default)</h3>
-          <div className="flex gap-2 flex-wrap items-center card">
+          <div className="flex gap-2 flex-wrap items-center">
+            {colors.map((c) => (
+              <Badge key={c} color={c}>{c}</Badge>
+            ))}
+          </div>
+          <div className="flex gap-2 flex-wrap items-center card mt-2">
             {colors.map((c) => (
               <Badge key={c} color={c}>{c}</Badge>
             ))}
@@ -23,7 +28,12 @@ export function BadgePage() {
         {/* Outline variant */}
         <section>
           <h3 className="heading-3 mb-3">Outline</h3>
-          <div className="flex gap-2 flex-wrap items-center card">
+          <div className="flex gap-2 flex-wrap items-center">
+            {colors.map((c) => (
+              <Badge key={c} color={c} variant="outline">{c}</Badge>
+            ))}
+          </div>
+          <div className="flex gap-2 flex-wrap items-center card mt-2">
             {colors.map((c) => (
               <Badge key={c} color={c} variant="outline">{c}</Badge>
             ))}
@@ -33,7 +43,7 @@ export function BadgePage() {
         {/* With icons */}
         <section>
           <h3 className="heading-3 mb-3">With Icons</h3>
-          <div className="flex gap-2 flex-wrap items-center card">
+          <div className="flex gap-2 flex-wrap items-center">
             <Badge color="success" startIcon={<Check />}>Approved</Badge>
             <Badge color="danger" startIcon={<X />}>Rejected</Badge>
             <Badge color="warning" startIcon={<AlertTriangle />}>Warning</Badge>
@@ -41,11 +51,28 @@ export function BadgePage() {
             <Badge color="primary" endIcon={<Star />}>Featured</Badge>
             <Badge color="secondary" startIcon={<Zap />}>New</Badge>
           </div>
-          <div className="flex gap-2 flex-wrap items-center card">
+          <div className="flex gap-2 flex-wrap items-center mt-2">
             <Badge color="success" variant="outline" startIcon={<Check />}>Approved</Badge>
             <Badge color="danger" variant="outline" startIcon={<X />}>Rejected</Badge>
             <Badge color="warning" variant="outline" startIcon={<AlertTriangle />}>Warning</Badge>
             <Badge color="primary" variant="outline" endIcon={<Star />}>Featured</Badge>
+          </div>
+          <div className="card mt-2">
+            <div className="flex gap-2 flex-wrap items-center">
+              <Badge color="success" startIcon={<Check />}>Approved</Badge>
+              <Badge color="danger" startIcon={<X />}>Rejected</Badge>
+              <Badge color="warning" startIcon={<AlertTriangle />}>Warning</Badge>
+              <Badge color="info" startIcon={<Info />}>Info</Badge>
+              <Badge color="primary" endIcon={<Star />}>Featured</Badge>
+              <Badge color="secondary" startIcon={<Zap />}>New</Badge>
+            </div>
+            <hr className="divider-sm" />
+            <div className="flex gap-2 flex-wrap items-center">
+              <Badge color="success" variant="outline" startIcon={<Check />}>Approved</Badge>
+              <Badge color="danger" variant="outline" startIcon={<X />}>Rejected</Badge>
+              <Badge color="warning" variant="outline" startIcon={<AlertTriangle />}>Warning</Badge>
+              <Badge color="primary" variant="outline" endIcon={<Star />}>Featured</Badge>
+            </div>
           </div>
         </section>
 
@@ -65,23 +92,27 @@ export function BadgePage() {
         {/* Icon-only */}
         <section>
           <h3 className="heading-3 mb-3">Icon Only</h3>
-          <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="primary" size="xs" startIcon={<Star />} />
-            <Badge color="primary" size="sm" startIcon={<Star />} />
-            <Badge color="primary" startIcon={<Star />} />
-            <Badge color="primary" size="lg" startIcon={<Star />} />
-          </div>
-          <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="success" startIcon={<Check />} />
-            <Badge color="danger" startIcon={<X />} />
-            <Badge color="warning" startIcon={<AlertTriangle />} />
-            <Badge color="info" startIcon={<Info />} />
-          </div>
-          <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="success" variant="outline" startIcon={<Check />} />
-            <Badge color="danger" variant="outline" startIcon={<X />} />
-            <Badge color="warning" variant="outline" startIcon={<AlertTriangle />} />
-            <Badge color="info" variant="outline" startIcon={<Info />} />
+          <div className="card">
+            <div className="flex gap-2 flex-wrap items-center">
+              <Badge color="primary" size="xs" startIcon={<Star />} />
+              <Badge color="primary" size="sm" startIcon={<Star />} />
+              <Badge color="primary" startIcon={<Star />} />
+              <Badge color="primary" size="lg" startIcon={<Star />} />
+            </div>
+            <hr className="divider-sm" />
+            <div className="flex gap-2 flex-wrap items-center">
+              <Badge color="success" startIcon={<Check />} />
+              <Badge color="danger" startIcon={<X />} />
+              <Badge color="warning" startIcon={<AlertTriangle />} />
+              <Badge color="info" startIcon={<Info />} />
+            </div>
+            <hr className="divider-sm" />
+            <div className="flex gap-2 flex-wrap items-center">
+              <Badge color="success" variant="outline" startIcon={<Check />} />
+              <Badge color="danger" variant="outline" startIcon={<X />} />
+              <Badge color="warning" variant="outline" startIcon={<AlertTriangle />} />
+              <Badge color="info" variant="outline" startIcon={<Info />} />
+            </div>
           </div>
         </section>
 
@@ -97,17 +128,20 @@ export function BadgePage() {
         {/* Tailwind overrides */}
         <section>
           <h3 className="heading-3 mb-3">Tailwind Utility Overrides</h3>
-          <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="primary">Default weight</Badge>
-            <Badge color="primary" className="font-normal">font-normal</Badge>
-            <Badge color="primary" className="font-bold">font-bold</Badge>
-            <Badge color="primary" className="font-black">font-black</Badge>
-          </div>
-          <div className="flex gap-2 flex-wrap items-center card">
-            <Badge color="secondary">Default size</Badge>
-            <Badge color="secondary" className="text-xs">text-xs</Badge>
-            <Badge color="secondary" className="text-sm">text-sm</Badge>
-            <Badge color="secondary" className="text-base">text-base</Badge>
+          <div className="card">
+            <div className="flex gap-2 flex-wrap items-center">
+              <Badge color="primary">Default weight</Badge>
+              <Badge color="primary" className="font-normal">font-normal</Badge>
+              <Badge color="primary" className="font-bold">font-bold</Badge>
+              <Badge color="primary" className="font-black">font-black</Badge>
+            </div>
+            <hr className="divider-sm" />
+            <div className="flex gap-2 flex-wrap items-center">
+              <Badge color="secondary">Default size</Badge>
+              <Badge color="secondary" className="text-xs">text-xs</Badge>
+              <Badge color="secondary" className="text-sm">text-sm</Badge>
+              <Badge color="secondary" className="text-base">text-base</Badge>
+            </div>
           </div>
         </section>
 

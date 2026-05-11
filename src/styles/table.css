@@ -28,10 +28,6 @@
         transition: background-color 0.15s ease;
     }
 
-    .table-body .table-row:last-child {
-        border-bottom: none;
-    }
-
     @media (hover: hover) {
         .table-body .table-row:hover {
             background: var(--color-table-row-hover, var(--color-surface-hover));

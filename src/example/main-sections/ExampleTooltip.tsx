@@ -94,7 +94,7 @@ export function ExampleTooltip() {
           <p>
             You can add tooltips to{' '}
             <Tooltip content="This is a tooltip on inline text">
-              <span className="text-primary cursor-help underline decoration-dotted">
+              <span className="text-primary-fg cursor-help underline decoration-dotted">
                 inline text elements
               </span>
             </Tooltip>
@@ -125,7 +125,7 @@ export function ExampleTooltip() {
       <section>
         <h3 className="heading-3 mb-3">Auto-positioning</h3>
         <div className="card">
-          <p className="text-sm text-muted mb-4">
+          <p className="text-sm text-subtle mb-4">
             Tooltips automatically flip to the opposite side if there's not enough space.
             Try scrolling or moving these near the viewport edges:
           </p>

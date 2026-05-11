@@ -17,7 +17,7 @@ export function ExampleButtons() {
           <Button disabled>Disabled</Button>
         </div>
         <details>
-          <summary className="text-sm cursor-pointer text-muted py-1">CSS classes</summary>
+          <summary className="text-sm cursor-pointer text-subtle py-1">CSS classes</summary>
           <div className="flex gap-2 flex-wrap card mt-1">
             <button className="btn">Default</button>
             <button className="btn btn-primary">Primary</button>
@@ -41,7 +41,7 @@ export function ExampleButtons() {
           <Button variant="outline" disabled>Disabled</Button>
         </div>
         <details>
-          <summary className="text-sm cursor-pointer text-muted py-1">CSS classes</summary>
+          <summary className="text-sm cursor-pointer text-subtle py-1">CSS classes</summary>
           <div className="flex gap-2 flex-wrap card mt-1">
             <button className="btn btn-outline-default">Default</button>
             <button className="btn btn-outline-primary">Primary</button>
@@ -65,7 +65,7 @@ export function ExampleButtons() {
           <Button variant="ghost" disabled>Disabled</Button>
         </div>
         <details>
-          <summary className="text-sm cursor-pointer text-muted py-1">CSS classes</summary>
+          <summary className="text-sm cursor-pointer text-subtle py-1">CSS classes</summary>
           <div className="flex gap-2 flex-wrap card mt-1">
             <button className="btn btn-ghost-default">Default</button>
             <button className="btn btn-ghost-primary">Primary</button>
@@ -146,7 +146,7 @@ export function ExampleButtons() {
       {/* Icon Spacing Fix */}
       <section>
         <h3 className="heading-3 mb-3">Icon Spacing Fix</h3>
-        <p className="text-muted mb-3">Narrow icons like chevrons can look visually loose. Use negative margin on the icon to tighten.</p>
+        <p className="text-subtle mb-3">Narrow icons like chevrons can look visually loose. Use negative margin on the icon to tighten.</p>
         <div className="flex gap-2 flex-wrap items-center card">
           <Button variant="outline" endIcon={<ChevronRight />}>Next</Button>
           <Button variant="outline" endIcon={<ChevronRight className="-mr-1" />}>Next (fixed)</Button>
