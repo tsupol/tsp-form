@@ -143,8 +143,15 @@ export const ImageCropper = forwardRef(function ImageCropper(
     setZoom: (newZoom: number) => {
       const s = stateRef.current;
       const clamped = Math.min(s.maxZoom, Math.max(s.minZoom, newZoom));
+      if (clamped === s.zoom) return;
+      // Anchor at viewport center: keep the image-space point currently under the
+      // viewport center pinned there after the zoom change.
+      const cx = viewportWidth / 2;
+      const cy = viewportHeight / 2;
+      const imgX = (cx - s.pos.x) / s.zoom;
+      const imgY = (cy - s.pos.y) / s.zoom;
       setZoom(clamped);
-      setPos(prev => clampPos(prev.x, prev.y, clamped, s.naturalW, s.naturalH));
+      setPos(clampPos(cx - imgX * clamped, cy - imgY * clamped, clamped, s.naturalW, s.naturalH));
       onZoomChangeRef.current?.(clamped);
     },
     crop: (callback) => {

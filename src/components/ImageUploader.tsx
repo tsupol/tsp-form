@@ -24,22 +24,37 @@ export interface ResizeOptions {
   format?: 'jpeg' | 'png' | 'webp' | 'original';
 }
 
-export interface UploadedImage {
-  id: string;
+export interface ResizedVariant {
   file: File;
-  originalFile: File;
   preview: string;
   width: number;
   height: number;
+  size: number;
+}
+
+export interface UploadedImage {
+  id: string;
+  originalFile: File;
   originalWidth: number;
   originalHeight: number;
-  size: number;
   originalSize: number;
+  // Populated in single-size mode (no `sizes` prop)
+  file?: File;
+  preview?: string;
+  width?: number;
+  height?: number;
+  size?: number;
+  // Populated in multi-size mode (`sizes` prop set)
+  variants?: Record<string, ResizedVariant>;
 }
 
 export interface ImageUploaderProps {
   onUpload?: (images: UploadedImage[]) => void;
   resizeOptions?: ResizeOptions;
+  // Multi-size mode: emit one variant per entry. Per-variant fields override `resizeOptions`.
+  // When set, top-level `file`/`preview`/`width`/`height`/`size` on UploadedImage are undefined
+  // and consumers read from `variants[key]` instead.
+  sizes?: Record<string, ResizeOptions>;
   multiple?: boolean;
   accept?: string;
   maxFiles?: number;
@@ -95,176 +110,153 @@ function getCropOffset(
   }
 }
 
-async function resizeImage(
-  file: File,
+function resizeLoadedImage(
+  img: HTMLImageElement,
+  sourceMimeType: string,
   options: ResizeOptions
 ): Promise<{ blob: Blob; width: number; height: number }> {
   return new Promise((resolve, reject) => {
-    const img = new Image();
-    const url = URL.createObjectURL(file);
+    const {
+      maxWidth = Infinity,
+      maxHeight = Infinity,
+      width: exactWidth,
+      height: exactHeight,
+      aspectRatio,
+      mode = 'contain',
+      cropPosition = 'center',
+      quality = 0.85,
+      format = 'original'
+    } = options;
 
-    img.onload = () => {
-      URL.revokeObjectURL(url);
+    const srcWidth = img.width;
+    const srcHeight = img.height;
+    const srcRatio = srcWidth / srcHeight;
 
-      const {
-        maxWidth = Infinity,
-        maxHeight = Infinity,
-        width: exactWidth,
-        height: exactHeight,
-        aspectRatio,
-        mode = 'contain',
-        cropPosition = 'center',
-        quality = 0.85,
-        format = 'original'
-      } = options;
+    let targetWidth: number;
+    let targetHeight: number;
+    let sx = 0, sy = 0, sw = srcWidth, sh = srcHeight;
 
-      const srcWidth = img.width;
-      const srcHeight = img.height;
-      const srcRatio = srcWidth / srcHeight;
-
-      let targetWidth: number;
-      let targetHeight: number;
-      let sx = 0, sy = 0, sw = srcWidth, sh = srcHeight;
-
-      // Step 1: Determine target dimensions
-      if (exactWidth && exactHeight) {
-        // Exact dimensions specified
-        targetWidth = exactWidth;
-        targetHeight = exactHeight;
-      } else if (exactWidth) {
-        targetWidth = exactWidth;
-        targetHeight = aspectRatio ? exactWidth / aspectRatio : exactWidth / srcRatio;
-      } else if (exactHeight) {
-        targetHeight = exactHeight;
-        targetWidth = aspectRatio ? exactHeight * aspectRatio : exactHeight * srcRatio;
-      } else if (aspectRatio) {
-        // Apply aspect ratio constraint within max bounds
-        if (srcRatio > aspectRatio) {
-          // Source is wider, constrain by height
-          targetHeight = Math.min(srcHeight, maxHeight);
-          targetWidth = targetHeight * aspectRatio;
-        } else {
-          // Source is taller, constrain by width
-          targetWidth = Math.min(srcWidth, maxWidth);
-          targetHeight = targetWidth / aspectRatio;
-        }
-        // Apply max bounds
-        if (targetWidth > maxWidth) {
-          targetWidth = maxWidth;
-          targetHeight = targetWidth / aspectRatio;
-        }
-        if (targetHeight > maxHeight) {
-          targetHeight = maxHeight;
-          targetWidth = targetHeight * aspectRatio;
-        }
+    // Step 1: Determine target dimensions
+    if (exactWidth && exactHeight) {
+      targetWidth = exactWidth;
+      targetHeight = exactHeight;
+    } else if (exactWidth) {
+      targetWidth = exactWidth;
+      targetHeight = aspectRatio ? exactWidth / aspectRatio : exactWidth / srcRatio;
+    } else if (exactHeight) {
+      targetHeight = exactHeight;
+      targetWidth = aspectRatio ? exactHeight * aspectRatio : exactHeight * srcRatio;
+    } else if (aspectRatio) {
+      if (srcRatio > aspectRatio) {
+        targetHeight = Math.min(srcHeight, maxHeight);
+        targetWidth = targetHeight * aspectRatio;
       } else {
-        // No exact dimensions or aspect ratio, just apply max bounds
-        targetWidth = srcWidth;
-        targetHeight = srcHeight;
-        if (targetWidth > maxWidth || targetHeight > maxHeight) {
-          const ratio = Math.min(maxWidth / targetWidth, maxHeight / targetHeight);
-          targetWidth = Math.round(targetWidth * ratio);
-          targetHeight = Math.round(targetHeight * ratio);
-        }
+        targetWidth = Math.min(srcWidth, maxWidth);
+        targetHeight = targetWidth / aspectRatio;
       }
-
-      targetWidth = Math.round(targetWidth);
-      targetHeight = Math.round(targetHeight);
-
-      const targetRatio = targetWidth / targetHeight;
-
-      // Step 2: Handle crop mode
-      if (mode === 'cover') {
-        // Scale source to cover target, then crop
-        if (srcRatio > targetRatio) {
-          // Source is wider, crop sides
-          sh = srcHeight;
-          sw = srcHeight * targetRatio;
-          const offset = getCropOffset(cropPosition, srcWidth, srcHeight, sw, sh);
-          sx = offset.sx;
-          sy = 0;
-        } else {
-          // Source is taller, crop top/bottom
-          sw = srcWidth;
-          sh = srcWidth / targetRatio;
-          const offset = getCropOffset(cropPosition, srcWidth, srcHeight, sw, sh);
-          sx = 0;
-          sy = offset.sy;
-        }
-      } else if (mode === 'contain') {
-        // Fit within target, maintaining aspect ratio (may have letterboxing if drawing to fixed canvas)
-        // For output, we adjust target dimensions to match source ratio
-        if (!exactWidth && !exactHeight && !aspectRatio) {
-          // Already handled above
-        } else if (srcRatio > targetRatio) {
-          // Source is wider, fit by width
-          targetHeight = Math.round(targetWidth / srcRatio);
-        } else {
-          // Source is taller, fit by height
-          targetWidth = Math.round(targetHeight * srcRatio);
-        }
+      if (targetWidth > maxWidth) {
+        targetWidth = maxWidth;
+        targetHeight = targetWidth / aspectRatio;
       }
-      // mode === 'fill': stretch to exact dimensions (no adjustment needed)
-
-      // Create canvas and draw
-      const canvas = document.createElement('canvas');
-      canvas.width = targetWidth;
-      canvas.height = targetHeight;
-
-      const ctx = canvas.getContext('2d');
-      if (!ctx) {
-        reject(new Error('Could not get canvas context'));
-        return;
+      if (targetHeight > maxHeight) {
+        targetHeight = maxHeight;
+        targetWidth = targetHeight * aspectRatio;
       }
+    } else {
+      targetWidth = srcWidth;
+      targetHeight = srcHeight;
+      if (targetWidth > maxWidth || targetHeight > maxHeight) {
+        const ratio = Math.min(maxWidth / targetWidth, maxHeight / targetHeight);
+        targetWidth = Math.round(targetWidth * ratio);
+        targetHeight = Math.round(targetHeight * ratio);
+      }
+    }
 
-      ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+    // No-upscale: clamp target to source dimensions, preserving aspect ratio of the
+    // resolved target. Exact specs become ceilings — if the source is smaller, emit
+    // at source size instead of upscaling.
+    if (targetWidth > srcWidth || targetHeight > srcHeight) {
+      const downscale = Math.min(srcWidth / targetWidth, srcHeight / targetHeight, 1);
+      targetWidth = targetWidth * downscale;
+      targetHeight = targetHeight * downscale;
+    }
 
-      // Determine output format
-      let mimeType: string;
-      if (format === 'original') {
-        mimeType = file.type || 'image/jpeg';
+    targetWidth = Math.round(targetWidth);
+    targetHeight = Math.round(targetHeight);
+
+    const targetRatio = targetWidth / targetHeight;
+
+    // Step 2: Handle crop mode
+    if (mode === 'cover') {
+      if (srcRatio > targetRatio) {
+        sh = srcHeight;
+        sw = srcHeight * targetRatio;
+        const offset = getCropOffset(cropPosition, srcWidth, srcHeight, sw, sh);
+        sx = offset.sx;
+        sy = 0;
       } else {
-        mimeType = `image/${format}`;
+        sw = srcWidth;
+        sh = srcWidth / targetRatio;
+        const offset = getCropOffset(cropPosition, srcWidth, srcHeight, sw, sh);
+        sx = 0;
+        sy = offset.sy;
       }
+    } else if (mode === 'contain') {
+      if (!exactWidth && !exactHeight && !aspectRatio) {
+        // Already handled above
+      } else if (srcRatio > targetRatio) {
+        targetHeight = Math.round(targetWidth / srcRatio);
+      } else {
+        targetWidth = Math.round(targetHeight * srcRatio);
+      }
+    }
+    // mode === 'fill': stretch to exact dimensions (no adjustment needed)
 
-      // Convert to blob
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve({ blob, width: targetWidth, height: targetHeight });
-          } else {
-            reject(new Error('Could not create blob'));
-          }
-        },
-        mimeType,
-        quality
-      );
-    };
+    const canvas = document.createElement('canvas');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
 
-    img.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('Could not load image'));
-    };
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      reject(new Error('Could not get canvas context'));
+      return;
+    }
 
-    img.src = url;
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
+
+    let mimeType: string;
+    if (format === 'original') {
+      mimeType = sourceMimeType || 'image/jpeg';
+    } else {
+      mimeType = `image/${format}`;
+    }
+
+    canvas.toBlob(
+      (blob) => {
+        if (blob) {
+          resolve({ blob, width: targetWidth, height: targetHeight });
+        } else {
+          reject(new Error('Could not create blob'));
+        }
+      },
+      mimeType,
+      quality
+    );
   });
 }
 
-async function getImageDimensions(file: File): Promise<{ width: number; height: number }> {
+function loadImageFromFile(file: File): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
-
     img.onload = () => {
       URL.revokeObjectURL(url);
-      resolve({ width: img.width, height: img.height });
+      resolve(img);
     };
-
     img.onerror = () => {
       URL.revokeObjectURL(url);
       reject(new Error('Could not load image'));
     };
-
     img.src = url;
   });
 }
@@ -272,6 +264,7 @@ async function getImageDimensions(file: File): Promise<{ width: number; height: 
 export function ImageUploader({
   onUpload,
   resizeOptions = DEFAULT_RESIZE_OPTIONS,
+  sizes,
   multiple = false,
   accept = 'image/*',
   maxFiles = 10,
@@ -297,24 +290,48 @@ export function ImageUploader({
       for (const file of fileArray) {
         if (!file.type.startsWith('image/')) continue;
 
-        const originalDimensions = await getImageDimensions(file);
-        const { blob, width, height } = await resizeImage(file, resizeOptions);
+        const img = await loadImageFromFile(file);
+        const originalWidth = img.width;
+        const originalHeight = img.height;
 
-        const resizedFile = new File([blob], file.name, { type: blob.type });
-        const preview = URL.createObjectURL(blob);
-
-        results.push({
-          id: generateId(),
-          file: resizedFile,
-          originalFile: file,
-          preview,
-          width,
-          height,
-          originalWidth: originalDimensions.width,
-          originalHeight: originalDimensions.height,
-          size: blob.size,
-          originalSize: file.size,
-        });
+        if (sizes) {
+          const variants: Record<string, ResizedVariant> = {};
+          for (const [key, perVariant] of Object.entries(sizes)) {
+            const merged = { ...resizeOptions, ...perVariant };
+            const { blob, width, height } = await resizeLoadedImage(img, file.type, merged);
+            const variantFile = new File([blob], file.name, { type: blob.type });
+            variants[key] = {
+              file: variantFile,
+              preview: URL.createObjectURL(blob),
+              width,
+              height,
+              size: blob.size,
+            };
+          }
+          results.push({
+            id: generateId(),
+            originalFile: file,
+            originalWidth,
+            originalHeight,
+            originalSize: file.size,
+            variants,
+          });
+        } else {
+          const { blob, width, height } = await resizeLoadedImage(img, file.type, resizeOptions);
+          const resizedFile = new File([blob], file.name, { type: blob.type });
+          results.push({
+            id: generateId(),
+            file: resizedFile,
+            originalFile: file,
+            preview: URL.createObjectURL(blob),
+            width,
+            height,
+            originalWidth,
+            originalHeight,
+            size: blob.size,
+            originalSize: file.size,
+          });
+        }
       }
 
       onUpload?.(results);
@@ -323,7 +340,7 @@ export function ImageUploader({
     } finally {
       setIsProcessing(false);
     }
-  }, [onUpload, resizeOptions, multiple, maxFiles]);
+  }, [onUpload, resizeOptions, sizes, multiple, maxFiles]);
 
   const handleDragEnter = useCallback((e: DragEvent) => {
     e.preventDefault();
@@ -426,6 +443,22 @@ export function ImageUploader({
       )}
     </div>
   );
+}
+
+// Revokes every blob URL on an UploadedImage (top-level `preview` and all `variants[*].preview`).
+// Call this when removing an image from state or in an effect cleanup to avoid leaking blob URLs.
+export function revokeUploadedImage(image: UploadedImage): void {
+  if (image.preview) URL.revokeObjectURL(image.preview);
+  if (image.variants) {
+    for (const v of Object.values(image.variants)) {
+      URL.revokeObjectURL(v.preview);
+    }
+  }
+}
+
+// Revokes blob URLs on a list of UploadedImages.
+export function revokeUploadedImages(images: UploadedImage[]): void {
+  for (const img of images) revokeUploadedImage(img);
 }
 
 // Preset resize options for common use cases
