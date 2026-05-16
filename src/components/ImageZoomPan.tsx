@@ -47,6 +47,7 @@ const WHEEL_SPEED = 0.065;
 const PINCH_SPEED = 1;
 const DRAG_THRESHOLD = 4;
 const DOUBLE_TAP_MS = 300;
+const ANIM_DURATION = 200;
 
 export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
   src,
@@ -75,44 +76,62 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
   const onZoomChangeRef = useRef(onZoomChange);
   onZoomChangeRef.current = onZoomChange;
 
+  // Imperative handle calls these — they're set inside the effect once mounted.
+  const apiRef = useRef<{
+    animateTo: (cx: number, cy: number, targetScale: number) => void;
+  } | null>(null);
+
   const effectiveMinZoom = rubberBand ? rubberBandMin : minZoom;
 
-  // Apply transform directly to DOM. Skip React state for hot path.
   useEffect(() => {
     const container = containerRef.current;
     const img = imgRef.current;
     if (!container || !img || !imgSize) return;
 
+    // ===== State =====
     let raf = 0;
+    let animRaf = 0;
     let lastReportedScale = 1;
+
     let panning = false;
     let pinching = false;
-
-    // Velocity tracker for inertia
-    let lastTrackTime = 0;
-    let lastTrackX = 0;
-    let lastTrackY = 0;
-    let vx = 0;
-    let vy = 0;
-    let trackTicker = 0;
-    let inertiaRaf = 0;
-
-    let pointerStartX = 0;
-    let pointerStartY = 0;
-    let pointerLastX = 0;
-    let pointerLastY = 0;
     let touchActive = false;
     let mouseActive = false;
     let movedPastThreshold = false;
+
+    // Pointer tracking (shared by touch + mouse pan)
+    let prevX = 0;
+    let prevY = 0;
+
+    // Velocity tracking for inertia
+    let lastSampleTime = 0;
+    let vx = 0;
+    let vy = 0;
+    let trackerRaf = 0;
+
+    // Double-tap (touch)
     let lastTapTime = 0;
     let lastTapX = 0;
     let lastTapY = 0;
+
+    // Pinch state
     let pinchStartDist = 0;
     let pinchStartScale = 1;
-    let pinchStartMidpoint = { x: 0, y: 0 };
+
+    // Suppress synthetic mouse events on touch devices
     let lastTouchTime = 0;
 
-    const applyTransform = () => {
+    // Wheel session: while active, wheel events stay claimed by the component
+    // even after scale drops to baseline. Without rubberBand, ends on idle
+    // timeout. With rubberBand, ends only on mouseleave.
+    let wheelActive = false;
+    let wheelIdleTimer = 0;
+    let leaveSnapTimer = 0;
+
+    // ===== Transform helpers =====
+    const rect = () => container.getBoundingClientRect();
+
+    const apply = () => {
       const t = transformRef.current;
       img.style.transform = `translate3d(${t.x}px, ${t.y}px, 0) scale(${t.scale})`;
       if (Math.abs(t.scale - lastReportedScale) > 0.001) {
@@ -125,250 +144,179 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
       if (raf) return;
       raf = requestAnimationFrame(() => {
         raf = 0;
-        applyTransform();
+        apply();
       });
     };
 
-    const getContainerRect = () => container.getBoundingClientRect();
-
-    // Clamp transform so the image always covers the container (when scale > fit)
-    // or stays centered (when scale = 1). At scale=1 with imageFit=contain the
-    // image is already smaller than container — we keep it centered (x=y=0).
-    // At scale>1 we clamp so the image edges can't go inside the container edges.
-    const clampTransform = (t: Transform, allowOverflow = false): Transform => {
-      const rect = getContainerRect();
-      const imgW = imgSize.w * t.scale;
-      const imgH = imgSize.h * t.scale;
-
-      // At scale 1 the image is sized to fit; center any residual.
-      // Translation is relative to the image's centered position via transform-origin.
-      // We treat the image as positioned at (0,0) inside container then translated.
-      // The image is centered by flex layout, so transform x/y are deltas from center.
-      let x = t.x;
-      let y = t.y;
-
-      const maxX = Math.max(0, (imgW - rect.width) / 2);
-      const maxY = Math.max(0, (imgH - rect.height) / 2);
-
-      if (!allowOverflow) {
-        if (x > maxX) x = maxX;
-        if (x < -maxX) x = -maxX;
-        if (y > maxY) y = maxY;
-        if (y < -maxY) y = -maxY;
-      }
-
-      return { x, y, scale: t.scale };
+    // Clamp pan so the image edges can't move inside the container edges.
+    // At scale <= 1 (fit=contain), the image is smaller than the container —
+    // maxX/Y collapse to 0, locking the image centered.
+    const clamp = (t: Transform): Transform => {
+      const r = rect();
+      const w = imgSize.w * t.scale;
+      const h = imgSize.h * t.scale;
+      const maxX = Math.max(0, (w - r.width) / 2);
+      const maxY = Math.max(0, (h - r.height) / 2);
+      return {
+        x: Math.max(-maxX, Math.min(maxX, t.x)),
+        y: Math.max(-maxY, Math.min(maxY, t.y)),
+        scale: t.scale,
+      };
     };
 
-    const setTransform = (next: Transform, allowOverflow = false) => {
-      transformRef.current = clampTransform(next, allowOverflow);
+    const setTransform = (next: Transform) => {
+      transformRef.current = clamp(next);
       scheduleApply();
     };
 
-    const zoomAt = (clientX: number, clientY: number, scaleMultiplier: number, floor = effectiveMinZoom) => {
+    // Zoom at a screen point so the point under the cursor/finger stays put.
+    const zoomAt = (clientX: number, clientY: number, multiplier: number) => {
       const t = transformRef.current;
-      const rect = getContainerRect();
+      const r = rect();
+      const cx = clientX - r.left - r.width / 2;
+      const cy = clientY - r.top - r.height / 2;
 
-      // Container-local coords (relative to container center, since img is flex-centered)
-      const cx = clientX - rect.left - rect.width / 2;
-      const cy = clientY - rect.top - rect.height / 2;
-
-      let newScale = t.scale * scaleMultiplier;
-      newScale = Math.max(floor, Math.min(maxZoom, newScale));
-      const actualMultiplier = newScale / t.scale;
-
-      // Keep the point under the cursor stationary:
-      // (cx - x) is the image-local coord at scale t.scale.
-      // After scaling by m: new offset of that point = (cx - x) * m
-      // We want new screen position = cx, so: cx = newX + (cx - x) * m
-      // => newX = cx - (cx - x) * m = cx * (1 - m) + x * m
-      const newX = cx * (1 - actualMultiplier) + t.x * actualMultiplier;
-      const newY = cy * (1 - actualMultiplier) + t.y * actualMultiplier;
-
-      setTransform({ x: newX, y: newY, scale: newScale }, rubberBand && newScale < minZoom);
+      const newScale = Math.max(effectiveMinZoom, Math.min(maxZoom, t.scale * multiplier));
+      const m = newScale / t.scale;
+      setTransform({
+        x: cx * (1 - m) + t.x * m,
+        y: cy * (1 - m) + t.y * m,
+        scale: newScale,
+      });
     };
 
-    const cancelInertia = () => {
-      if (inertiaRaf) {
-        cancelAnimationFrame(inertiaRaf);
-        inertiaRaf = 0;
+    const cancelAnim = () => {
+      if (animRaf) {
+        cancelAnimationFrame(animRaf);
+        animRaf = 0;
       }
     };
 
-    const startVelocityTracking = () => {
-      vx = 0;
-      vy = 0;
-      lastTrackTime = performance.now();
-      lastTrackX = pointerLastX;
-      lastTrackY = pointerLastY;
-      cancelAnimationFrame(trackTicker);
+    const animateTo = (clientX: number, clientY: number, targetScale: number) => {
+      cancelAnim();
+      const start = { ...transformRef.current };
+      const t0 = performance.now();
+      const step = () => {
+        const elapsed = performance.now() - t0;
+        const p = Math.min(1, elapsed / ANIM_DURATION);
+        const eased = 1 - Math.pow(1 - p, 3);
+        const s = start.scale + (targetScale - start.scale) * eased;
+        const m = s / start.scale;
+        const r = rect();
+        const cx = clientX - r.left - r.width / 2;
+        const cy = clientY - r.top - r.height / 2;
+        setTransform({
+          x: cx * (1 - m) + start.x * m,
+          y: cy * (1 - m) + start.y * m,
+          scale: s,
+        });
+        animRaf = p < 1 ? requestAnimationFrame(step) : 0;
+      };
+      animRaf = requestAnimationFrame(step);
+    };
+    apiRef.current = { animateTo };
+
+    const animateBackToBase = () => {
+      if (Math.abs(transformRef.current.scale - minZoom) < 0.001) return false;
+      const r = rect();
+      animateTo(r.left + r.width / 2, r.top + r.height / 2, minZoom);
+      return true;
+    };
+
+    // ===== Velocity tracking (for pan inertia) =====
+    const startTracking = () => {
+      vx = vy = 0;
+      lastSampleTime = performance.now();
+      cancelAnimationFrame(trackerRaf);
+      let lastX = prevX;
+      let lastY = prevY;
       const tick = () => {
         const now = performance.now();
-        const elapsed = now - lastTrackTime;
-        lastTrackTime = now;
-        const dx = pointerLastX - lastTrackX;
-        const dy = pointerLastY - lastTrackY;
-        lastTrackX = pointerLastX;
-        lastTrackY = pointerLastY;
+        const elapsed = now - lastSampleTime;
+        lastSampleTime = now;
+        const dx = prevX - lastX;
+        const dy = prevY - lastY;
+        lastX = prevX;
+        lastY = prevY;
         const dt = 1000 / (1 + elapsed);
         vx = 0.8 * dx * dt + 0.2 * vx;
         vy = 0.8 * dy * dt + 0.2 * vy;
-        trackTicker = requestAnimationFrame(tick);
+        trackerRaf = requestAnimationFrame(tick);
       };
-      trackTicker = requestAnimationFrame(tick);
+      trackerRaf = requestAnimationFrame(tick);
     };
 
-    const stopVelocityTracking = () => {
-      cancelAnimationFrame(trackTicker);
-      trackTicker = 0;
+    const stopTracking = () => {
+      cancelAnimationFrame(trackerRaf);
+      trackerRaf = 0;
     };
 
     const startInertia = () => {
       if (Math.abs(vx) < INERTIA_MIN_VELOCITY && Math.abs(vy) < INERTIA_MIN_VELOCITY) return;
       const ax = INERTIA_AMPLITUDE * vx;
       const ay = INERTIA_AMPLITUDE * vy;
-      const start = performance.now();
-      const startTransform = { ...transformRef.current };
-
-      const animate = () => {
-        const elapsed = performance.now() - start;
+      const start = { ...transformRef.current };
+      const t0 = performance.now();
+      const step = () => {
+        const elapsed = performance.now() - t0;
         const decay = Math.exp(-elapsed / INERTIA_TIME_CONSTANT);
-        const dx = ax * (1 - decay);
-        const dy = ay * (1 - decay);
-        const next = clampTransform({
-          x: startTransform.x + dx,
-          y: startTransform.y + dy,
-          scale: startTransform.scale,
+        setTransform({
+          x: start.x + ax * (1 - decay),
+          y: start.y + ay * (1 - decay),
+          scale: start.scale,
         });
-        // Stop if clamped to same value twice (hit wall) or decay nearly done
-        const moveLeftX = Math.abs(ax * decay);
-        const moveLeftY = Math.abs(ay * decay);
-        transformRef.current = next;
-        scheduleApply();
-        if (moveLeftX > 0.5 || moveLeftY > 0.5) {
-          inertiaRaf = requestAnimationFrame(animate);
-        } else {
-          inertiaRaf = 0;
-        }
+        const remaining = Math.max(Math.abs(ax * decay), Math.abs(ay * decay));
+        animRaf = remaining > 0.5 ? requestAnimationFrame(step) : 0;
       };
-      inertiaRaf = requestAnimationFrame(animate);
+      animRaf = requestAnimationFrame(step);
     };
 
-    // Always-snap (for touch pinch): return to scale=minZoom on release regardless of current scale.
-    const snapBackAlways = () => {
-      if (!rubberBand) return false;
-      const t = transformRef.current;
-      if (Math.abs(t.scale - minZoom) < 0.001) return false;
-      const rect = getContainerRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      animateScaleTo(cx, cy, minZoom);
-      return true;
-    };
-
-    // Safety snap (for wheel): if user under-zoomed past minZoom (rubberBand's
-    // bigger range, or the small built-in overscroll floor), spring back.
-    const snapBackIfUnderzoom = () => {
-      const t = transformRef.current;
-      if (t.scale >= minZoom - 0.001) return false;
-      const rect = getContainerRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      animateScaleTo(cx, cy, minZoom);
-      return true;
-    };
-
-    const animateScaleTo = (clientX: number, clientY: number, targetScale: number) => {
-      cancelInertia();
-      const startTransform = { ...transformRef.current };
-      const startTime = performance.now();
-      const duration = 200;
-      const animate = () => {
-        const elapsed = performance.now() - startTime;
-        const progress = Math.min(1, elapsed / duration);
-        // ease-out cubic
-        const eased = 1 - Math.pow(1 - progress, 3);
-        const scaleNow = startTransform.scale + (targetScale - startTransform.scale) * eased;
-        const m = scaleNow / startTransform.scale;
-        const rect = getContainerRect();
-        const cx = clientX - rect.left - rect.width / 2;
-        const cy = clientY - rect.top - rect.height / 2;
-        const nx = cx * (1 - m) + startTransform.x * m;
-        const ny = cy * (1 - m) + startTransform.y * m;
-        transformRef.current = clampTransform({ x: nx, y: ny, scale: scaleNow });
-        scheduleApply();
-        if (progress < 1) {
-          inertiaRaf = requestAnimationFrame(animate);
-        } else {
-          inertiaRaf = 0;
-        }
-      };
-      inertiaRaf = requestAnimationFrame(animate);
-    };
-
-    // ===== Touch handlers =====
-    // We never preventDefault on touchstart — that decision is deferred to touchmove
-    // once we know what gesture the user is making.
-
-    // "Pannable" = there's somewhere for the image to move. True when zoomed,
-    // or when image overflows the container at scale 1 (cover fit).
-    const isPannable = () => {
-      if (transformRef.current.scale > minZoom + 0.001) return true;
-      const rect = getContainerRect();
-      const imgW = imgSize.w * transformRef.current.scale;
-      const imgH = imgSize.h * transformRef.current.scale;
-      return imgW > rect.width + 1 || imgH > rect.height + 1;
-    };
+    // ===== State queries =====
     const isZoomed = () => transformRef.current.scale > minZoom + 0.001;
 
+    const isPannable = () => {
+      if (isZoomed()) return true;
+      const r = rect();
+      const w = imgSize.w * transformRef.current.scale;
+      const h = imgSize.h * transformRef.current.scale;
+      return w > r.width + 1 || h > r.height + 1;
+    };
+
+    // ===== Touch =====
     const onTouchStart = (e: TouchEvent) => {
       lastTouchTime = performance.now();
-      cancelInertia();
+      cancelAnim();
+
       if (e.touches.length === 1) {
         const t = e.touches[0];
-        pointerStartX = pointerLastX = t.clientX;
-        pointerStartY = pointerLastY = t.clientY;
+        prevX = t.clientX;
+        prevY = t.clientY;
         movedPastThreshold = false;
         touchActive = true;
-        // Don't preventDefault yet — wait until we know it's a pan we should claim.
-        if (isPannable()) startVelocityTracking();
+        if (isPannable()) startTracking();
       } else if (e.touches.length === 2) {
-        // Pinch: we always claim this gesture
         e.preventDefault();
         touchActive = true;
         pinching = true;
         panning = false;
-        stopVelocityTracking();
-        const t1 = e.touches[0];
-        const t2 = e.touches[1];
+        stopTracking();
+        const [t1, t2] = [e.touches[0], e.touches[1]];
         pinchStartDist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
         pinchStartScale = transformRef.current.scale;
-        pinchStartMidpoint = {
-          x: (t1.clientX + t2.clientX) / 2,
-          y: (t1.clientY + t2.clientY) / 2,
-        };
       }
     };
-
-    let prevMoveX = 0;
-    let prevMoveY = 0;
 
     const onTouchMove = (e: TouchEvent) => {
       if (!touchActive) return;
 
       if (e.touches.length === 2 && pinching) {
         e.preventDefault();
-        const t1 = e.touches[0];
-        const t2 = e.touches[1];
+        const [t1, t2] = [e.touches[0], e.touches[1]];
         const dist = Math.hypot(t2.clientX - t1.clientX, t2.clientY - t1.clientY);
-        const ratio = dist / pinchStartDist;
-        const multiplier = 1 + (ratio - 1) * PINCH_SPEED;
-        const targetScale = pinchStartScale * multiplier;
+        const target = pinchStartScale * (1 + (dist / pinchStartDist - 1) * PINCH_SPEED);
         const midX = (t1.clientX + t2.clientX) / 2;
         const midY = (t1.clientY + t2.clientY) / 2;
-        const stepMultiplier = targetScale / transformRef.current.scale;
-        zoomAt(midX, midY, stepMultiplier);
-        pinchStartMidpoint = { x: midX, y: midY };
+        zoomAt(midX, midY, target / transformRef.current.scale);
         return;
       }
 
@@ -376,31 +324,26 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
         const t = e.touches[0];
 
         if (!movedPastThreshold) {
-          const totalDx = t.clientX - pointerStartX;
-          const totalDy = t.clientY - pointerStartY;
-          if (Math.hypot(totalDx, totalDy) < DRAG_THRESHOLD) return;
+          if (Math.hypot(t.clientX - prevX, t.clientY - prevY) < DRAG_THRESHOLD) return;
           movedPastThreshold = true;
-
           if (!isPannable()) {
-            // Release gesture to browser; never preventDefault.
+            // Single-finger drag at scale=1 → release to browser (page scroll).
             touchActive = false;
             return;
           }
           panning = true;
-          prevMoveX = t.clientX;
-          prevMoveY = t.clientY;
-          startVelocityTracking();
+          prevX = t.clientX;
+          prevY = t.clientY;
+          startTracking();
           return;
         }
 
         if (panning) {
           e.preventDefault();
-          const dx = t.clientX - prevMoveX;
-          const dy = t.clientY - prevMoveY;
-          prevMoveX = t.clientX;
-          prevMoveY = t.clientY;
-          pointerLastX = t.clientX;
-          pointerLastY = t.clientY;
+          const dx = t.clientX - prevX;
+          const dy = t.clientY - prevY;
+          prevX = t.clientX;
+          prevY = t.clientY;
           const cur = transformRef.current;
           setTransform({ x: cur.x + dx, y: cur.y + dy, scale: cur.scale });
         }
@@ -410,22 +353,13 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
     const onTouchEnd = (e: TouchEvent) => {
       if (!touchActive) return;
 
-      // Double-tap detection (only when fully released)
+      // Double-tap (only on a tap, not a pan/pinch)
       if (e.touches.length === 0 && !panning && !pinching) {
         const now = performance.now();
         const t = e.changedTouches[0];
-        if (
-          now - lastTapTime < DOUBLE_TAP_MS &&
-          Math.hypot(t.clientX - lastTapX, t.clientY - lastTapY) < 20
-        ) {
-          // Double tap
+        if (now - lastTapTime < DOUBLE_TAP_MS && Math.hypot(t.clientX - lastTapX, t.clientY - lastTapY) < 20) {
           lastTapTime = 0;
-          if (isZoomed()) {
-            // Zoom out to 1
-            animateScaleTo(t.clientX, t.clientY, minZoom);
-          } else {
-            animateScaleTo(t.clientX, t.clientY, doubleClickZoom);
-          }
+          animateTo(t.clientX, t.clientY, isZoomed() ? minZoom : doubleClickZoom);
         } else {
           lastTapTime = now;
           lastTapX = t.clientX;
@@ -435,49 +369,43 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
 
       if (e.touches.length === 0) {
         const wasPanning = panning;
-        touchActive = false;
-        panning = false;
-        pinching = false;
-        stopVelocityTracking();
-        // On full release, always snap back to natural scale (rubber-band peek).
-        // Snap takes priority over pan inertia.
-        const snapped = snapBackAlways();
+        touchActive = panning = pinching = false;
+        stopTracking();
+        // On full release, rubber-band snaps back to base scale. Otherwise apply
+        // pan inertia if we were panning.
+        const snapped = rubberBand && animateBackToBase();
         if (!snapped && wasPanning) startInertia();
       } else if (e.touches.length === 1 && pinching) {
-        // One finger released during pinch — drop to pan with remaining finger.
-        // Don't snap-back yet; the user is still touching. Snap-back happens
-        // when all fingers lift.
+        // Pinch → single-finger pan transition.
         pinching = false;
         const t = e.touches[0];
-        prevMoveX = t.clientX;
-        prevMoveY = t.clientY;
+        prevX = t.clientX;
+        prevY = t.clientY;
         panning = true;
-        startVelocityTracking();
+        startTracking();
       }
     };
 
-    // ===== Mouse handlers (desktop pan via drag) =====
+    // ===== Mouse pan =====
     const onMouseDown = (e: MouseEvent) => {
-      if (e.button !== 0) return;
-      if (!isPannable()) return; // Nothing to pan; let clicks pass through
+      if (e.button !== 0 || !isPannable()) return;
       e.preventDefault();
-      cancelInertia();
+      cancelAnim();
       mouseActive = true;
       panning = true;
-      pointerStartX = pointerLastX = prevMoveX = e.clientX;
-      pointerStartY = pointerLastY = prevMoveY = e.clientY;
+      prevX = e.clientX;
+      prevY = e.clientY;
       movedPastThreshold = false;
-      startVelocityTracking();
+      startTracking();
     };
 
     const onMouseMove = (e: MouseEvent) => {
-      if (!mouseActive || !panning) return;
-      const dx = e.clientX - prevMoveX;
-      const dy = e.clientY - prevMoveY;
-      prevMoveX = e.clientX;
-      prevMoveY = e.clientY;
-      pointerLastX = e.clientX;
-      pointerLastY = e.clientY;
+      if (!mouseActive) return;
+      const dx = e.clientX - prevX;
+      const dy = e.clientY - prevY;
+      prevX = e.clientX;
+      prevY = e.clientY;
+      if (Math.abs(dx) + Math.abs(dy) > DRAG_THRESHOLD) movedPastThreshold = true;
       const cur = transformRef.current;
       setTransform({ x: cur.x + dx, y: cur.y + dy, scale: cur.scale });
     };
@@ -486,54 +414,11 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
       if (!mouseActive) return;
       mouseActive = false;
       panning = false;
-      stopVelocityTracking();
+      stopTracking();
       startInertia();
     };
 
     // ===== Wheel =====
-    let wheelEndTimer = 0;
-    let wheelSessionActive = false;
-    const onWheel = (e: WheelEvent) => {
-      let allow = false;
-      if (wheelZoom === 'always') allow = true;
-      else if (wheelZoom === 'modifier') allow = e.ctrlKey || e.metaKey;
-      else if (wheelZoom === 'when-zoomed') {
-        // Once a wheel-zoom session starts, keep claiming wheel events until it
-        // ends — otherwise wheeling out past scale=1 would hand the gesture to
-        // the page mid-session, which feels broken.
-        allow = wheelSessionActive || isPannable() || e.ctrlKey || e.metaKey;
-      }
-      if (!allow) return;
-      wheelSessionActive = true;
-
-      e.preventDefault();
-      cancelInertia();
-      // User is interacting — cancel any pending mouseleave snap-back.
-      cancelLeaveSnap();
-
-      let delta = e.deltaY;
-      if (e.deltaMode > 0) delta *= 100;
-      const sign = Math.sign(delta);
-      const deltaAdjusted = Math.min(0.25, Math.abs(WHEEL_SPEED * delta / 128));
-      const multiplier = 1 - sign * deltaAdjusted;
-      zoomAt(e.clientX, e.clientY, multiplier);
-
-      scheduleWheelEnd();
-    };
-
-    const scheduleWheelEnd = () => {
-      // With rubberBand, the wheel session never ends on idle — it ends only
-      // when the cursor leaves the container. Pausing mid-zoom must stay in
-      // zoom mode so the next wheel keeps zooming instead of scrolling the page.
-      if (rubberBand) return;
-      if (wheelEndTimer) clearTimeout(wheelEndTimer);
-      wheelEndTimer = window.setTimeout(() => {
-        wheelEndTimer = 0;
-        wheelSessionActive = false;
-      }, wheelSessionTimeout);
-    };
-
-    let leaveSnapTimer = 0;
     const cancelLeaveSnap = () => {
       if (leaveSnapTimer) {
         clearTimeout(leaveSnapTimer);
@@ -541,55 +426,71 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
       }
     };
 
-    // ===== Click / Double-click (desktop only) =====
-    // Touch devices fire synthetic mouse events after touchend. Suppress those.
-    const isFromTouch = () => performance.now() - lastTouchTime < 500;
+    const onWheel = (e: WheelEvent) => {
+      let allow = false;
+      if (wheelZoom === 'always') allow = true;
+      else if (wheelZoom === 'modifier') allow = e.ctrlKey || e.metaKey;
+      else if (wheelZoom === 'when-zoomed') {
+        allow = wheelActive || isPannable() || e.ctrlKey || e.metaKey;
+      }
+      if (!allow) return;
 
-    const handleZoomToggle = (clientX: number, clientY: number) => {
-      cancelInertia();
-      if (isZoomed()) {
-        animateScaleTo(clientX, clientY, minZoom);
-      } else {
-        animateScaleTo(clientX, clientY, doubleClickZoom);
+      wheelActive = true;
+      e.preventDefault();
+      cancelAnim();
+      cancelLeaveSnap();
+
+      let delta = e.deltaY;
+      if (e.deltaMode > 0) delta *= 100;
+      const sign = Math.sign(delta);
+      const step = Math.min(0.25, Math.abs(WHEEL_SPEED * delta / 128));
+      zoomAt(e.clientX, e.clientY, 1 - sign * step);
+
+      // Without rubberBand, end the session after idle so page scroll can resume.
+      // With rubberBand, the session ends only on mouseleave.
+      if (!rubberBand) {
+        if (wheelIdleTimer) clearTimeout(wheelIdleTimer);
+        wheelIdleTimer = window.setTimeout(() => {
+          wheelIdleTimer = 0;
+          wheelActive = false;
+        }, wheelSessionTimeout);
       }
     };
 
+    // ===== Click / double-click (desktop only) =====
+    const fromTouch = () => performance.now() - lastTouchTime < 500;
+
+    const toggleZoom = (clientX: number, clientY: number) => {
+      cancelAnim();
+      animateTo(clientX, clientY, isZoomed() ? minZoom : doubleClickZoom);
+    };
+
     const onClick = (e: MouseEvent) => {
-      if (isFromTouch()) return;
-      // Suppress click that follows a mouse-pan drag
-      if (movedPastThreshold) return;
+      if (fromTouch() || movedPastThreshold) return;
       e.preventDefault();
-      handleZoomToggle(e.clientX, e.clientY);
+      toggleZoom(e.clientX, e.clientY);
     };
 
     const onDoubleClick = (e: MouseEvent) => {
-      if (isFromTouch()) return;
+      if (fromTouch()) return;
       e.preventDefault();
-      handleZoomToggle(e.clientX, e.clientY);
+      toggleZoom(e.clientX, e.clientY);
     };
 
-    // Desktop rubber-band trigger: when the cursor leaves, schedule a snap-back
-    // to scale 1 after `wheelSessionTimeout`. If the cursor returns within the
-    // window, cancel the snap-back.
+    // ===== Mouseleave / enter (rubberBand snap-back trigger) =====
     const onMouseLeave = () => {
       if (!rubberBand) return;
       cancelLeaveSnap();
       leaveSnapTimer = window.setTimeout(() => {
         leaveSnapTimer = 0;
-        if (wheelEndTimer) {
-          clearTimeout(wheelEndTimer);
-          wheelEndTimer = 0;
-        }
-        wheelSessionActive = false;
-        snapBackAlways();
+        wheelActive = false;
+        animateBackToBase();
       }, wheelSessionTimeout);
     };
 
-    const onMouseEnter = () => {
-      cancelLeaveSnap();
-    };
+    const onMouseEnter = () => cancelLeaveSnap();
 
-    // Attach listeners
+    // ===== Wire up =====
     container.addEventListener('touchstart', onTouchStart, { passive: false });
     container.addEventListener('touchmove', onTouchMove, { passive: false });
     container.addEventListener('touchend', onTouchEnd, { passive: false });
@@ -600,13 +501,10 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
     container.addEventListener('wheel', onWheel, { passive: false });
     container.addEventListener('mouseleave', onMouseLeave);
     container.addEventListener('mouseenter', onMouseEnter);
-    if (desktopZoomTrigger === 'click') {
-      container.addEventListener('click', onClick);
-    } else if (desktopZoomTrigger === 'double-click') {
-      container.addEventListener('dblclick', onDoubleClick);
-    }
+    if (desktopZoomTrigger === 'click') container.addEventListener('click', onClick);
+    else if (desktopZoomTrigger === 'double-click') container.addEventListener('dblclick', onDoubleClick);
 
-    applyTransform();
+    apply();
 
     return () => {
       container.removeEventListener('touchstart', onTouchStart);
@@ -622,45 +520,29 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
       container.removeEventListener('click', onClick);
       container.removeEventListener('dblclick', onDoubleClick);
       if (raf) cancelAnimationFrame(raf);
-      if (inertiaRaf) cancelAnimationFrame(inertiaRaf);
-      if (trackTicker) cancelAnimationFrame(trackTicker);
-      if (wheelEndTimer) clearTimeout(wheelEndTimer);
+      if (animRaf) cancelAnimationFrame(animRaf);
+      if (trackerRaf) cancelAnimationFrame(trackerRaf);
+      if (wheelIdleTimer) clearTimeout(wheelIdleTimer);
       if (leaveSnapTimer) clearTimeout(leaveSnapTimer);
+      apiRef.current = null;
     };
   }, [imgSize, minZoom, maxZoom, doubleClickZoom, rubberBand, rubberBandMin, wheelZoom, wheelSessionTimeout, effectiveMinZoom, desktopZoomTrigger]);
 
-  // Measure image natural size + compute fitted size from container ratio
+  // Measure image natural size + fit it to the container's aspect ratio.
   useEffect(() => {
     if (!imgNatural) return;
     const container = containerRef.current;
     if (!container) return;
 
     const compute = () => {
-      const rect = container.getBoundingClientRect();
-      if (rect.width === 0 || rect.height === 0) return;
-
-      const containerRatio = rect.width / rect.height;
+      const r = container.getBoundingClientRect();
+      if (r.width === 0 || r.height === 0) return;
+      const containerRatio = r.width / r.height;
       const imgRatio = imgNatural.w / imgNatural.h;
-
-      let w: number;
-      let h: number;
-      if (imageFit === 'contain') {
-        if (imgRatio > containerRatio) {
-          w = rect.width;
-          h = rect.width / imgRatio;
-        } else {
-          h = rect.height;
-          w = rect.height * imgRatio;
-        }
-      } else {
-        if (imgRatio > containerRatio) {
-          h = rect.height;
-          w = rect.height * imgRatio;
-        } else {
-          w = rect.width;
-          h = rect.width / imgRatio;
-        }
-      }
+      const useWidth =
+        imageFit === 'contain' ? imgRatio > containerRatio : imgRatio <= containerRatio;
+      const w = useWidth ? r.width : r.height * imgRatio;
+      const h = useWidth ? r.width / imgRatio : r.height;
       setImgSize({ w, h });
     };
 
@@ -672,68 +554,27 @@ export const ImageZoomPan = forwardRef<ImageZoomPanHandle, ImageZoomPanProps>(({
 
   useImperativeHandle(ref, () => ({
     zoomIn: () => {
-      const container = containerRef.current;
-      if (!container) return;
-      const rect = container.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      animateScaleViaRef(cx, cy, Math.min(maxZoom, transformRef.current.scale * 1.5));
+      const c = containerRef.current;
+      if (!c || !apiRef.current) return;
+      const r = c.getBoundingClientRect();
+      apiRef.current.animateTo(r.left + r.width / 2, r.top + r.height / 2,
+        Math.min(maxZoom, transformRef.current.scale * 1.5));
     },
     zoomOut: () => {
-      const container = containerRef.current;
-      if (!container) return;
-      const rect = container.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      animateScaleViaRef(cx, cy, Math.max(minZoom, transformRef.current.scale / 1.5));
+      const c = containerRef.current;
+      if (!c || !apiRef.current) return;
+      const r = c.getBoundingClientRect();
+      apiRef.current.animateTo(r.left + r.width / 2, r.top + r.height / 2,
+        Math.max(minZoom, transformRef.current.scale / 1.5));
     },
     reset: () => {
-      const container = containerRef.current;
-      if (!container) return;
-      const rect = container.getBoundingClientRect();
-      const cx = rect.left + rect.width / 2;
-      const cy = rect.top + rect.height / 2;
-      animateScaleViaRef(cx, cy, 1);
+      const c = containerRef.current;
+      if (!c || !apiRef.current) return;
+      const r = c.getBoundingClientRect();
+      apiRef.current.animateTo(r.left + r.width / 2, r.top + r.height / 2, 1);
     },
     getScale: () => transformRef.current.scale,
   }), [maxZoom, minZoom]);
-
-  // External-facing animator that mirrors the internal one. Necessary because
-  // the internal one closes over effect-scope state.
-  const animateScaleViaRef = (clientX: number, clientY: number, targetScale: number) => {
-    const container = containerRef.current;
-    const img = imgRef.current;
-    if (!container || !img) return;
-    const startTransform = { ...transformRef.current };
-    const startTime = performance.now();
-    const duration = 200;
-    const step = () => {
-      const elapsed = performance.now() - startTime;
-      const progress = Math.min(1, elapsed / duration);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      const scaleNow = startTransform.scale + (targetScale - startTransform.scale) * eased;
-      const m = scaleNow / startTransform.scale;
-      const rect = container.getBoundingClientRect();
-      const cx = clientX - rect.left - rect.width / 2;
-      const cy = clientY - rect.top - rect.height / 2;
-      const nx = cx * (1 - m) + startTransform.x * m;
-      const ny = cy * (1 - m) + startTransform.y * m;
-
-      // Clamp
-      const imgW = imgSize ? imgSize.w * scaleNow : 0;
-      const imgH = imgSize ? imgSize.h * scaleNow : 0;
-      const maxX = Math.max(0, (imgW - rect.width) / 2);
-      const maxY = Math.max(0, (imgH - rect.height) / 2);
-      const clampedX = Math.max(-maxX, Math.min(maxX, nx));
-      const clampedY = Math.max(-maxY, Math.min(maxY, ny));
-
-      transformRef.current = { x: clampedX, y: clampedY, scale: scaleNow };
-      img.style.transform = `translate3d(${clampedX}px, ${clampedY}px, 0) scale(${scaleNow})`;
-      onZoomChangeRef.current?.(scaleNow);
-      if (progress < 1) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
-  };
 
   const containerStyle: CSSProperties = {
     aspectRatio: aspectRatio !== undefined ? `${aspectRatio}` : undefined,

@@ -189,6 +189,13 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(
     const handleTouchStart = useCallback(
       (e: TouchEvent<HTMLDivElement>) => {
         if (!swipeable) return;
+        // Multi-touch belongs to a child (e.g. pinch-zoom). Don't start a swipe.
+        if (e.touches.length > 1) {
+          setIsDragging(false);
+          setDragOffset(0);
+          isHorizontalSwipe.current = null;
+          return;
+        }
         dragStartX.current = e.touches[0].clientX;
         dragStartY.current = e.touches[0].clientY;
         dragCurrentX.current = e.touches[0].clientX;
@@ -201,6 +208,15 @@ export const Carousel = forwardRef<HTMLDivElement, CarouselProps>(
     const handleTouchMove = useCallback(
       (e: TouchEvent<HTMLDivElement>) => {
         if (!swipeable || !isDragging) return;
+
+        // A second finger arrived, or a child handler (e.g. ImageZoomPan
+        // panning a zoomed image) already claimed this gesture. Bail out.
+        if (e.touches.length > 1 || e.defaultPrevented) {
+          setIsDragging(false);
+          setDragOffset(0);
+          isHorizontalSwipe.current = null;
+          return;
+        }
 
         const currentX = e.touches[0].clientX;
         const currentY = e.touches[0].clientY;

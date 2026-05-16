@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Carousel } from '../../components/Carousel';
+import { ImageZoomPan } from '../../components/ImageZoomPan';
 import { LabeledCheckbox } from '../../components/LabeledCheckbox';
 import { Input } from '../../components/Input';
 
@@ -308,6 +309,32 @@ export function CarouselPage() {
                 </button>
               ))}
             </div>
+          </div>
+        </div>
+
+        {/* Photo viewer — zoom & pan inside each slide */}
+        <div className="card space-y-4">
+          <h2 className="heading-3">Photo Viewer (ImageZoomPan inside slides)</h2>
+          <p className="text-sm text-subtle">
+            Each slide is an <code>ImageZoomPan</code>. Swipe the carousel with one finger;
+            pinch (or double-click) to zoom into a photo. Once zoomed, one-finger drag
+            pans the image instead of switching slides — the carousel only receives the
+            gesture again when you zoom back out.
+          </p>
+
+          <div className="aspect-[4/3]">
+            <Carousel loop className="rounded-lg overflow-hidden h-full">
+              {thumbnailImages.slice(0, 4).map((src, i) => (
+                <ImageZoomPan
+                  key={i}
+                  src={src}
+                  alt={`Photo ${i + 1}`}
+                  className="h-full"
+                  imageFit="contain"
+                  rubberBand
+                />
+              ))}
+            </Carousel>
           </div>
         </div>
 

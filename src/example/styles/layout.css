@@ -48,6 +48,7 @@ body {
         background: var(--color-surface);
         padding: var(--spacing-card);
         border-radius: var(--radius-control);
+        min-width: 0;
     }
 
     .divider {
