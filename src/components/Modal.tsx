@@ -1,7 +1,7 @@
 import { CSSProperties, useEffect, useRef, useState, type ReactNode, useCallback, useId } from 'react';
 import { createPortal } from 'react-dom';
 import "../styles/modal.css";
-import { useModal } from '../context/ModalContext';
+import { useModal, useModalContext } from '../context/ModalContext';
 
 type ModalProps = {
   id?: string;
@@ -33,7 +33,15 @@ export const Modal = ({
   const autoId = useId();
   const modalId = id ?? autoId;
   const modalHook = useModal(modalId);
+  const { registerOnClose, unregisterOnClose } = useModalContext();
   const { isOpen, isTop, zIndex } = modalHook;
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
+  useEffect(() => {
+    registerOnClose(modalId, () => onCloseRef.current?.());
+    return () => unregisterOnClose(modalId);
+  }, [modalId, registerOnClose, unregisterOnClose]);
   const [closing, setClosing] = useState(false);
   const [visible, setVisible] = useState(false);
   const mountNodeRef = useRef<HTMLElement | null>(null);
@@ -131,15 +139,6 @@ export const Modal = ({
     }
   }, [closing]);
 
-  // Handle escape key for this specific modal
-  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
-    if (event.key === 'Escape' && isTop) {
-      event.preventDefault();
-      event.stopPropagation();
-      onClose?.();
-    }
-  }, [isTop, onClose]);
-
   // Track mousedown target to prevent closing when selecting text
   const handleMouseDown = useCallback((event: React.MouseEvent) => {
     mouseDownTargetRef.current = event.target;
@@ -183,7 +182,6 @@ export const Modal = ({
       data-open={visible ? 'true' : 'false'}
       data-top={isTop ? 'true' : 'false'}
       data-modal-id={modalId}
-      onKeyDown={handleKeyDown}
       onMouseDown={handleMouseDown}
       onClick={handleLayerClick}
     >

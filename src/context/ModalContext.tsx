@@ -25,6 +25,8 @@ type ModalContextValue = {
   isTop: (id: string) => boolean;
   getZIndex: (id: string) => number;
   hasModals: boolean;
+  registerOnClose: (id: string, onClose: () => void) => void;
+  unregisterOnClose: (id: string) => void;
 };
 
 const ModalContext = createContext<ModalContextValue | null>(null);
@@ -47,6 +49,15 @@ export const ModalProvider = ({
   const backdropClosingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const backdropMountRef = useRef<HTMLElement | null>(null);
   const backdropRef = useRef<HTMLDivElement | null>(null);
+  const onCloseHandlersRef = useRef<Map<string, () => void>>(new Map());
+
+  const registerOnClose = useCallback((id: string, onClose: () => void) => {
+    onCloseHandlersRef.current.set(id, onClose);
+  }, []);
+
+  const unregisterOnClose = useCallback((id: string) => {
+    onCloseHandlersRef.current.delete(id);
+  }, []);
 
   // Create backdrop mount point
   useEffect(() => {
@@ -229,14 +240,21 @@ export const ModalProvider = ({
 
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
+        const topModal = stack[stack.length - 1];
+        if (!topModal) return;
         event.preventDefault();
-        closeTop();
+        const onClose = onCloseHandlersRef.current.get(topModal.id);
+        if (onClose) {
+          onClose();
+        } else {
+          closeTop();
+        }
       }
     };
 
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
-  }, [hasModals, closeTop]);
+  }, [hasModals, closeTop, stack]);
 
   const contextValue = useMemo<ModalContextValue>(() => ({
     stack,
@@ -247,7 +265,9 @@ export const ModalProvider = ({
     isOpen,
     isTop,
     getZIndex,
-    hasModals
+    hasModals,
+    registerOnClose,
+    unregisterOnClose
   }), [
     stack,
     openModal,
@@ -257,7 +277,9 @@ export const ModalProvider = ({
     isOpen,
     isTop,
     getZIndex,
-    hasModals
+    hasModals,
+    registerOnClose,
+    unregisterOnClose
   ]);
 
   return (
