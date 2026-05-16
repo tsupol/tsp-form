@@ -34,6 +34,7 @@ import { CarouselPage } from './pages/CarouselPage';
 import { SettingsModalPage } from './pages/SettingsModalPage';
 import { FormSizesPage } from './pages/FormSizesPage';
 import { ImageUploaderPage } from './pages/ImageUploaderPage';
+import { ImageZoomPanPage } from './pages/ImageZoomPanPage';
 import { SelectPage } from './pages/SelectPage';
 import { DatePickerPage } from './pages/DatePickerPage';
 import { TablePage } from './pages/TablePage';
@@ -123,7 +124,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
       triggerClassName="w-full"
       trigger={
         <button
-          className={clsx('flex items-center gap-2 py-2.5 transition-all text-item-fg hover:bg-item-hover-bg w-full cursor-pointer', collapsed ? 'px-1.5' : 'px-4')}
+          className={clsx('flex items-center gap-3 py-2.5 transition-all text-item-fg hover:bg-item-hover-bg w-full cursor-pointer', collapsed ? 'px-1.5' : 'px-3')}
           onClick={() => setOpen(!open)}
         >
           <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-primary-contrast text-sm font-semibold shrink-0">
@@ -249,27 +250,33 @@ const SideNav = () => {
   const menuItems: SideMenuItemData[] = [
     { key: 'dashboard', icon: <Home size="1rem"/>, label: "Dashboard", path: '/' },
     { key: 'components', icon: <Layers size="1rem"/>, label: "Components", path: '/components', children: [
-      { key: 'comp-buttons', label: "Buttons", path: '/components/buttons' },
       { key: 'comp-alert', label: "Alert", path: '/components/alert' },
       { key: 'comp-badge', label: "Badge", path: '/components/badge' },
       { key: 'comp-button-group', label: "Button Group", path: '/components/button-group' },
-      { key: 'comp-form', label: "Form", path: '/components/form' },
-      { key: 'comp-popover', label: "PopOver", path: '/components/popover' },
-      { key: 'comp-modal', label: "Modal", path: '/components/modal' },
-      { key: 'comp-drawer', label: "Drawer", path: '/components/drawer' },
-      { key: 'comp-snackbar', label: "Snackbar", path: '/components/snackbar' },
-      { key: 'comp-tabs', label: "Tabs", path: '/components/tabs' },
-      { key: 'comp-skeleton', label: "Skeleton", path: '/components/skeleton' },
-      { key: 'comp-tooltip', label: "Tooltip", path: '/components/tooltip' },
-      { key: 'comp-select', label: "Select", path: '/components/select' },
-      { key: 'comp-date-picker', label: "Date Picker", path: '/components/date-picker' },
-      { key: 'comp-pagination', label: "Pagination", path: '/components/pagination' },
-      { key: 'comp-table', label: "Table", path: '/components/table' },
-      { key: 'comp-context-menu', label: "Context Menu", path: '/components/context-menu' },
+      { key: 'comp-buttons', label: "Buttons", path: '/components/buttons' },
       { key: 'comp-carousel', label: "Carousel", path: '/components/carousel' },
-      { key: 'comp-switch', label: "Switch", path: '/components/switch' },
       { key: 'comp-checkbox', label: "Checkbox", path: '/components/checkbox' },
+      { key: 'comp-context-menu', label: "Context Menu", path: '/components/context-menu' },
+      { key: 'comp-date-picker', label: "Date Picker", path: '/components/date-picker' },
+      { key: 'comp-drawer', label: "Drawer", path: '/components/drawer' },
+      { key: 'comp-file-uploader', label: "File Uploader", path: '/components/file-uploader' },
+      { key: 'comp-form', label: "Form", path: '/components/form' },
+      { key: 'comp-image-uploader', label: "Image Uploader", path: '/components/image-uploader' },
+      { key: 'comp-image-zoom-pan', label: "Image Zoom & Pan", path: '/components/image-zoom-pan' },
       { key: 'comp-masked-input', label: "Masked Input", path: '/components/masked-input' },
+      { key: 'comp-modal', label: "Modal", path: '/components/modal' },
+      { key: 'comp-number-spinner', label: "Number Spinner", path: '/components/number-spinner' },
+      { key: 'comp-pagination', label: "Pagination", path: '/components/pagination' },
+      { key: 'comp-popover', label: "PopOver", path: '/components/popover' },
+      { key: 'comp-progress-bar', label: "Progress Bar", path: '/components/progress-bar' },
+      { key: 'comp-select', label: "Select", path: '/components/select' },
+      { key: 'comp-skeleton', label: "Skeleton", path: '/components/skeleton' },
+      { key: 'comp-snackbar', label: "Snackbar", path: '/components/snackbar' },
+      { key: 'comp-switch', label: "Switch", path: '/components/switch' },
+      { key: 'comp-table', label: "Table", path: '/components/table' },
+      { key: 'comp-tabs', label: "Tabs", path: '/components/tabs' },
+      { key: 'comp-tooltip', label: "Tooltip", path: '/components/tooltip' },
+      { key: 'comp-typography', label: "Typography", path: '/components/typography' },
     ]},
     { type: 'group', key: 'grp-examples', label: "Examples" },
     { key: 'form-sizes', icon: <SlidersHorizontal size="1rem"/>, label: "Form Sizes", path: '/form-sizes' },
@@ -388,6 +395,7 @@ const App = () => {
                   <Route path="context-menu" element={<ContextMenuPage/>}/>
                   <Route path="carousel" element={<CarouselPage/>}/>
                   <Route path="image-uploader" element={<ImageUploaderPage/>}/>
+                  <Route path="image-zoom-pan" element={<ImageZoomPanPage/>}/>
                   <Route path="file-uploader" element={<FileUploaderPage/>}/>
                   <Route path="table" element={<TablePage/>}/>
                   <Route path="alert" element={<AlertPage/>}/>

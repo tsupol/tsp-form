@@ -1,0 +1,20 @@
+@layer components {
+  .image-zoom-pan {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .image-zoom-pan-img {
+    display: block;
+    user-select: none;
+    -webkit-user-drag: none;
+    flex-shrink: 0;
+    transform-origin: 50% 50%;
+    will-change: transform;
+  }
+}

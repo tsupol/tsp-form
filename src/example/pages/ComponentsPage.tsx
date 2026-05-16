@@ -15,32 +15,33 @@ type ComponentEntry = {
 };
 
 const components: ComponentEntry[] = [
-  { label: 'Buttons', path: '/components/buttons', icon: <Box size={16} />, description: 'Button variants and sizes' },
   { label: 'Alert', path: '/components/alert', icon: <Box size={16} />, description: 'Dismissible alert banners' },
   { label: 'Badge', path: '/components/badge', icon: <Box size={16} />, description: 'Status and count badges' },
   { label: 'Button Group', path: '/components/button-group', icon: <Box size={16} />, description: 'Grouped button controls' },
-  { label: 'Form', path: '/components/form', icon: <FileText size={16} />, description: 'Input, checkbox, radio, textarea' },
-  { label: 'PopOver', path: '/components/popover', icon: <MessageSquare size={16} />, description: 'Floating content panels' },
-  { label: 'Modal', path: '/components/modal', icon: <Columns3 size={16} />, description: 'Dialog overlays' },
+  { label: 'Buttons', path: '/components/buttons', icon: <Box size={16} />, description: 'Button variants and sizes' },
+  { label: 'Carousel', path: '/components/carousel', icon: <Image size={16} />, description: 'Image and content slider' },
+  { label: 'Checkbox', path: '/components/checkbox', icon: <Box size={16} />, description: 'Checkbox form controls' },
+  { label: 'Context Menu', path: '/components/context-menu', icon: <MousePointerClick size={16} />, description: 'Right-click menus' },
+  { label: 'Date Picker', path: '/components/date-picker', icon: <CalendarDays size={16} />, description: 'Date and range pickers' },
   { label: 'Drawer', path: '/components/drawer', icon: <Columns3 size={16} />, description: 'Slide-in side panels' },
-  { label: 'Snackbar', path: '/components/snackbar', icon: <MessageSquare size={16} />, description: 'Toast notifications' },
-  { label: 'Tabs', path: '/components/tabs', icon: <GalleryHorizontalEnd size={16} />, description: 'Tabbed content switching' },
-  { label: 'Skeleton', path: '/components/skeleton', icon: <Clock size={16} />, description: 'Loading placeholders' },
-  { label: 'Tooltip', path: '/components/tooltip', icon: <Eye size={16} />, description: 'Hover info tips' },
+  { label: 'File Uploader', path: '/components/file-uploader', icon: <Upload size={16} />, description: 'File upload mechanics' },
+  { label: 'Form', path: '/components/form', icon: <FileText size={16} />, description: 'Input, checkbox, radio, textarea' },
+  { label: 'Image Uploader', path: '/components/image-uploader', icon: <Upload size={16} />, description: 'Image upload with preview' },
+  { label: 'Image Zoom & Pan', path: '/components/image-zoom-pan', icon: <Image size={16} />, description: 'Pan, zoom, pinch image viewer' },
+  { label: 'Masked Input', path: '/components/masked-input', icon: <Hash size={16} />, description: 'Pattern and number formatting' },
+  { label: 'Modal', path: '/components/modal', icon: <Columns3 size={16} />, description: 'Dialog overlays' },
+  { label: 'Number Spinner', path: '/components/number-spinner', icon: <Hash size={16} />, description: 'Numeric input with +/- buttons' },
+  { label: 'Pagination', path: '/components/pagination', icon: <ToggleLeft size={16} />, description: 'Page navigation controls' },
+  { label: 'PopOver', path: '/components/popover', icon: <MessageSquare size={16} />, description: 'Floating content panels' },
   { label: 'Progress Bar', path: '/components/progress-bar', icon: <BarChart3 size={16} />, description: 'Progress indicators' },
   { label: 'Select', path: '/components/select', icon: <ChevronsUpDown size={16} />, description: 'Dropdown select menus' },
-  { label: 'Date Picker', path: '/components/date-picker', icon: <CalendarDays size={16} />, description: 'Date and range pickers' },
-  { label: 'Pagination', path: '/components/pagination', icon: <ToggleLeft size={16} />, description: 'Page navigation controls' },
-  { label: 'Table', path: '/components/table', icon: <Table2 size={16} />, description: 'Data tables with sorting' },
-  { label: 'Typography', path: '/components/typography', icon: <Type size={16} />, description: 'Text and prose styles' },
-  { label: 'Context Menu', path: '/components/context-menu', icon: <MousePointerClick size={16} />, description: 'Right-click menus' },
-  { label: 'Carousel', path: '/components/carousel', icon: <Image size={16} />, description: 'Image and content slider' },
-  { label: 'Image Uploader', path: '/components/image-uploader', icon: <Upload size={16} />, description: 'Image upload with preview' },
-  { label: 'File Uploader', path: '/components/file-uploader', icon: <Upload size={16} />, description: 'File upload mechanics' },
-  { label: 'Number Spinner', path: '/components/number-spinner', icon: <Hash size={16} />, description: 'Numeric input with +/- buttons' },
+  { label: 'Skeleton', path: '/components/skeleton', icon: <Clock size={16} />, description: 'Loading placeholders' },
+  { label: 'Snackbar', path: '/components/snackbar', icon: <MessageSquare size={16} />, description: 'Toast notifications' },
   { label: 'Switch (Toggle)', path: '/components/switch', icon: <ToggleLeft size={16} />, description: 'Toggle switch controls' },
-  { label: 'Checkbox', path: '/components/checkbox', icon: <Box size={16} />, description: 'Checkbox form controls' },
-  { label: 'Masked Input', path: '/components/masked-input', icon: <Hash size={16} />, description: 'Pattern and number formatting' },
+  { label: 'Table', path: '/components/table', icon: <Table2 size={16} />, description: 'Data tables with sorting' },
+  { label: 'Tabs', path: '/components/tabs', icon: <GalleryHorizontalEnd size={16} />, description: 'Tabbed content switching' },
+  { label: 'Tooltip', path: '/components/tooltip', icon: <Eye size={16} />, description: 'Hover info tips' },
+  { label: 'Typography', path: '/components/typography', icon: <Type size={16} />, description: 'Text and prose styles' },
 ];
 
 function ComponentsIndex() {
@@ -72,7 +73,7 @@ function ComponentNav() {
   const location = useLocation();
 
   return (
-    <nav className="w-56 shrink-0 border-r border-line overflow-y-auto better-scroll py-2 fixed top-0 h-dvh">
+    <nav className="hidden lg:block w-56 shrink-0 border-r border-line overflow-y-auto better-scroll py-2 fixed top-0 h-dvh">
       {components.map((c) => (
         <button
           key={c.path}
@@ -103,7 +104,7 @@ export function ComponentsLayout() {
   return (
     <div>
       <ComponentNav />
-      <div className="ml-56">
+      <div className="lg:ml-56">
         <Outlet />
       </div>
     </div>
