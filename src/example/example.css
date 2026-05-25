@@ -57,7 +57,11 @@
     --color-primary-contrast: #ffffff;
     --color-primary-light: rgba(37, 99, 235, 0.1);
     --color-primary-fg: var(--color-primary);
+    --color-secondary-fg: var(--color-secondary);
+    --color-success-fg: var(--color-success);
+    --color-danger-fg: var(--color-danger);
     --color-warning-fg: var(--color-warning);
+    --color-info-fg: var(--color-info);
 
     /* ── Secondary (Teal) ─────────────────────────────────────────────── */
 
@@ -213,7 +217,8 @@
     --text-small--line-height: 1.5;
 
     /* Subtle text — used by library components (slider, image-uploader, etc.) */
-    --color-subtle: #8b8d98;
+    --color-subtle: #999999;
+    --color-subtler: #70737c;
 
     /* Section spacing */
     --spacing-section: 2rem;
@@ -274,7 +279,8 @@
     --color-control-bg: #ffffff;
     --color-control-placeholder: #80838d;
     --color-control-label: #60646c;
-    --color-subtle: #60646c;
+    --color-subtle: #555;
+    --color-subtler: #999;
 
     /* default button */
     --color-button-default-bg: #eeeef1;
