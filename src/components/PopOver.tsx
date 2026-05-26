@@ -263,7 +263,7 @@ export function PopOver({
     }
   }, [isOpen, placement, align]);
 
-  // Recalculate on scroll and resize with throttling
+  // Recalculate on scroll, resize, and popover content size changes
   useEffect(() => {
     if (!isOpen) return;
 
@@ -274,18 +274,26 @@ export function PopOver({
       timeoutId = setTimeout(calculatePosition, 16); // ~60fps
     };
 
-    // Listen to all scroll events (including nested)
     const handleScroll = () => throttledCalculate();
     const handleResize = () => throttledCalculate();
 
-    // Use capture to catch all scroll events
     document.addEventListener('scroll', handleScroll, { passive: true, capture: true });
     window.addEventListener('resize', handleResize, { passive: true });
+
+    // Reposition when the popover's own content resizes (e.g. async results
+    // change the dropdown height — affects flipped placements anchored to the
+    // popover's top edge).
+    let resizeObserver: ResizeObserver | undefined;
+    if (popoverRef.current && typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => throttledCalculate());
+      resizeObserver.observe(popoverRef.current);
+    }
 
     return () => {
       clearTimeout(timeoutId);
       document.removeEventListener('scroll', handleScroll, { capture: true });
       window.removeEventListener('resize', handleResize);
+      resizeObserver?.disconnect();
     };
   }, [isOpen]);
 
