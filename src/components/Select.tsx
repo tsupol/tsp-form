@@ -57,6 +57,7 @@ interface SelectProps {
   chipDisplay?: boolean; // Show selected value as chip (default false for single, always true for multi)
   clearable?: boolean; // Show clear button when value is selected
   searchable?: boolean; // Allow typing to filter options (default true)
+  filterOptions?: boolean; // Apply built-in substring filter to options (default true). Set false when parent supplies pre-filtered options (e.g. fuzzy/async search).
   showChevron?: boolean; // Show chevron icon (default true)
   maxSelect?: number; // Maximum number of selectable items in multi mode
   showSelectedInList?: boolean; // Show selected items in dropdown with highlight instead of removing them (default false)
@@ -86,6 +87,7 @@ export function Select({
   chipDisplay = false,
   clearable = false,
   searchable = true,
+  filterOptions = true,
   showChevron = true,
   maxSelect,
   showSelectedInList = false,
@@ -138,7 +140,7 @@ export function Select({
       }
 
       // Filter by search
-      if (searchable && !item.label.toLowerCase().includes(searchTerm.toLowerCase())) continue;
+      if (searchable && filterOptions && !item.label.toLowerCase().includes(searchTerm.toLowerCase())) continue;
       // Filter already selected in multi mode
       if (multiple && !showSelectedInList && selectedValuesArray.includes(item.value)) continue;
 
@@ -166,7 +168,7 @@ export function Select({
     }
 
     return cleaned;
-  }, [options, searchTerm, multiple, selectedValuesArray, searchable]);
+  }, [options, searchTerm, multiple, selectedValuesArray, searchable, filterOptions]);
 
   // Flat list of selectable options (matching availableItems filtering)
   const selectableOptions = useMemo(

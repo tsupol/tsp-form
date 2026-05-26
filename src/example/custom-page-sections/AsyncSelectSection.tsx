@@ -41,6 +41,38 @@ function mockFetchById(id: string): Promise<Option | undefined> {
   });
 }
 
+// Subsequence fuzzy match: returns a score if every char of `query` appears in
+// `label` in order (not necessarily adjacent). Lower score = better (tighter span).
+function fuzzyScore(label: string, query: string): number | null {
+  const l = label.toLowerCase();
+  const q = query.toLowerCase();
+  let li = 0;
+  let firstMatch = -1;
+  let lastMatch = -1;
+  for (let qi = 0; qi < q.length; qi++) {
+    const ch = q[qi];
+    while (li < l.length && l[li] !== ch) li++;
+    if (li === l.length) return null;
+    if (firstMatch === -1) firstMatch = li;
+    lastMatch = li;
+    li++;
+  }
+  return (lastMatch - firstMatch) + firstMatch * 0.1;
+}
+
+function mockFuzzySearch(query: string): Promise<Option[]> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const scored = MOCK_DATA
+        .map((item) => ({ item, score: fuzzyScore(item.label, query) }))
+        .filter((x): x is { item: Option; score: number } => x.score !== null)
+        .sort((a, b) => a.score - b.score)
+        .map((x) => x.item);
+      resolve(scored);
+    }, 400);
+  });
+}
+
 export function AsyncSelectSection() {
   const [value, setValue] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState<Option | null>(null);
@@ -113,6 +145,38 @@ export function AsyncSelectSection() {
       return [editSelectedOption, ...base];
     }
     return base;
+  })();
+
+  // Fuzzy search variant — uses filterOptions={false} so the parent's fuzzy
+  // results render as-is (subsequence matches like "hmn" → "Hannah Montana"
+  // would be dropped by the built-in substring filter).
+  const [fuzzyValue, setFuzzyValue] = useState<string | null>(null);
+  const [fuzzySelectedOption, setFuzzySelectedOption] = useState<Option | null>(null);
+  const [fuzzyResults, setFuzzyResults] = useState<Option[]>(MOCK_DATA);
+  const [fuzzyLoading, setFuzzyLoading] = useState(false);
+  const fuzzyDebounceRef = useRef<ReturnType<typeof setTimeout>>(null);
+
+  const handleFuzzySearchChange = useCallback((searchTerm: string) => {
+    if (fuzzyDebounceRef.current) clearTimeout(fuzzyDebounceRef.current);
+    if (searchTerm === '') {
+      setFuzzyResults(MOCK_DATA);
+      setFuzzyLoading(false);
+      return;
+    }
+    setFuzzyLoading(true);
+    fuzzyDebounceRef.current = setTimeout(() => {
+      mockFuzzySearch(searchTerm).then((results) => {
+        setFuzzyResults(results);
+        setFuzzyLoading(false);
+      });
+    }, 200);
+  }, []);
+
+  const fuzzyOptions = (() => {
+    if (fuzzySelectedOption && !fuzzyResults.some((o) => o.value === fuzzySelectedOption.value)) {
+      return [fuzzySelectedOption, ...fuzzyResults];
+    }
+    return fuzzyResults;
   })();
 
   const handleSearchChange = useCallback((searchTerm: string) => {
@@ -191,6 +255,25 @@ export function AsyncSelectSection() {
           onSearchChange={handleEditSearchChange}
           loading={editLoading || editInitLoading}
           placeholder="Type to search..."
+        />
+      </div>
+      <div className="flex flex-col">
+        <label className="form-label">Fuzzy Search (try "hmn", "alc", "ednrtn")</label>
+        <Select
+          id="async-fuzzy-user"
+          options={fuzzyOptions}
+          value={fuzzyValue}
+          onChange={(v) => {
+            const val = v as string | null;
+            setFuzzyValue(val);
+            const selected = fuzzyOptions.find((o) => o.value === val);
+            setFuzzySelectedOption(selected ?? null);
+          }}
+          onSearchChange={handleFuzzySearchChange}
+          filterOptions={false}
+          loading={fuzzyLoading}
+          placeholder="Type to fuzzy search..."
+          startIcon={<Search size={16} />}
         />
       </div>
     </div>
