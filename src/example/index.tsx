@@ -52,6 +52,7 @@ import { NumberSpinnerPage } from './pages/NumberSpinnerPage';
 import { SwitchPage } from './pages/SwitchPage';
 import { CheckboxPage } from './pages/CheckboxPage';
 import { MaskedInputPage } from './pages/MaskedInputPage';
+import { InputPage } from './pages/InputPage';
 
 import { DebugPage } from './pages/DebugPage';
 import { DisabledStatePage } from './pages/DisabledStatePage';
@@ -263,6 +264,7 @@ const SideNav = () => {
       { key: 'comp-form', label: "Form", path: '/components/form' },
       { key: 'comp-image-uploader', label: "Image Uploader", path: '/components/image-uploader' },
       { key: 'comp-image-zoom-pan', label: "Image Zoom & Pan", path: '/components/image-zoom-pan' },
+      { key: 'comp-input', label: "Input", path: '/components/input' },
       { key: 'comp-masked-input', label: "Masked Input", path: '/components/masked-input' },
       { key: 'comp-modal', label: "Modal", path: '/components/modal' },
       { key: 'comp-number-spinner', label: "Number Spinner", path: '/components/number-spinner' },
@@ -406,6 +408,7 @@ const App = () => {
                   <Route path="switch" element={<SwitchPage/>}/>
                   <Route path="checkbox" element={<CheckboxPage/>}/>
                   <Route path="masked-input" element={<MaskedInputPage/>}/>
+                  <Route path="input" element={<InputPage/>}/>
                 </Route>
                 <Route path="/form-sizes" element={<FormSizesPage/>}/>
                 <Route path="/nav-modal" element={<SettingsModalPage/>}/>

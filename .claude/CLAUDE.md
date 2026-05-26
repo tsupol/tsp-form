@@ -45,6 +45,17 @@ These are used by other library components — changes to them have wider impact
 - Use `.card` instead of `border border-line bg-surface p-card rounded-lg`
 - Do NOT use `ContentPanel` — it has been removed. Use `heading-3` + `card` directly instead.
 
+### Adding a new component page — THREE places to register
+The example app has two navs **and** a landing page, all listing components separately. Miss one and the page either won't appear or appears with no nav.
+
+1. **Global side menu fanout** — `src/example/index.tsx`, inside the `components` group's `children` array. Sorted alphabetically by label.
+2. **In-page component nav** — `src/example/pages/ComponentsPage.tsx`, the `components` array. Drives both the `/components` landing grid AND the left rail (`ComponentNav`) shown on every `/components/*` route. Without an entry here the page renders with no left nav and isn't on the landing grid.
+3. **Route** — `src/example/index.tsx`, inside `<Route path="/components/*" element={<ComponentsLayout/>}>`.
+
+Plus the obvious: import the page component in `src/example/index.tsx` and create the page file in `src/example/pages/`.
+
+`/components` is a landing index (handled by `ComponentsLayout` checking `pathname === '/components'`); `/components/<name>` renders the page with the in-page side nav.
+
 ## Scrollable Containers
 - Use `.better-scroll` class on any scrollable container for styled thin scrollbars
 - `.modal-content` already has thin scrollbar styles built in — no need to add `.better-scroll`

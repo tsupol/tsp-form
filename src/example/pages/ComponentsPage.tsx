@@ -28,6 +28,7 @@ const components: ComponentEntry[] = [
   { label: 'Form', path: '/components/form', icon: <FileText size={16} />, description: 'Input, checkbox, radio, textarea' },
   { label: 'Image Uploader', path: '/components/image-uploader', icon: <Upload size={16} />, description: 'Image upload with preview' },
   { label: 'Image Zoom & Pan', path: '/components/image-zoom-pan', icon: <Image size={16} />, description: 'Pan, zoom, pinch image viewer' },
+  { label: 'Input', path: '/components/input', icon: <FileText size={16} />, description: 'Text input with suggestions' },
   { label: 'Masked Input', path: '/components/masked-input', icon: <Hash size={16} />, description: 'Pattern and number formatting' },
   { label: 'Modal', path: '/components/modal', icon: <Columns3 size={16} />, description: 'Dialog overlays' },
   { label: 'Number Spinner', path: '/components/number-spinner', icon: <Hash size={16} />, description: 'Numeric input with +/- buttons' },
