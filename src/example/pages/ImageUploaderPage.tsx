@@ -86,6 +86,10 @@ export function ImageUploaderPage() {
   const [cropSrc, setCropSrc] = useState<File | null>(null);
   const [cropAspect, setCropAspect] = useState('1');
   const [cropZoom, setCropZoom] = useState(1);
+  const [cropMinZoom, setCropMinZoom] = useState(0.1);
+  const [cropMaxZoom, setCropMaxZoom] = useState(4);
+  const [cropRotation, setCropRotation] = useState(0);
+  const [cropRotationEnabled, setCropRotationEnabled] = useState(true);
   const [croppedPreview, setCroppedPreview] = useState<string | null>(null);
 
   const buildResizeOptions = (): ResizeOptions => {
@@ -313,13 +317,20 @@ export function ImageUploaderPage() {
             Upload an image, then zoom and drag to crop at a fixed aspect ratio.
           </p>
 
-          <div className="flex flex-col gap-3" style={{ maxWidth: 200 }}>
-            <label className="form-label">Aspect Ratio</label>
-            <Select
-              options={cropAspectOptions}
-              value={cropAspect}
-              onChange={(v) => setCropAspect(v as string)}
-              searchable={false}
+          <div className="flex flex-wrap items-end gap-4">
+            <div className="flex flex-col gap-3" style={{ maxWidth: 200 }}>
+              <label className="form-label">Aspect Ratio</label>
+              <Select
+                options={cropAspectOptions}
+                value={cropAspect}
+                onChange={(v) => setCropAspect(v as string)}
+                searchable={false}
+              />
+            </div>
+            <LabeledCheckbox
+              label="Enable rotation"
+              checked={cropRotationEnabled}
+              onChange={(e) => setCropRotationEnabled(e.target.checked)}
             />
           </div>
 
@@ -346,20 +357,55 @@ export function ImageUploaderPage() {
                 ref={cropperRef}
                 src={cropSrc}
                 aspectRatio={Number(cropAspect)}
-                onZoomChange={setCropZoom}
+                rotation={cropRotationEnabled}
+                onZoomChange={(z, minZ, maxZ) => {
+                  setCropZoom(z);
+                  setCropMinZoom(minZ);
+                  setCropMaxZoom(maxZ);
+                }}
+                onRotationChange={setCropRotation}
               />
 
-              {/* Zoom slider */}
-              <div className="flex items-center gap-3 w-full">
-                <span className="text-xs text-subtle whitespace-nowrap">Zoom</span>
-                <Slider
-                  min={Math.round((cropperRef.current?.minZoom ?? 0.1) * 100)}
-                  max={Math.round((cropperRef.current?.maxZoom ?? 4) * 100)}
-                  step={1}
-                  value={Math.round(cropZoom * 100)}
-                  onChange={(v) => cropperRef.current?.setZoom(v / 100)}
-                />
-              </div>
+              {/* Zoom slider — non-linear: finer control at low zoom, accelerating toward max.
+                  Slider position is derived live from current zoom so it tracks pinch/wheel input,
+                  but inverse-mapping uses the current min/max so rotation-driven range changes
+                  don't visually wiggle the thumb. */}
+              {(() => {
+                const curve = 2.2;
+                const range = Math.max(cropMaxZoom - cropMinZoom, 1e-6);
+                const sliderValue = Math.round(
+                  Math.pow(Math.min(1, Math.max(0, (cropZoom - cropMinZoom) / range)), 1 / curve) * 100
+                );
+                const zoomFromSlider = (v: number) => cropMinZoom + range * Math.pow(v / 100, curve);
+                return (
+                  <div className="flex items-center gap-3 w-full">
+                    <span className="text-xs text-subtle whitespace-nowrap">Zoom</span>
+                    <Slider
+                      min={0}
+                      max={100}
+                      step={1}
+                      value={sliderValue}
+                      onChange={(v) => cropperRef.current?.setZoom(zoomFromSlider(v))}
+                    />
+                  </div>
+                );
+              })()}
+
+              {cropRotationEnabled && (
+                <div className="flex items-center gap-3 w-full">
+                  <span className="text-xs text-subtle whitespace-nowrap">Rotate</span>
+                  <Slider
+                    min={-180}
+                    max={180}
+                    step={1}
+                    value={Math.round(cropRotation)}
+                    onChange={(v) => cropperRef.current?.setRotation(v)}
+                  />
+                  <span className="text-xs text-subtle whitespace-nowrap" style={{ minWidth: 36, textAlign: 'right' }}>
+                    {Math.round(cropRotation)}°
+                  </span>
+                </div>
+              )}
 
               {/* Actions */}
               <div className="flex gap-3">
