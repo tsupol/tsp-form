@@ -40,6 +40,7 @@ const components: ComponentEntry[] = [
   { label: 'Snackbar', path: '/components/snackbar', icon: <MessageSquare size={16} />, description: 'Toast notifications' },
   { label: 'Switch (Toggle)', path: '/components/switch', icon: <ToggleLeft size={16} />, description: 'Toggle switch controls' },
   { label: 'Table', path: '/components/table', icon: <Table2 size={16} />, description: 'Data tables with sorting' },
+  { label: 'Table theming', path: '/components/table-theming', icon: <Table2 size={16} />, description: 'Retheme rows via CSS vars' },
   { label: 'Tabs', path: '/components/tabs', icon: <GalleryHorizontalEnd size={16} />, description: 'Tabbed content switching' },
   { label: 'Tooltip', path: '/components/tooltip', icon: <Eye size={16} />, description: 'Hover info tips' },
   { label: 'Typography', path: '/components/typography', icon: <Type size={16} />, description: 'Text and prose styles' },

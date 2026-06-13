@@ -38,6 +38,7 @@ import { ImageZoomPanPage } from './pages/ImageZoomPanPage';
 import { SelectPage } from './pages/SelectPage';
 import { DatePickerPage } from './pages/DatePickerPage';
 import { TablePage } from './pages/TablePage';
+import { TableThemingPage } from './pages/TableThemingPage';
 import { ButtonGroupPage } from './pages/ButtonGroupPage';
 import { BadgePage } from './pages/BadgePage';
 import { ServerPaginationPage } from './pages/ServerPaginationPage';
@@ -123,6 +124,8 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
       offset={4}
       openDelay={0}
       triggerClassName="w-full"
+      minWidth="calc(var(--spacing-side-menu) - 1rem)"
+      maxWidth="calc(var(--spacing-side-menu) - 1rem)"
       trigger={
         <button
           className={clsx('flex items-center gap-3 py-2.5 transition-all text-item-fg hover:bg-item-hover-bg w-full cursor-pointer', collapsed ? 'px-1.5' : 'px-3')}
@@ -139,7 +142,7 @@ function UserMenu({ collapsed }: { collapsed: boolean }) {
         </button>
       }
     >
-      <div className="py-1 w-[calc(var(--spacing-side-menu)-1rem)]">
+      <div className="py-1">
         <SubMenu icon={<Settings size={14} />} label="Settings">
           <MenuItem label="General" onClick={() => handleAction('Settings > General')} />
           <SubMenu label="Theme">
@@ -400,6 +403,7 @@ const App = () => {
                   <Route path="image-zoom-pan" element={<ImageZoomPanPage/>}/>
                   <Route path="file-uploader" element={<FileUploaderPage/>}/>
                   <Route path="table" element={<TablePage/>}/>
+                  <Route path="table-theming" element={<TableThemingPage/>}/>
                   <Route path="alert" element={<AlertPage/>}/>
                   <Route path="badge" element={<BadgePage/>}/>
                   <Route path="button-group" element={<ButtonGroupPage/>}/>

@@ -304,6 +304,8 @@ type ColumnModeProps<TData> = DataTableBaseProps<TData> & {
   renderRow?: never;
   renderHeader?: never;
   tableClassName?: string;
+  rowClassName?: never;
+  getRowProps?: never;
 };
 
 type FreeformModeProps<TData> = DataTableBaseProps<TData> & {
@@ -311,6 +313,8 @@ type FreeformModeProps<TData> = DataTableBaseProps<TData> & {
   renderRow: (row: RowHelper<TData>) => ReactNode;
   renderHeader?: () => ReactNode;
   tableClassName?: never;
+  rowClassName?: string;
+  getRowProps?: (row: RowHelper<TData>) => Record<string, unknown>;
 };
 
 export type DataTableProps<TData> = ColumnModeProps<TData> | FreeformModeProps<TData>;
@@ -348,6 +352,8 @@ export function DataTable<TData>({
   noResults,
   className,
   tableClassName,
+  rowClassName,
+  getRowProps,
   striped = false,
 }: DataTableProps<TData>) {
   // Internal state with optional controlled overrides
@@ -665,7 +671,14 @@ export function DataTable<TData>({
             <div className="data-table-freeform-body">
               {displayRows.length > 0 ? (
                 displayRows.map((row) => (
-                  <div key={row.id}>{renderRow(row)}</div>
+                  <div
+                    key={row.id}
+                    className={clsx('data-table-freeform-row', rowClassName)}
+                    data-state={row.getIsSelected() ? 'selected' : undefined}
+                    {...(getRowProps?.(row) ?? {})}
+                  >
+                    {renderRow(row)}
+                  </div>
                 ))
               ) : (
                 <div className="data-table-no-results">
