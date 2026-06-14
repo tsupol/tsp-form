@@ -57,6 +57,10 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 
           onClick={(e) => {
             if (internalInputRef.current) {
+              if (internalInputRef.current.disabled) {
+                e.preventDefault();
+                return;
+              }
               // Prevent label from also toggling the input (double-toggle)
               e.preventDefault();
               internalInputRef.current.click();

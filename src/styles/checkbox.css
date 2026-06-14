@@ -43,6 +43,10 @@
         box-shadow: 0 0 0 2px var(--color-primary);
     }
 
+    .checkbox-peer:disabled + .checkbox-box {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
 
     .checkbox-mark {
         width: 1rem;

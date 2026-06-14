@@ -38,10 +38,10 @@ export function CheckboxPage() {
         <section>
           <h3 className="heading-3 mb-3">Disabled</h3>
           <div className="flex gap-4 items-center card">
-            <label className="flex items-center gap-2 text-sm cursor-pointer opacity-50">
+            <label className="flex items-center gap-2 text-sm cursor-not-allowed">
               <Checkbox disabled /> Disabled unchecked
             </label>
-            <label className="flex items-center gap-2 text-sm cursor-pointer opacity-50">
+            <label className="flex items-center gap-2 text-sm cursor-not-allowed">
               <Checkbox disabled defaultChecked /> Disabled checked
             </label>
           </div>
