@@ -110,11 +110,75 @@ function getCropOffset(
   }
 }
 
+// Encode a canvas honestly: produce the requested format and report the MIME +
+// extension that the bytes ACTUALLY are — never the requested format blindly.
+//
+// Safari < 17.4 silently ignores `toBlob(..., 'image/webp')` and hands back a
+// PNG blob. The old code labelled that PNG as `image/webp` and named the file
+// `.webp` — a file whose bytes, name, and DB mime_type all disagreed. Here we
+// inspect `blob.type` and, for webp/original requests, fall back to JPEG when
+// webp isn't produced, returning the real type either way. PNG is requested
+// explicitly (e.g. a signature pad) and always succeeds, so no fallback there.
+function encodeCanvasHonest(
+  canvas: HTMLCanvasElement,
+  format: NonNullable<ResizeOptions['format']>,
+  sourceMimeType: string,
+  quality: number,
+): Promise<{ blob: Blob; mime: string; ext: string }> {
+  const toBlob = (type: string) =>
+    new Promise<Blob | null>((res) => canvas.toBlob(res, type, quality));
+
+  return (async () => {
+    // PNG: lossless, universally supported — request and trust it.
+    if (format === 'png') {
+      const png = await toBlob('image/png');
+      if (!png) throw new Error('canvas encode failed: no blob');
+      return { blob: png, mime: 'image/png', ext: 'png' };
+    }
+
+    // JPEG: also universally supported.
+    if (format === 'jpeg') {
+      const jpeg = await toBlob('image/jpeg');
+      if (!jpeg) throw new Error('canvas encode failed: no blob');
+      return { blob: jpeg, mime: 'image/jpeg', ext: 'jpg' };
+    }
+
+    // 'original': keep the source type when it's one we can re-encode;
+    // otherwise treat as webp (the modern default) with the webp→jpeg fallback.
+    if (format === 'original') {
+      if (sourceMimeType === 'image/png') {
+        const png = await toBlob('image/png');
+        if (png && png.type === 'image/png') return { blob: png, mime: 'image/png', ext: 'png' };
+      }
+      if (sourceMimeType === 'image/jpeg') {
+        const jpeg = await toBlob('image/jpeg');
+        if (jpeg && jpeg.type === 'image/jpeg') return { blob: jpeg, mime: 'image/jpeg', ext: 'jpg' };
+      }
+      // fall through to webp→jpeg for everything else
+    }
+
+    // webp (or original-fallthrough): try webp, then JPEG. Report what came out.
+    const webp = await toBlob('image/webp');
+    if (webp && webp.type === 'image/webp') return { blob: webp, mime: 'image/webp', ext: 'webp' };
+    const jpeg = await toBlob('image/jpeg');
+    if (!jpeg) throw new Error('canvas encode failed: browser returned no blob');
+    if (jpeg.type !== 'image/jpeg') {
+      throw new Error(`canvas encode failed: browser cannot produce webp or jpeg (got ${jpeg.type || 'unknown'})`);
+    }
+    return { blob: jpeg, mime: 'image/jpeg', ext: 'jpg' };
+  })();
+}
+
+/** Swap a filename's extension to match the encoded format. */
+function renameForExt(name: string, ext: string): string {
+  return name.replace(/\.[^.]+$/, '') + '.' + ext;
+}
+
 function resizeLoadedImage(
   img: HTMLImageElement,
   sourceMimeType: string,
   options: ResizeOptions
-): Promise<{ blob: Blob; width: number; height: number }> {
+): Promise<{ blob: Blob; mime: string; ext: string; width: number; height: number }> {
   return new Promise((resolve, reject) => {
     const {
       maxWidth = Infinity,
@@ -224,24 +288,10 @@ function resizeLoadedImage(
 
     ctx.drawImage(img, sx, sy, sw, sh, 0, 0, targetWidth, targetHeight);
 
-    let mimeType: string;
-    if (format === 'original') {
-      mimeType = sourceMimeType || 'image/jpeg';
-    } else {
-      mimeType = `image/${format}`;
-    }
-
-    canvas.toBlob(
-      (blob) => {
-        if (blob) {
-          resolve({ blob, width: targetWidth, height: targetHeight });
-        } else {
-          reject(new Error('Could not create blob'));
-        }
-      },
-      mimeType,
-      quality
-    );
+    encodeCanvasHonest(canvas, format, sourceMimeType, quality)
+      .then(({ blob, mime, ext }) =>
+        resolve({ blob, mime, ext, width: targetWidth, height: targetHeight }))
+      .catch(reject);
   });
 }
 
@@ -259,6 +309,54 @@ function loadImageFromFile(file: File): Promise<HTMLImageElement> {
     };
     img.src = url;
   });
+}
+
+/**
+ * Resize a source image into one or more variants — the same processor the
+ * `ImageUploader` UI uses, decoupled so non-drop-zone flows (camera capture,
+ * chat attachments, post-crop output) can share it instead of hand-rolling a
+ * canvas resize.
+ *
+ * `src` may be a raw `File` (decoded internally) or an already-decoded
+ * `HTMLImageElement` (e.g. the output of an interactive crop/rotate — saves a
+ * decode pass). `sizes` maps a variant label to its `ResizeOptions`; pass a
+ * single entry for a single-size type.
+ *
+ * Output files are named `${baseName}-${label}.${ext}` where `ext` reflects
+ * the format actually produced (webp, jpg, or png) — honest about the bytes,
+ * never a hardcoded guess. `baseName` defaults to the source file's name (sans
+ * extension) or `'image'`.
+ *
+ * For a `File` source, `format: 'original'` preserves PNG/JPEG sources and
+ * encodes everything else as webp (JPEG fallback). For an `HTMLImageElement`
+ * source the original type is unknown, so `'original'` behaves as webp.
+ */
+export async function resizeToVariants(
+  src: File | HTMLImageElement,
+  sizes: Record<string, ResizeOptions>,
+  baseName?: string,
+): Promise<Record<string, ResizedVariant>> {
+  const isFile = src instanceof File;
+  const img = isFile ? await loadImageFromFile(src) : src;
+  const sourceMime = isFile ? src.type : '';
+  const name =
+    baseName ??
+    (isFile ? src.name.replace(/\.[^.]+$/, '') : null) ??
+    'image';
+
+  const out: Record<string, ResizedVariant> = {};
+  for (const [label, opts] of Object.entries(sizes)) {
+    const { blob, ext, width, height } = await resizeLoadedImage(img, sourceMime, opts);
+    const file = new File([blob], `${name}-${label}.${ext}`, { type: blob.type });
+    out[label] = {
+      file,
+      preview: URL.createObjectURL(blob),
+      width,
+      height,
+      size: blob.size,
+    };
+  }
+  return out;
 }
 
 export function ImageUploader({
@@ -298,8 +396,8 @@ export function ImageUploader({
           const variants: Record<string, ResizedVariant> = {};
           for (const [key, perVariant] of Object.entries(sizes)) {
             const merged = { ...resizeOptions, ...perVariant };
-            const { blob, width, height } = await resizeLoadedImage(img, file.type, merged);
-            const variantFile = new File([blob], file.name, { type: blob.type });
+            const { blob, ext, width, height } = await resizeLoadedImage(img, file.type, merged);
+            const variantFile = new File([blob], renameForExt(file.name, ext), { type: blob.type });
             variants[key] = {
               file: variantFile,
               preview: URL.createObjectURL(blob),
@@ -317,8 +415,8 @@ export function ImageUploader({
             variants,
           });
         } else {
-          const { blob, width, height } = await resizeLoadedImage(img, file.type, resizeOptions);
-          const resizedFile = new File([blob], file.name, { type: blob.type });
+          const { blob, ext, width, height } = await resizeLoadedImage(img, file.type, resizeOptions);
+          const resizedFile = new File([blob], renameForExt(file.name, ext), { type: blob.type });
           results.push({
             id: generateId(),
             file: resizedFile,
