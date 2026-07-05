@@ -33,7 +33,13 @@ export interface DatePickerProps {
   labels?: DatePickerLabels;
 }
 
+// Thai: browsers' Intl returns the full stand-alone name (อาทิตย์…) for
+// weekday:'short' rather than the conventional 1-char abbreviation, so the
+// calendar header reads too wide. Use the canonical short forms directly.
+const TH_WEEKDAYS_SHORT = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+
 function getWeekdays(locale: string): string[] {
+  if (locale === 'th' || locale.startsWith('th-')) return TH_WEEKDAYS_SHORT;
   const formatter = new Intl.DateTimeFormat(locale, { weekday: 'short' });
   // Jan 4 2026 is a Sunday
   return Array.from({ length: 7 }, (_, i) =>
