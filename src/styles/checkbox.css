@@ -19,7 +19,7 @@
 
     .checkbox-box {
         position: relative;
-        margin-top: .075rem;
+        margin-top: 0;
         width: 1.125rem;
         height: 1.125rem;
         border: 1.5px solid var(--color-line);

@@ -402,7 +402,13 @@ export const DatePicker = ({
 
     if (onChange) onChange(todayWithTime);
     if (mode === 'range' && onToDateChange) {
-      onToDateChange(null);
+      // Range mode: "Today" means the single-day range today→today. Setting the
+      // end to today (not null) so consumers get a complete {from, to} range —
+      // clearing `to` left a half-open range that broke on-change queries.
+      const endWithTime = showTime
+        ? new Date(today.getFullYear(), today.getMonth(), today.getDate(), endHours, endMinutes)
+        : todayWithTime;
+      onToDateChange(endWithTime);
     }
 
     // Navigate to current month
