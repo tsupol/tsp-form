@@ -34,11 +34,12 @@ export const RadioGroup = <T extends string | number>(
       {options.map((option) => (
         <div
           key={String(option.value)}
-          style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
+          style={{ display: 'flex', alignItems: 'flex-start', cursor: 'pointer' }}
           onClick={() => onChange(option.value)}>
           <RadioCircle
             checked={option.value === value}
             {...radioCircleProps}
+            style={{ marginTop: '0.125rem', ...radioCircleProps?.style }}
           />
           <span className="form-option-label" style={{ marginLeft: '0.5rem' }}>{option.label}</span>
         </div>

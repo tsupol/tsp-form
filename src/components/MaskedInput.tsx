@@ -229,6 +229,11 @@ export const MaskedInput = forwardRef<HTMLInputElement, MaskedInputProps>(
             if (formatted[i] === decimalSeparator) return i + 1;
           }
         }
+        // Lone '-' (no digits yet): keep caret after the minus so the next
+        // digit lands to its right, otherwise the '-' gets dropped on extract.
+        if (digitsBeforeCaret === 0 && formatted.startsWith('-')) {
+          return 1;
+        }
       }
       return posOfNthDigit(formatted, digitsBeforeCaret);
     }, [isNumber, decimalSeparator]);
