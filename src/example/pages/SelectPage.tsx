@@ -77,6 +77,9 @@ export function SelectPage() {
   const [multi, setMulti] = useState<string[] | null>(null);
   const [longMulti, setLongMulti] = useState<string[] | null>(['long', 'longer', 'longest']);
   const [maxSelect, setMaxSelect] = useState<string[] | null>(null);
+  const [overflowCollapse, setOverflowCollapse] = useState<string[] | null>(['en', 'es', 'fr', 'de', 'ja']);
+  const [overflowWrap, setOverflowWrap] = useState<string[] | null>(['en', 'es', 'fr', 'de', 'ja']);
+  const [overflowSmall, setOverflowSmall] = useState<string[] | null>(['en', 'es', 'fr', 'de', 'ja']);
   const [chipSingle, setChipSingle] = useState<string | null>('apple');
   const [clearable, setClearable] = useState<string | null>('banana');
   const [sizeSmall, setSizeSmall] = useState<string | null>(null);
@@ -175,6 +178,53 @@ export function SelectPage() {
               placeholder="Select options..."
               className="[--max-width-select-chip:20rem]"
             />
+          </div>
+        </div>
+
+        {/* Chip overflow */}
+        <div className="card space-y-3">
+          <h2 className="heading-3">Chip Overflow</h2>
+          <p className="text-sm text-subtle">
+            Multi-select keeps chips on one line by default (<code>chipOverflow="collapse"</code>) — whatever
+            doesn't fit becomes a <code>+N</code> counter, so the control never changes height. Narrow the
+            window to watch the count adjust. Use <code>chipOverflow="wrap"</code> for the old multi-line behavior.
+          </p>
+          <div className="flex flex-col gap-1">
+            <label className="form-label">Collapse to one line (default)</label>
+            <Select
+              options={languageOptions}
+              value={overflowCollapse}
+              onChange={(v) => setOverflowCollapse(v as string[])}
+              multiple
+              showSelectedInList
+              placeholder="Select languages..."
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="form-label">Wrap to multiple lines</label>
+            <Select
+              options={languageOptions}
+              value={overflowWrap}
+              onChange={(v) => setOverflowWrap(v as string[])}
+              multiple
+              showSelectedInList
+              chipOverflow="wrap"
+              placeholder="Select languages..."
+            />
+          </div>
+          <div className="flex flex-col gap-1">
+            <label className="form-label">Collapse, size="sm", in a narrow container</label>
+            <div style={{ width: '16rem' }}>
+              <Select
+                options={languageOptions}
+                value={overflowSmall}
+                onChange={(v) => setOverflowSmall(v as string[])}
+                multiple
+                showSelectedInList
+                size="sm"
+                placeholder="Select languages..."
+              />
+            </div>
           </div>
         </div>
 

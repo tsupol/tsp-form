@@ -8,8 +8,14 @@
         transition-property: border-color, box-shadow;
         transition-duration: 200ms;
         cursor: pointer;
-        padding-top: var(--text-shift-y, 0px);
-        padding-bottom: calc(0px - var(--text-shift-y, 0px));
+        /* Zero, not the old `padding-top: shift; padding-bottom: calc(0px - shift)`.
+           That bottom value was a negative padding — invalid, so browsers dropped it
+           and kept only the top half, pushing content (chips especially) below centre.
+           The shift now lives on the text elements; `align-items: center` does the
+           centring, and zeroing both sides keeps the control at its min-height rather
+           than inheriting the taller .form-control padding. */
+        padding-top: 0;
+        padding-bottom: 0;
         padding-right: 2.5rem;
         width: 100%;
         min-width: 0;
@@ -23,8 +29,8 @@
 
     .form-control-xs.select {
         min-height: var(--height-control-xs, 1.375rem);
-        padding-top: var(--text-shift-y, 0px);
-        padding-bottom: calc(0px - var(--text-shift-y, 0px));
+        padding-top: 0;
+        padding-bottom: 0;
         padding-right: 1.75rem;
     }
 
@@ -42,8 +48,8 @@
 
     .form-control-sm.select {
         min-height: var(--height-control-sm, 1.75rem);
-        padding-top: var(--text-shift-y, 0px);
-        padding-bottom: calc(0px - var(--text-shift-y, 0px));
+        padding-top: 0;
+        padding-bottom: 0;
         padding-right: 2rem;
     }
 
@@ -65,8 +71,8 @@
 
     .form-control-lg.select {
         min-height: var(--height-control-lg, 2.75rem);
-        padding-top: var(--text-shift-y, 0px);
-        padding-bottom: calc(0px - var(--text-shift-y, 0px));
+        padding-top: 0;
+        padding-bottom: 0;
         padding-right: 2.5rem;
     }
 
@@ -89,6 +95,76 @@
         cursor: not-allowed;
     }
 
+    /* Row holding the chips. Owns the chip gap and, in collapse mode, keeps every
+       chip on one line so the control never grows taller than a normal input. */
+    .select-chip-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        min-width: 0;
+        flex-shrink: 1;
+    }
+
+    .select-chip-row-collapse {
+        flex-wrap: nowrap;
+        overflow: hidden;
+        /* The row must be allowed to shrink below its content width, otherwise it
+           pushes the search input out of the control instead of collapsing chips. */
+        flex: 0 1 auto;
+    }
+
+    /* Chips keep their natural width in collapse mode. Letting them shrink would
+       squash every label to a letter or two instead of hiding the surplus, and it
+       would also break the fit measurement (which reads offsetWidth). */
+    .select-chip-row-collapse .selected-chip {
+        flex-shrink: 0;
+    }
+
+    /* In collapse mode the whole control is one line: the chip row and the search
+       input sit side by side. Without this the container's `flex-wrap: wrap` drops
+       the input onto a second line, which is what made the control grow and left
+       the chips pinned to the top. */
+    .select-nowrap {
+        flex-wrap: nowrap;
+    }
+
+    /* On one line the search input is the flexible part — it must be able to shrink
+       so chips keep their space instead of being squeezed. Only once chips exist:
+       with an empty selection the input still owns the row and shows the placeholder. */
+    .select-nowrap.select-has-chips .select-input {
+        flex: 1 1 20px;
+        min-width: 0;
+        width: 20px;
+    }
+
+    /* Chips past the fold: still laid out (measurement reads their real width) but
+       removed from view. `visibility` rather than `display:none` — the latter zeroes
+       offsetWidth and the fit calculation would never recover. */
+    .selected-chip-overflow {
+        position: absolute;
+        visibility: hidden;
+        pointer-events: none;
+    }
+
+    .select-chip-overflow-count {
+        flex-shrink: 0;
+        font-size: 0.857em;
+        line-height: 1.2;
+        color: var(--color-subtle);
+        white-space: nowrap;
+        padding-top: var(--text-shift-y, 0px);
+    }
+
+    .form-control-sm.select .select-chip-overflow-count {
+        font-size: 0.75em;
+        line-height: 1;
+    }
+
+    .form-control-lg.select .select-chip-overflow-count {
+        font-size: 1em;
+    }
+
     .selected-chip {
         display: flex;
         align-items: center;
@@ -102,7 +178,6 @@
         max-width: var(--max-width-select-chip, 10rem);
         overflow: hidden;
         box-sizing: border-box;
-        padding-top: var(--text-shift-y, 0px);
     }
 
     .form-control-sm.select .selected-chip {
@@ -129,6 +204,9 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        /* Baseline compensation belongs on the text, not the chip box — putting it
+           on the box padded the chip off-centre inside the control. */
+        transform: translateY(var(--text-shift-y, 0px));
     }
 
     .form-control-sm.select .selected-chip-label {
@@ -167,6 +245,7 @@
         text-overflow: ellipsis;
         flex-shrink: 1;
         min-width: 0;
+        transform: translateY(var(--text-shift-y, 0px));
     }
 
     .form-control-sm.select .select-value {
@@ -224,6 +303,10 @@
         flex: 1;
         min-width: 20px;
         padding: 0.25rem 0;
+        /* Baseline shift moved off the container onto the text. `transform`, not
+           padding, so the size variants that reset padding to 0 can't drop it and
+           it never changes the control's height. */
+        transform: translateY(var(--text-shift-y-input, var(--text-shift-y, 0px)));
         border-radius: 0.25rem;
         border: none;
         outline: none;

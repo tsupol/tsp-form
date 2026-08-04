@@ -33,6 +33,18 @@ function isGroup(item: SelectItem): item is OptionGroup {
   return 'type' in item && item.type === 'group';
 }
 
+// The chip row's column-gap, in px — needed to measure how many chips fit, since
+// the gap sits between every pair. Read from the computed style so a consumer
+// retheming the gap doesn't desync the measurement.
+function chipGapPx(row: HTMLElement): number {
+  const gap = parseFloat(getComputedStyle(row).columnGap);
+  return Number.isFinite(gap) ? gap : 0;
+}
+
+// Space kept for the search input when chips share its line — matches the
+// `min-width` the input has always had, so typing never gets squeezed out.
+const MIN_SEARCH_INPUT_WIDTH = 20;
+
 
 interface SelectProps {
   id?: string;
@@ -62,6 +74,7 @@ interface SelectProps {
   maxSelect?: number; // Maximum number of selectable items in multi mode
   showSelectedInList?: boolean; // Show selected items in dropdown with highlight instead of removing them (default false)
   renderOption?: (option: Option, state: { selected: boolean }) => ReactNode; // Custom option renderer
+  chipOverflow?: 'collapse' | 'wrap'; // 'collapse' (default): keep chips on one line, surplus becomes a "+N" counter. 'wrap': grow the control to as many lines as needed.
 }
 
 export function Select({
@@ -92,6 +105,7 @@ export function Select({
   maxSelect,
   showSelectedInList = false,
   renderOption,
+  chipOverflow = 'collapse',
 }: SelectProps) {
   const sizeClass = size === "xs" ? "form-control-xs" : size === "sm" ? "form-control-sm" : size === "lg" ? "form-control-lg" : undefined;
   const [isOpen, setIsOpen] = useState(false);
@@ -101,6 +115,8 @@ export function Select({
   const inputRef = useRef<HTMLInputElement>(null);
   const selectRef = useRef<HTMLDivElement>(null); // Ref for the main select container
   const listRef = useRef<HTMLDivElement>(null);
+  const chipRowRef = useRef<HTMLDivElement>(null);
+  const overflowCounterRef = useRef<HTMLSpanElement>(null);
   const isTouchDevice = useRef(false);
   const skipBlurRef = useRef(false);
 
@@ -125,6 +141,71 @@ export function Select({
   const selectedOptions = useMemo(() => {
     return optionItems.filter(option => selectedValuesArray.includes(option.value));
   }, [optionItems, selectedValuesArray]);
+
+  // For single-line chip display (`chipOverflow="collapse"`), how many chips fit
+  // before the rest collapse into "+N". Starts optimistic (show all) so the very
+  // first paint has real chip widths to measure; the effect below trims it.
+  const [visibleChipCount, setVisibleChipCount] = useState(selectedOptions.length);
+  const collapseChips = chipOverflow === 'collapse';
+
+  // Measure which chips fit on one line. Every chip stays mounted at its natural
+  // width — the overflowing ones are only visually hidden — so the measurement is
+  // stable and can grow back when the control widens. Re-runs on selection change
+  // and on any resize of the control.
+  useEffect(() => {
+    if (!collapseChips) return;
+    const row = chipRowRef.current;
+    if (!row) return;
+
+    const control = selectRef.current;
+    if (!control) return;
+
+    const measure = () => {
+      const chips = Array.from(row.querySelectorAll<HTMLElement>('.selected-chip'));
+      if (chips.length === 0) {
+        setVisibleChipCount(0);
+        return;
+      }
+      // Budget comes from the control, not the row: the row's own width is a
+      // function of how many chips are currently shown, so measuring it would
+      // ratchet downward and never recover when the control grows back.
+      const controlStyle = getComputedStyle(control);
+      const available =
+        control.clientWidth
+        - parseFloat(controlStyle.paddingLeft)
+        - parseFloat(controlStyle.paddingRight)
+        // The search input sits on the same line and must keep its minimum.
+        - MIN_SEARCH_INPUT_WIDTH;
+
+      const gap = chipGapPx(row);
+      // The "+N" counter competes for the same line, so reserve its width for every
+      // case where at least one chip has to hide.
+      const counterWidth = overflowCounterRef.current?.offsetWidth ?? 0;
+
+      let fits = 0;
+      let cursor = 0; // running width of the chips kept so far
+      for (let i = 0; i < chips.length; i++) {
+        // offsetWidth, not a bounding rect — overflow chips are positioned out of
+        // flow, so their on-screen coordinates lie while their widths stay true.
+        const end = cursor + (i === 0 ? 0 : gap) + chips[i].offsetWidth;
+        // The last chip needs no counter space — if it fits, nothing collapses.
+        const needed = i === chips.length - 1 ? end : end + gap + counterWidth;
+        if (needed > available) break;
+        cursor = end;
+        fits++;
+      }
+      // Always keep one chip: a lone "+N" with no chip reads as broken. That chip
+      // truncates with an ellipsis instead (`max-width` on the chip).
+      setVisibleChipCount(Math.max(1, fits));
+    };
+
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(control);
+    return () => observer.disconnect();
+  }, [collapseChips, selectedOptions, size]);
+
+  const hiddenChipCount = collapseChips ? Math.max(0, selectedOptions.length - visibleChipCount) : 0;
 
   // Build dropdown items: filter options but keep groups/separators contextually
   const availableItems = useMemo(() => {
@@ -407,6 +488,7 @@ export function Select({
         error && "form-field-error",
         isOpen && "select-open",
         useChipDisplay && selectedOptions.length > 0 && "select-has-chips",
+        useChipDisplay && collapseChips && "select-nowrap",
         className
       )}
       onClick={handleWrapperClick}
@@ -415,31 +497,52 @@ export function Select({
       {startIcon && <div className="input-icon input-icon-start">{startIcon}</div>}
       {useChipDisplay ? (
         // Chip display (always for multi, optional for single)
-        selectedOptions.map(option => (
-          <div
-            key={option.value}
-            className="selected-chip"
-          >
-            <div className="selected-chip-label">
-              {option.icon && <span className="select-option-icon">{option.icon}</span>}
-              <span className="selected-chip-text">{option.label}</span>
+        <div
+          ref={chipRowRef}
+          className={clsx('select-chip-row', collapseChips && 'select-chip-row-collapse')}
+        >
+          {selectedOptions.map((option, index) => (
+            <div
+              key={option.value}
+              // Chips past the fold stay mounted (measurement needs their real
+              // width) but are taken out of view — see `.selected-chip-overflow`.
+              className={clsx(
+                'selected-chip',
+                collapseChips && index >= visibleChipCount && 'selected-chip-overflow',
+              )}
+              aria-hidden={collapseChips && index >= visibleChipCount ? true : undefined}
+            >
+              <div className="selected-chip-label">
+                {option.icon && <span className="select-option-icon">{option.icon}</span>}
+                <span className="selected-chip-text">{option.label}</span>
+              </div>
+              {!disabled && (
+                <button
+                  type="button"
+                  className="selected-chip-close"
+                  tabIndex={collapseChips && index >= visibleChipCount ? -1 : undefined}
+                  onMouseDown={(e) => e.preventDefault()}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveSelected(option.value);
+                  }}
+                  aria-label={`Remove ${option.label}`}
+                >
+                  ×
+                </button>
+              )}
             </div>
-            {!disabled && (
-              <button
-                type="button"
-                className="selected-chip-close"
-                onMouseDown={(e) => e.preventDefault()}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRemoveSelected(option.value);
-                }}
-                aria-label={`Remove ${option.label}`}
-              >
-                ×
-              </button>
-            )}
-          </div>
-        ))
+          ))}
+          {/* Always mounted so its width is measurable before the first collapse;
+              hidden (not unmounted) while everything fits. */}
+          <span
+            ref={overflowCounterRef}
+            className={clsx('select-chip-overflow-count', hiddenChipCount === 0 && 'selected-chip-overflow')}
+            aria-hidden={hiddenChipCount === 0 ? true : undefined}
+          >
+            +{hiddenChipCount}
+          </span>
+        </div>
       ) : (
         // Text display (for single select without chip)
         // Show value when there's a selection and not actively searching
