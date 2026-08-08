@@ -169,6 +169,15 @@ export function PageNavTablePage() {
                   pageSize={8}
                   className="flex-1 min-h-0 border-none"
                   controlSize="sm"
+                  // Click into the list, then ArrowUp/ArrowDown to walk it —
+                  // the detail panel follows the cursor. Home/End jump to the
+                  // ends. The cursor is left uncontrolled here; onRowActivate
+                  // drives the same selection the row's onClick does.
+                  enableKeyboardNav
+                  onRowActivate={(row) => {
+                    setSelected(row.original);
+                    if (navRef.current.isMobile) navRef.current.goTo('detail');
+                  }}
                   renderRow={(row) => {
                     const p = row.original;
                     return (

@@ -297,6 +297,32 @@ type DataTableBaseProps<TData> = {
   noResults?: ReactNode;
   className?: string;
   striped?: boolean;
+  /**
+   * Enable ArrowUp/ArrowDown keyboard navigation over the rows.
+   *
+   * The body becomes focusable (roving tabindex) so the arrows only apply once
+   * the user has tabbed or clicked into the list — they never steal keys from a
+   * detail panel or an input elsewhere on the page. Home/End jump to the first
+   * and last row; Enter/Space activate the cursor row via `onRowActivate`.
+   */
+  enableKeyboardNav?: boolean;
+  /**
+   * Row the keyboard cursor sits on, by row id. Controlled — pair with
+   * `onActiveRowChange`. Omit to let the DataTable track the cursor itself.
+   */
+  activeRowId?: string | null;
+  onActiveRowChange?: (rowId: string | null) => void;
+  /**
+   * Fired when the cursor moves to a row. With `keyboardActivateMode="follow"`
+   * this fires on every arrow press; with `"manual"` only on Enter/Space.
+   */
+  onRowActivate?: (row: RowHelper<TData>) => void;
+  /**
+   * `"follow"` (default) — moving the cursor activates the row immediately, so a
+   * detail panel tracks the arrows. `"manual"` — arrows only move the cursor and
+   * Enter/Space commits, for when activating is expensive.
+   */
+  keyboardActivateMode?: 'follow' | 'manual';
 };
 
 type ColumnModeProps<TData> = DataTableBaseProps<TData> & {
@@ -355,6 +381,11 @@ export function DataTable<TData>({
   rowClassName,
   getRowProps,
   striped = false,
+  enableKeyboardNav = false,
+  activeRowId: controlledActiveRowId,
+  onActiveRowChange,
+  onRowActivate,
+  keyboardActivateMode = 'follow',
 }: DataTableProps<TData>) {
   // Internal state with optional controlled overrides
   const [internalSorting, setInternalSorting] = useState<SortingState>([]);
@@ -567,6 +598,89 @@ export function DataTable<TData>({
   // The rows to render
   const displayRows = enablePagination ? paginatedRows : sortedRows;
 
+  // ── Keyboard navigation ───────────────────────────────────────────
+  // The cursor is tracked by row id, not index, so it survives the list
+  // reordering or a page of data arriving late. `scrollIntoView` runs against
+  // the body ref rather than the row, so we never scroll the whole document.
+  const [internalActiveRowId, setInternalActiveRowId] = useState<string | null>(null);
+  const bodyRef = useRef<HTMLDivElement | null>(null);
+  const activeRowId = controlledActiveRowId !== undefined ? controlledActiveRowId : internalActiveRowId;
+
+  const setActiveRowId = useCallback((id: string | null) => {
+    if (controlledActiveRowId === undefined) setInternalActiveRowId(id);
+    onActiveRowChange?.(id);
+  }, [controlledActiveRowId, onActiveRowChange]);
+
+  // Bring the cursor row into view without scrolling ancestors. `block: nearest`
+  // keeps the list still when the row is already visible.
+  const scrollRowIntoView = useCallback((rowId: string) => {
+    const body = bodyRef.current;
+    if (!body) return;
+    const el = body.querySelector<HTMLElement>(`[data-row-id="${CSS.escape(rowId)}"]`);
+    el?.scrollIntoView({ block: 'nearest' });
+  }, []);
+
+  const moveCursor = useCallback((delta: number) => {
+    if (displayRows.length === 0) return;
+    const current = displayRows.findIndex((r) => r.id === activeRowId);
+    // No cursor yet: ArrowDown starts at the top, ArrowUp at the bottom.
+    const nextIndex = current === -1
+      ? (delta > 0 ? 0 : displayRows.length - 1)
+      : Math.min(Math.max(current + delta, 0), displayRows.length - 1);
+    const next = displayRows[nextIndex];
+    if (!next || next.id === activeRowId) return;
+    setActiveRowId(next.id);
+    scrollRowIntoView(next.id);
+    if (keyboardActivateMode === 'follow') onRowActivate?.(next);
+  }, [displayRows, activeRowId, setActiveRowId, scrollRowIntoView, keyboardActivateMode, onRowActivate]);
+
+  const jumpCursor = useCallback((edge: 'first' | 'last') => {
+    if (displayRows.length === 0) return;
+    const next = edge === 'first' ? displayRows[0] : displayRows[displayRows.length - 1];
+    if (!next || next.id === activeRowId) return;
+    setActiveRowId(next.id);
+    scrollRowIntoView(next.id);
+    if (keyboardActivateMode === 'follow') onRowActivate?.(next);
+  }, [displayRows, activeRowId, setActiveRowId, scrollRowIntoView, keyboardActivateMode, onRowActivate]);
+
+  // Clicking a row parks the cursor there, so the next arrow press continues
+  // from what the user just clicked instead of restarting at the top. Bound on
+  // the body so it covers whatever the consumer renders inside a row — the
+  // click target is usually a button of theirs, not an element we control.
+  // Pointerdown (not click) so the cursor is already correct if the consumer's
+  // own handler moves focus. Never calls preventDefault: the row's own click
+  // must still fire.
+  const handleRowPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (!enableKeyboardNav) return;
+    const rowEl = (e.target as HTMLElement).closest<HTMLElement>('[data-row-id]');
+    const rowId = rowEl?.getAttribute('data-row-id');
+    if (rowId == null || rowId === activeRowId) return;
+    setActiveRowId(rowId);
+  }, [enableKeyboardNav, activeRowId, setActiveRowId]);
+
+  const handleKeyboardNav = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (!enableKeyboardNav) return;
+    // Let inputs inside a row keep their own arrow/Enter behaviour.
+    const target = e.target as HTMLElement;
+    if (target !== e.currentTarget && target.closest('input, textarea, select, [contenteditable="true"]')) return;
+
+    switch (e.key) {
+      case 'ArrowDown': e.preventDefault(); moveCursor(1); break;
+      case 'ArrowUp': e.preventDefault(); moveCursor(-1); break;
+      case 'Home': e.preventDefault(); jumpCursor('first'); break;
+      case 'End': e.preventDefault(); jumpCursor('last'); break;
+      case 'Enter':
+      case ' ': {
+        const row = displayRows.find((r) => r.id === activeRowId);
+        if (!row) return;
+        e.preventDefault();
+        onRowActivate?.(row);
+        break;
+      }
+      default: break;
+    }
+  }, [enableKeyboardNav, moveCursor, jumpCursor, displayRows, activeRowId, onRowActivate]);
+
   const totalPages = enablePagination
     ? Math.ceil(totalRows / effectivePageSize)
     : 1;
@@ -659,7 +773,18 @@ export function DataTable<TData>({
 
   return (
     <div className={clsx('data-table', className)}>
-      <div className="data-table-content better-scroll">
+      <div
+        className="data-table-content better-scroll"
+        // Freeform mode puts these on the body (which can own listbox
+        // semantics); column mode has a <table> in the way, so the scroll
+        // container carries focus and the handler instead.
+        {...(enableKeyboardNav && !isFreeform ? {
+          ref: bodyRef,
+          tabIndex: 0,
+          onKeyDown: handleKeyboardNav,
+          onPointerDown: handleRowPointerDown,
+        } : {})}
+      >
         {isFreeform ? (
           /* ── Freeform mode ── */
           <div className="data-table-freeform">
@@ -668,13 +793,28 @@ export function DataTable<TData>({
                 {renderHeader()}
               </div>
             )}
-            <div className="data-table-freeform-body">
+            <div
+              className="data-table-freeform-body"
+              ref={bodyRef}
+              {...(enableKeyboardNav ? {
+                role: 'listbox',
+                tabIndex: 0,
+                onKeyDown: handleKeyboardNav,
+                onPointerDown: handleRowPointerDown,
+              } : {})}
+            >
               {displayRows.length > 0 ? (
                 displayRows.map((row) => (
                   <div
                     key={row.id}
                     className={clsx('data-table-freeform-row', rowClassName)}
                     data-state={row.getIsSelected() ? 'selected' : undefined}
+                    {...(enableKeyboardNav ? {
+                      'data-row-id': row.id,
+                      'data-cursor': row.id === activeRowId ? 'true' : undefined,
+                      role: 'option',
+                      'aria-selected': row.id === activeRowId,
+                    } : {})}
                     {...(getRowProps?.(row) ?? {})}
                   >
                     {renderRow(row)}
@@ -705,6 +845,11 @@ export function DataTable<TData>({
                   <Fragment key={row.id}>
                     <TableRow
                       data-state={row.getIsSelected() ? 'selected' : undefined}
+                      {...(enableKeyboardNav ? {
+                        'data-row-id': row.id,
+                        'data-cursor': row.id === activeRowId ? 'true' : undefined,
+                        'aria-selected': row.id === activeRowId,
+                      } : {})}
                       className={clsx(expandOnRowClick && row.getCanExpand() && 'data-table-row-expandable')}
                       onClick={expandOnRowClick && row.getCanExpand() ? () => row.toggleExpanded() : undefined}
                     >

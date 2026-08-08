@@ -211,4 +211,27 @@
         cursor: not-allowed;
     }
 
+    /* Keyboard navigation — the focus ring belongs on the cursor row, not on
+       the scroll container, so suppress the container's own outline. */
+    .data-table-freeform-body:focus,
+    .data-table-freeform-body:focus-visible,
+    .data-table-content:focus,
+    .data-table-content:focus-visible {
+        outline: none;
+    }
+
+    /* The cursor row. Only shown while the list actually has focus — otherwise
+       a stale highlight competes with the selected row for attention. In
+       "follow" mode cursor and selection sit on the same row and the inset ring
+       reads as one state; in "manual" mode they separate and the ring is what
+       tells the user where Enter will land. */
+    .data-table-freeform-body:focus-within [data-cursor="true"],
+    .data-table-content:focus-within tr[data-cursor="true"] {
+        box-shadow: inset 2px 0 0 0 var(--color-table-row-cursor, var(--color-primary));
+    }
+
+    .data-table-freeform-body:focus-within .data-table-freeform-row[data-cursor="true"]:not([data-state="selected"]) {
+        background: var(--color-table-row-hover, var(--color-surface-hover));
+    }
+
 }
