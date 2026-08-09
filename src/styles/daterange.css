@@ -55,8 +55,30 @@
         font-weight: 600;
     }
 
-    /* Narrow viewports: rail moves above the calendar and scrolls horizontally
-       instead of forcing the popover wider than the screen. */
+    /* Overflow button — only rendered on narrow viewports. */
+    .daterange-preset-more {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        flex-shrink: 0;
+    }
+
+    /* Overflow popover list. Vertical regardless of the rail's orientation. */
+    .daterange-presets-more {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        padding: var(--spacing-daterange-presets-padding, 8px);
+    }
+
+    .daterange-presets-more .daterange-preset {
+        white-space: nowrap;
+        text-align: left;
+    }
+
+    /* Narrow viewports: rail moves above the calendar and lays out horizontally.
+       Presets past `mobilePresetCount` move into the More popover, so the strip
+       fits without horizontal scrolling. */
     @media (max-width: 480px) {
         .datepicker-popover-content.daterange-with-presets {
             flex-direction: column;
@@ -64,8 +86,8 @@
 
         .daterange-presets {
             flex-direction: row;
-            flex-wrap: nowrap;
-            overflow-x: auto;
+            flex-wrap: wrap;
+            align-items: center;
             min-width: 0;
             border-right: none;
             border-bottom: 1px solid var(--color-daterange-presets-border, var(--color-line));

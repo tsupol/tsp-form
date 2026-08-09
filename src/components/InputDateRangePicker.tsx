@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { Input, InputProps } from './Input';
 import { MaskedInput } from './MaskedInput';
 import { PopOver } from './PopOver';
+import { Chevron } from './Chevron';
 import { DatePicker, DatePickerProps } from './DatePicker';
 import { DateRangePreset } from './dateRangePresets';
 import '../styles/daterange.css';
@@ -52,10 +53,39 @@ export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 
    * open so the applied range is visible and adjustable on the calendar.
    */
   closeOnPresetSelect?: boolean;
+  /**
+   * How many presets stay inline on narrow viewports before the rest move into
+   * a "More" popover. Default 3. Ignored on desktop, where the full rail fits.
+   */
+  mobilePresetCount?: number;
+  /** Label for the overflow button on narrow viewports. Defaults to 'More'. */
+  moreLabel?: string;
 };
 
 const hasTime = (date: Date | null) =>
   date !== null && (date.getHours() !== 0 || date.getMinutes() !== 0);
+
+/** Must match the @media breakpoint in daterange.css that turns the rail horizontal. */
+const NARROW_QUERY = '(max-width: 480px)';
+
+/**
+ * Tracks the narrow-viewport breakpoint. `enabled` is false when no presets are
+ * passed, so the listener is skipped entirely for the common case.
+ */
+function useIsNarrow(enabled: boolean): boolean {
+  const [isNarrow, setIsNarrow] = useState(false);
+
+  useEffect(() => {
+    if (!enabled || typeof window === 'undefined' || !window.matchMedia) return;
+    const mq = window.matchMedia(NARROW_QUERY);
+    setIsNarrow(mq.matches);
+    const onChange = (e: MediaQueryListEvent) => setIsNarrow(e.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, [enabled]);
+
+  return isNarrow;
+}
 
 function resolveLocale(locale: string, calendar: 'locale' | 'gregorian'): string {
   return calendar === 'gregorian' ? `${locale}-u-ca-gregory` : locale;
@@ -118,10 +148,13 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
     onPresetKeyChange,
     presetsLabel,
     closeOnPresetSelect = false,
+    mobilePresetCount = 3,
+    moreLabel = 'More',
     ...inputProps
   }, ref) => {
     const formatRange = dateFormat ?? createDateRangeFormat(locale, calendar);
     const [isOpen, setIsOpen] = useState(false);
+    const [moreOpen, setMoreOpen] = useState(false);
     const openCountRef = useRef(0);
     const maskedRef = useRef<HTMLInputElement>(null);
     const [typedRaw, setTypedRaw] = useState('');
@@ -205,6 +238,35 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
     const formattedValue = formatRange(fromDate || null, toDate || null);
     const hasPresets = presets !== undefined && presets.length > 0;
 
+    // Mobile lays the rail out as a horizontal strip, where a long preset list
+    // scrolls out of sight. Keep the first few inline and move the rest behind
+    // a "More" popover so nothing is discoverable only by swiping. Desktop
+    // renders the full vertical rail, so this split is inert there.
+    const isNarrow = useIsNarrow(hasPresets);
+    const overflowFrom = mobilePresetCount;
+    const splitPresets = hasPresets && isNarrow && presets!.length > overflowFrom;
+    const inlinePresets = splitPresets ? presets!.slice(0, overflowFrom) : (presets ?? []);
+    const overflowPresets = splitPresets ? presets!.slice(overflowFrom) : [];
+    // Surface an active-but-hidden preset on the More button itself.
+    const activeOverflow = overflowPresets.find((p) => p.key === presetKey);
+
+    const renderPreset = (preset: DateRangePreset) => (
+      <button
+        key={preset.key}
+        type="button"
+        className={clsx(
+          'daterange-preset',
+          presetKey === preset.key && 'daterange-preset-active'
+        )}
+        onClick={() => {
+          handlePresetClick(preset);
+          setMoreOpen(false);
+        }}
+      >
+        {preset.label}
+      </button>
+    );
+
     return (
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
         <PopOver
@@ -245,19 +307,36 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
                 {presetsLabel !== null && (
                   <div className="daterange-presets-label">{presetsLabel ?? 'Quick ranges'}</div>
                 )}
-                {presets!.map((preset) => (
-                  <button
-                    key={preset.key}
-                    type="button"
-                    className={clsx(
-                      'daterange-preset',
-                      presetKey === preset.key && 'daterange-preset-active'
-                    )}
-                    onClick={() => handlePresetClick(preset)}
+                {inlinePresets.map(renderPreset)}
+                {splitPresets && (
+                  <PopOver
+                    isOpen={moreOpen}
+                    onClose={() => setMoreOpen(false)}
+                    placement="bottom"
+                    align="start"
+                    minWidth="150px"
+                    maxWidth="auto"
+                    maxHeight="auto"
+                    trigger={
+                      <button
+                        type="button"
+                        className={clsx(
+                          'daterange-preset',
+                          'daterange-preset-more',
+                          activeOverflow && 'daterange-preset-active'
+                        )}
+                        onClick={() => setMoreOpen(!moreOpen)}
+                      >
+                        {activeOverflow ? activeOverflow.label : moreLabel}
+                        <Chevron direction="down" open={moreOpen} size={14} />
+                      </button>
+                    }
                   >
-                    {preset.label}
-                  </button>
-                ))}
+                    <div className="daterange-presets-more">
+                      {overflowPresets.map(renderPreset)}
+                    </div>
+                  </PopOver>
+                )}
               </div>
             )}
             <DatePicker

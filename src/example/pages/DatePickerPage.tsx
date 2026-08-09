@@ -280,6 +280,7 @@ export function DatePickerPage() {
               presetKey={thaiKey}
               onPresetKeyChange={setThaiKey}
               presetsLabel="ช่วงเวลา"
+              moreLabel="เพิ่มเติม"
               datePickerProps={{
                 labels: { clear: 'ล้าง', today: 'วันนี้' },
               }}
