@@ -1,4 +1,4 @@
-import { forwardRef, InputHTMLAttributes, ReactNode } from "react";
+import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from "react";
 import clsx from "clsx";
 import "../styles/form.css";
 
@@ -19,7 +19,18 @@ const sizeClass = (size?: "sm" | "md" | "lg") => {
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, error, size, startIcon, endIcon, onStartIconClick, onEndIconClick, ...rest }, ref) => {
-    if (!startIcon && !endIcon) {
+    // The two branches below render structurally different trees, so switching
+    // between them remounts the <input> and it loses focus — on iOS that folds
+    // the keyboard away mid-typing. Callers legitimately toggle an icon on and
+    // off (a "type 3+ characters" hint, a conditional auto-fill affordance), so
+    // once this instance has shown an icon it keeps the wrapper for good, even
+    // while both slots are empty. Inputs that never pass an icon still get the
+    // bare element and its simpler box model.
+    const hasIcons = Boolean(startIcon || endIcon);
+    const everHadIcons = useRef(hasIcons);
+    if (hasIcons) everHadIcons.current = true;
+
+    if (!everHadIcons.current) {
       return (
         <input
           ref={ref}
