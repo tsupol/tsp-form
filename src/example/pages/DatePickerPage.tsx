@@ -4,7 +4,52 @@ import { DatePicker } from '../../components/DatePicker';
 import { DoubleDatePicker } from '../../components/DoubleDatePicker';
 import { InputDatePicker } from '../../components/InputDatePicker';
 import { InputDateRangePicker } from '../../components/InputDateRangePicker';
+import {
+  DateRangePreset,
+  createDateRangePresets,
+  defaultDateRangePresets,
+  resolveDateRangePreset,
+} from '../../components/dateRangePresets';
 import { Calendar, Keyboard } from 'lucide-react';
+
+const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+const endOfDay = (d: Date) =>
+  new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999);
+
+// In a real app these strings come from your translator: t('range.today') etc.
+const thaiPresets: DateRangePreset[] = createDateRangePresets({
+  today: 'วันนี้',
+  yesterday: 'เมื่อวาน',
+  'last-7-days': '7 วันล่าสุด',
+  'last-30-days': '30 วันล่าสุด',
+  'this-month': 'เดือนนี้',
+  'last-month': 'เดือนที่แล้ว',
+  'this-year': 'ปีนี้',
+});
+
+const customPresets: DateRangePreset[] = [
+  ...defaultDateRangePresets.filter((p) => p.key !== 'this-year'),
+  {
+    key: 'last-quarter',
+    label: 'Last quarter',
+    getRange: () => {
+      const now = new Date();
+      const currentQuarterStartMonth = Math.floor(now.getMonth() / 3) * 3;
+      const from = new Date(now.getFullYear(), currentQuarterStartMonth - 3, 1);
+      // Day 0 of the current quarter's first month = last day of the prior quarter.
+      const to = new Date(now.getFullYear(), currentQuarterStartMonth, 0);
+      return [startOfDay(from), endOfDay(to)];
+    },
+  },
+  {
+    key: 'year-to-date',
+    label: 'Year to date',
+    getRange: () => {
+      const now = new Date();
+      return [startOfDay(new Date(now.getFullYear(), 0, 1)), endOfDay(now)];
+    },
+  },
+];
 
 export function DatePickerPage() {
   // Pure DatePicker
@@ -39,6 +84,21 @@ export function DatePickerPage() {
   const [rangeTimeTo, setRangeTimeTo] = useState<Date | null>(null);
   const [prefilledFrom, setPrefilledFrom] = useState<Date | null>(new Date(2026, 2, 10));
   const [prefilledTo, setPrefilledTo] = useState<Date | null>(new Date(2026, 2, 15));
+
+  // InputDateRangePicker with presets — seeded from a persisted key, as a
+  // consumer would do on load.
+  const initialPreset = resolveDateRangePreset('last-7-days');
+  const [presetKey, setPresetKey] = useState<string | null>('last-7-days');
+  const [presetFrom, setPresetFrom] = useState<Date | null>(initialPreset?.from ?? null);
+  const [presetTo, setPresetTo] = useState<Date | null>(initialPreset?.to ?? null);
+
+  const [thaiKey, setThaiKey] = useState<string | null>(null);
+  const [thaiFrom, setThaiFrom] = useState<Date | null>(null);
+  const [thaiTo, setThaiTo] = useState<Date | null>(null);
+
+  const [customPresetKey, setCustomPresetKey] = useState<string | null>(null);
+  const [customPresetFrom, setCustomPresetFrom] = useState<Date | null>(null);
+  const [customPresetTo, setCustomPresetTo] = useState<Date | null>(null);
 
   const today = new Date();
   today.setHours(0, 0, 0, 0);
@@ -172,6 +232,74 @@ export function DatePickerPage() {
               toDate={prefilledTo}
               onFromDateChange={setPrefilledFrom}
               onToDateChange={setPrefilledTo}
+              placeholder="Select date range"
+              endIcon={<Calendar size={18} />}
+              locale={i18n.language}
+              calendar="gregorian"
+            />
+          </div>
+        </div>
+
+        {/* InputDateRangePicker with presets */}
+        <div className="card space-y-3">
+          <h2 className="heading-3">InputDateRangePicker — Quick Ranges</h2>
+          <p className="text-subtle">
+            Presets are relative rules, not fixed dates. The component reports which preset
+            produced the range, so a persisted key recomputes fresh dates on every load.
+            Editing the calendar clears the key. Clicking a preset keeps the picker open and
+            jumps the calendar to the applied range, so you can fine-tune it.
+          </p>
+          <div className="flex flex-col gap-1">
+            <label className="form-label">With default presets</label>
+            <InputDateRangePicker
+              fromDate={presetFrom}
+              toDate={presetTo}
+              onFromDateChange={setPresetFrom}
+              onToDateChange={setPresetTo}
+              presets={defaultDateRangePresets}
+              presetKey={presetKey}
+              onPresetKeyChange={setPresetKey}
+              placeholder="Select date range"
+              endIcon={<Calendar size={18} />}
+              locale={i18n.language}
+              calendar="gregorian"
+            />
+          </div>
+          <p className="text-small text-subtle">
+            Active preset key: <code>{presetKey ?? 'null (custom range)'}</code>
+          </p>
+
+          <div className="flex flex-col gap-1">
+            <label className="form-label">Translated (Thai) — presets, rail heading, and footer buttons</label>
+            <InputDateRangePicker
+              fromDate={thaiFrom}
+              toDate={thaiTo}
+              onFromDateChange={setThaiFrom}
+              onToDateChange={setThaiTo}
+              presets={thaiPresets}
+              presetKey={thaiKey}
+              onPresetKeyChange={setThaiKey}
+              presetsLabel="ช่วงเวลา"
+              datePickerProps={{
+                labels: { clear: 'ล้าง', today: 'วันนี้' },
+              }}
+              placeholder="เลือกช่วงวันที่"
+              endIcon={<Calendar size={18} />}
+              locale="th"
+            />
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <label className="form-label">Custom presets (extending the defaults)</label>
+            <InputDateRangePicker
+              fromDate={customPresetFrom}
+              toDate={customPresetTo}
+              onFromDateChange={setCustomPresetFrom}
+              onToDateChange={setCustomPresetTo}
+              presets={customPresets}
+              presetKey={customPresetKey}
+              onPresetKeyChange={setCustomPresetKey}
+              presetsLabel="Reporting"
               placeholder="Select date range"
               endIcon={<Calendar size={18} />}
               locale={i18n.language}

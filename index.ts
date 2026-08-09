@@ -9,6 +9,7 @@ export * from './src/components/Checkmark';
 export * from './src/components/Chevron';
 export * from './src/components/CollapsiblePanel';
 export * from './src/components/DatePicker';
+export * from './src/components/dateRangePresets';
 export * from './src/components/DoubleDatePicker';
 export * from './src/components/FormErrorSignal';
 export * from './src/components/Input';

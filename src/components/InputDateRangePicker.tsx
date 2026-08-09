@@ -1,8 +1,11 @@
 import { forwardRef, useState, useRef, useEffect, useCallback, ReactNode, KeyboardEvent } from 'react';
+import clsx from 'clsx';
 import { Input, InputProps } from './Input';
 import { MaskedInput } from './MaskedInput';
 import { PopOver } from './PopOver';
 import { DatePicker, DatePickerProps } from './DatePicker';
+import { DateRangePreset } from './dateRangePresets';
+import '../styles/daterange.css';
 
 export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 'endIcon' | 'onEndIconClick'> & {
   fromDate?: Date | null;
@@ -30,6 +33,25 @@ export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 
   parseTypedDates?: (rawDigits: string) => { from: Date | null; to: Date | null };
   /** Placeholder shown in the MaskedInput during typing mode */
   typingPlaceholder?: string;
+  /**
+   * Relative range presets ("Last 7 days", …) shown as a rail beside the calendar.
+   * Omit to render the calendar alone. Use `defaultDateRangePresets` for the built-in set.
+   */
+  presets?: DateRangePreset[];
+  /**
+   * Key of the currently active preset, or null when the range came from the calendar.
+   * Persist this to recompute the range on load via `resolveDateRangePreset`.
+   */
+  presetKey?: string | null;
+  /** Fires with the preset key on preset click, and with null on any calendar edit. */
+  onPresetKeyChange?: (key: string | null) => void;
+  /** Heading above the preset rail. Pass null to hide it. Defaults to 'Quick ranges'. */
+  presetsLabel?: ReactNode;
+  /**
+   * Close the popover after clicking a preset. Default false — the picker stays
+   * open so the applied range is visible and adjustable on the calendar.
+   */
+  closeOnPresetSelect?: boolean;
 };
 
 const hasTime = (date: Date | null) =>
@@ -91,6 +113,11 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
     typingMask,
     parseTypedDates,
     typingPlaceholder,
+    presets,
+    presetKey,
+    onPresetKeyChange,
+    presetsLabel,
+    closeOnPresetSelect = false,
     ...inputProps
   }, ref) => {
     const formatRange = dateFormat ?? createDateRangeFormat(locale, calendar);
@@ -115,23 +142,41 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
       }
     }, [isTyping]);
 
+    // Any calendar edit invalidates the active preset — a stale key would
+    // otherwise outlive the range it named and recompute wrong dates on reload.
     const handleFromDateChange = (date: Date | null) => {
+      onPresetKeyChange?.(null);
       onFromDateChange?.(date);
     };
 
     const handleToDateChange = (date: Date | null) => {
+      onPresetKeyChange?.(null);
       onToDateChange?.(date);
+    };
+
+    // Stays open so the applied range is visible on the calendar and can be
+    // adjusted from there. Opt into closing with `closeOnPresetSelect`.
+    const handlePresetClick = (preset: DateRangePreset) => {
+      const [from, to] = preset.getRange();
+      onFromDateChange?.(from);
+      onToDateChange?.(to);
+      onPresetKeyChange?.(preset.key);
+      // DatePicker derives its visible month from initial state only, so remount
+      // it to jump the calendar to the range the preset just applied.
+      openCountRef.current++;
+      if (closeOnPresetSelect) setIsOpen(false);
     };
 
     const commitTyping = useCallback(() => {
       if (parseTypedDates && typedRaw) {
         const { from, to } = parseTypedDates(typedRaw);
+        if (from || to) onPresetKeyChange?.(null);
         if (from) onFromDateChange?.(from);
         if (to) onToDateChange?.(to);
       }
       setTypedRaw('');
       onTypingModeChange?.(false);
-    }, [parseTypedDates, typedRaw, onFromDateChange, onToDateChange, onTypingModeChange]);
+    }, [parseTypedDates, typedRaw, onFromDateChange, onToDateChange, onTypingModeChange, onPresetKeyChange]);
 
     const cancelTyping = useCallback(() => {
       setTypedRaw('');
@@ -158,6 +203,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
     }, [typingEnabled, onTypingModeChange]);
 
     const formattedValue = formatRange(fromDate || null, toDate || null);
+    const hasPresets = presets !== undefined && presets.length > 0;
 
     return (
       <div style={{ width: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
@@ -193,7 +239,27 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
             />
           }
         >
-          <div className="datepicker-popover-content">
+          <div className={clsx('datepicker-popover-content', hasPresets && 'daterange-with-presets')}>
+            {hasPresets && (
+              <div className="daterange-presets">
+                {presetsLabel !== null && (
+                  <div className="daterange-presets-label">{presetsLabel ?? 'Quick ranges'}</div>
+                )}
+                {presets!.map((preset) => (
+                  <button
+                    key={preset.key}
+                    type="button"
+                    className={clsx(
+                      'daterange-preset',
+                      presetKey === preset.key && 'daterange-preset-active'
+                    )}
+                    onClick={() => handlePresetClick(preset)}
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </div>
+            )}
             <DatePicker
               key={openCountRef.current}
               {...datePickerProps}

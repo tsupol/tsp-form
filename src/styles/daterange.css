@@ -1,19 +1,78 @@
 @layer components {
-    .date-range-picker-container {
+    /* Popover grows a preset rail beside the calendar. Only applied when
+       `presets` is passed — the calendar-only layout is untouched. */
+    .datepicker-popover-content.daterange-with-presets {
         display: flex;
-        gap: 16px;
-        flex-wrap: wrap; /* Allows stacking on smaller screens */
+        align-items: stretch;
+        gap: 0;
     }
 
-    .date-range-picker-item {
+    .daterange-presets {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: 2px;
+        padding: var(--spacing-daterange-presets-padding, 8px);
+        min-width: var(--width-daterange-presets, 150px);
+        border-right: 1px solid var(--color-daterange-presets-border, var(--color-line));
     }
 
-    .date-range-label {
-        font-weight: bold;
-        margin-bottom: 4px;
+    .daterange-presets-label {
+        font-size: var(--text-small, 0.8125rem);
+        font-weight: 600;
+        color: var(--color-daterange-presets-label, var(--color-subtle));
+        padding: 4px var(--spacing-option-x) 6px;
     }
 
+    /* Mirrors .select-popover-item so the rail reads as the same kind of list. */
+    .daterange-preset {
+        appearance: none;
+        border: none;
+        background: transparent;
+        text-align: left;
+        cursor: pointer;
+        white-space: nowrap;
+        font-size: var(--text-option, 0.875rem);
+        line-height: var(--text-option--line-height, 1.25rem);
+        color: var(--color-daterange-preset-text, var(--color-control-text, var(--color-fg)));
+        padding: var(--spacing-option-y) var(--spacing-option-x);
+        border-radius: var(--radius-daterange-preset, var(--radius-option));
+        transition: background-color 0.05s ease-in-out;
+    }
+
+    .daterange-preset:hover {
+        background-color: var(--color-daterange-preset-hover-bg, var(--color-select-highlight, var(--color-surface-hover)));
+    }
+
+    .daterange-preset:focus-visible {
+        outline: 2px solid var(--color-daterange-preset-focus, var(--color-primary));
+        outline-offset: -2px;
+    }
+
+    .daterange-preset-active,
+    .daterange-preset-active:hover {
+        background-color: var(--color-daterange-preset-active-bg, var(--color-primary));
+        color: var(--color-daterange-preset-active-text, var(--color-primary-contrast));
+        font-weight: 600;
+    }
+
+    /* Narrow viewports: rail moves above the calendar and scrolls horizontally
+       instead of forcing the popover wider than the screen. */
+    @media (max-width: 480px) {
+        .datepicker-popover-content.daterange-with-presets {
+            flex-direction: column;
+        }
+
+        .daterange-presets {
+            flex-direction: row;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            min-width: 0;
+            border-right: none;
+            border-bottom: 1px solid var(--color-daterange-presets-border, var(--color-line));
+        }
+
+        .daterange-presets-label {
+            display: none;
+        }
+    }
 }
