@@ -54,8 +54,10 @@ export type InputDateRangePickerProps = Omit<InputProps, 'value' | 'onChange' | 
    */
   closeOnPresetSelect?: boolean;
   /**
-   * How many presets stay inline on narrow viewports before the rest move into
-   * a "More" popover. Default 3. Ignored on desktop, where the full rail fits.
+   * Pins how many presets stay inline on narrow viewports before the rest move
+   * into a "More" popover. Leave unset (recommended) to measure the actual
+   * label widths and fit as many as the rail allows — which adapts to
+   * translations and screen sizes on its own. Ignored on desktop.
    */
   mobilePresetCount?: number;
   /** Label for the overflow button on narrow viewports. Defaults to 'More'. */
@@ -85,6 +87,112 @@ function useIsNarrow(enabled: boolean): boolean {
   }, [enabled]);
 
   return isNarrow;
+}
+
+/**
+ * Measures how many presets actually fit on one row of the horizontal rail.
+ *
+ * A fixed count can't know label widths, so it has to be tuned per language and
+ * per device. This measures instead: the rail renders every preset once
+ * (`measuring`), we read their real widths, then fit as many as the container
+ * allows while reserving room for the More button.
+ *
+ * Returns `null` while measuring or when inactive — callers treat that as
+ * "show everything", which is also the correct no-JS / desktop behaviour.
+ */
+function useFittedCount(
+  active: boolean,
+  railRef: React.RefObject<HTMLDivElement | null>,
+  presetCount: number,
+  // Re-measure when labels change (translation swap) or items are added.
+  signature: string
+): { fitted: number | null; measuring: boolean } {
+  const [fitted, setFitted] = useState<number | null>(null);
+  const [measuring, setMeasuring] = useState(false);
+
+  // Re-enter the measuring pass whenever the inputs change.
+  useEffect(() => {
+    if (!active) {
+      setFitted(null);
+      setMeasuring(false);
+      return;
+    }
+    setMeasuring(true);
+  }, [active, signature, presetCount]);
+
+  useEffect(() => {
+    if (!active || !measuring) return;
+
+    const measure = () => {
+      // Resolve the ref inside the frame: on the first pass the rail mounts in
+      // the same commit as this effect, so railRef.current is still null when
+      // the effect body runs.
+      const rail = railRef.current;
+      if (!rail) return false;
+      const items = Array.from(
+        rail.querySelectorAll<HTMLElement>('[data-preset-item]')
+      );
+      if (!items.length || !rail.clientWidth) return false;
+
+      const railStyle = getComputedStyle(rail);
+      const padding =
+        parseFloat(railStyle.paddingLeft || '0') +
+        parseFloat(railStyle.paddingRight || '0');
+      const gap = parseFloat(railStyle.columnGap || railStyle.gap || '0') || 0;
+      // The popover is width:auto, so the rail sizes to its own content while
+      // measuring and can't report the real constraint. The viewport is what
+      // actually bounds it on mobile.
+      const available = Math.min(window.innerWidth, rail.clientWidth) - padding;
+
+      // The More button is not in the DOM during the probe pass; reserve a slot
+      // for it so adding it later can't push the last preset off the row.
+      const moreEl = rail.querySelector<HTMLElement>('[data-preset-more]');
+      const moreWidth = moreEl ? moreEl.getBoundingClientRect().width : 72;
+
+      let used = 0;
+      let count = 0;
+      for (let i = 0; i < items.length; i++) {
+        const w = items[i].getBoundingClientRect().width;
+        const next = used + (count > 0 ? gap : 0) + w;
+        // Every preset but the last must leave room for the More button.
+        const needsMore = i < items.length - 1;
+        const limit = needsMore ? available - moreWidth - gap : available;
+        if (next > limit) break;
+        used = next;
+        count++;
+      }
+
+      // Always keep at least one inline, else the rail is just a More button.
+      setFitted(Math.max(1, count));
+      setMeasuring(false);
+      return true;
+    };
+
+    // Measure after paint so widths are final. The popover mounts via a portal
+    // with an open delay, so retry for a few frames until the rail is there
+    // rather than bailing on the first miss and never resolving.
+    let raf = 0;
+    let attempts = 0;
+    const tick = () => {
+      const done = measure();
+      if (!done && attempts++ < 20) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [active, measuring, railRef, presetCount, signature]);
+
+  // Re-measure when the viewport changes (rotation, split-screen). Deliberately
+  // NOT a ResizeObserver on the rail: entering and leaving the measuring pass
+  // toggles the rail between absolute and static, which changes its own width
+  // and would retrigger measuring forever.
+  useEffect(() => {
+    if (!active || typeof window === 'undefined') return;
+    const onResize = () => setMeasuring(true);
+    window.addEventListener('resize', onResize, { passive: true });
+    return () => window.removeEventListener('resize', onResize);
+  }, [active]);
+
+  return { fitted, measuring };
 }
 
 function resolveLocale(locale: string, calendar: 'locale' | 'gregorian'): string {
@@ -148,7 +256,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
     onPresetKeyChange,
     presetsLabel,
     closeOnPresetSelect = false,
-    mobilePresetCount = 3,
+    mobilePresetCount,
     moreLabel = 'More',
     ...inputProps
   }, ref) => {
@@ -239,12 +347,27 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
     const hasPresets = presets !== undefined && presets.length > 0;
 
     // Mobile lays the rail out as a horizontal strip, where a long preset list
-    // scrolls out of sight. Keep the first few inline and move the rest behind
-    // a "More" popover so nothing is discoverable only by swiping. Desktop
-    // renders the full vertical rail, so this split is inert there.
+    // scrolls out of sight. Fit as many as the width actually allows and move
+    // the rest behind a "More" popover, so nothing is reachable only by
+    // swiping. Desktop renders the full vertical rail, so this is inert there.
     const isNarrow = useIsNarrow(hasPresets);
-    const overflowFrom = mobilePresetCount;
-    const splitPresets = hasPresets && isNarrow && presets!.length > overflowFrom;
+    const railRef = useRef<HTMLDivElement>(null);
+    const presetSignature = (presets ?? []).map((p) => p.key + p.label).join('|');
+    // An explicit count opts out of measuring entirely. Only measure while the
+    // popover is open, since the rail is not in the DOM otherwise.
+    const measures =
+      isOpen && isNarrow && hasPresets && mobilePresetCount === undefined;
+    const { fitted, measuring } = useFittedCount(
+      measures,
+      railRef,
+      presets?.length ?? 0,
+      presetSignature
+    );
+
+    // While measuring, render every preset so their widths can be read.
+    const overflowFrom = mobilePresetCount ?? fitted ?? presets?.length ?? 0;
+    const splitPresets =
+      hasPresets && isNarrow && !measuring && presets!.length > overflowFrom;
     const inlinePresets = splitPresets ? presets!.slice(0, overflowFrom) : (presets ?? []);
     const overflowPresets = splitPresets ? presets!.slice(overflowFrom) : [];
     // Surface an active-but-hidden preset on the More button itself.
@@ -254,6 +377,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
       <button
         key={preset.key}
         type="button"
+        data-preset-item=""
         className={clsx(
           'daterange-preset',
           presetKey === preset.key && 'daterange-preset-active'
@@ -303,7 +427,10 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
         >
           <div className={clsx('datepicker-popover-content', hasPresets && 'daterange-with-presets')}>
             {hasPresets && (
-              <div className="daterange-presets">
+              <div
+                ref={railRef}
+                className={clsx('daterange-presets', measuring && 'daterange-presets-measuring')}
+              >
                 {presetsLabel !== null && (
                   <div className="daterange-presets-label">{presetsLabel ?? 'Quick ranges'}</div>
                 )}
@@ -320,6 +447,7 @@ export const InputDateRangePicker = forwardRef<HTMLInputElement, InputDateRangeP
                     trigger={
                       <button
                         type="button"
+                        data-preset-more=""
                         className={clsx(
                           'daterange-preset',
                           'daterange-preset-more',
