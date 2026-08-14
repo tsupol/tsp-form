@@ -18,8 +18,20 @@ Responsive panel navigation. Desktop: panels side-by-side (consumer layout). Mob
 | `panels` | `string[]` | required | Panel IDs. First is root. |
 | `defaultPanel` | `string` | `panels[0]` | Initial active panel. Auto-populates nav stack from root so `isRoot` is correct. |
 | `mobileBreakpoint` | `number` | `768` | px width threshold for mobile mode |
+| `mobileMaxHeight` | `number` | — | Opt-in: also go mobile at this viewport height or less, whatever the width. See below. |
 | `className` | `string` | — | Class on outer wrapper |
 | `children` | `(ctx) => ReactNode` | required | Render prop |
+
+**Phone landscape needs `mobileMaxHeight`.** A phone turned sideways (844×390,
+932×430) clears `mobileBreakpoint` and gets the side-by-side layout, but has no
+vertical room for it — the rail eats the width and the detail panel is a slot a
+few hundred px tall. Width can't tell that viewport apart from a portrait tablet
+at the same width, which genuinely wants two panels. Height can.
+
+`mobileMaxHeight={500}` covers every current phone landscape and leaves tablets
+and laptops alone. Unset (the default) means width alone decides, exactly as
+before — pass it on pages where the detail panel needs real vertical space
+(video, forms, readers).
 
 ### PageNavPanel
 

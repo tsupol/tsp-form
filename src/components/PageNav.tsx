@@ -39,6 +39,17 @@ export type PageNavProps = {
   panels: string[];
   defaultPanel?: string;
   mobileBreakpoint?: number;
+  /**
+   * Also collapse to the mobile stack when the viewport is this short or less,
+   * regardless of width. Opt-in — unset means width alone decides.
+   *
+   * For a phone in landscape (e.g. 844x390) width is a poor signal: it clears
+   * `mobileBreakpoint` and gets the side-by-side layout, but there is no
+   * vertical room for it. Height separates that case from a genuinely roomy
+   * viewport at the same width, like a portrait tablet. ~500 catches every
+   * current phone landscape while leaving tablets alone.
+   */
+  mobileMaxHeight?: number;
   className?: string;
   children: (ctx: PageNavContext) => ReactNode;
 };
@@ -78,10 +89,17 @@ export function PageNavPanel({ id, className, mobileClassName, children }: PageN
   );
 }
 
+/** The viewport is "mobile" when it is too narrow, or (opt-in) too short. */
+function mobileQuery(breakpoint: number, maxHeight: number | undefined): string {
+  const narrow = `(max-width: ${breakpoint - 1}px)`;
+  return maxHeight === undefined ? narrow : `${narrow}, (max-height: ${maxHeight}px)`;
+}
+
 export function PageNav({
   panels,
   defaultPanel,
   mobileBreakpoint = 768,
+  mobileMaxHeight,
   className,
   children,
 }: PageNavProps) {
@@ -94,18 +112,20 @@ export function PageNav({
     return idx > 0 ? panels.slice(0, idx + 1) : [target];
   });
   const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' ? window.innerWidth < mobileBreakpoint : false
+    typeof window !== 'undefined'
+      ? window.matchMedia(mobileQuery(mobileBreakpoint, mobileMaxHeight)).matches
+      : false
   );
   const wasMobileRef = useRef(isMobile);
 
   // Mobile detection
   useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${mobileBreakpoint - 1}px)`);
+    const mql = window.matchMedia(mobileQuery(mobileBreakpoint, mobileMaxHeight));
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     setIsMobile(mql.matches);
     mql.addEventListener('change', handler);
     return () => mql.removeEventListener('change', handler);
-  }, [mobileBreakpoint]);
+  }, [mobileBreakpoint, mobileMaxHeight]);
 
   // Reset nav stack when switching from mobile to desktop
   useEffect(() => {
