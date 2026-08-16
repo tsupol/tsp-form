@@ -9,6 +9,19 @@ export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & {
   endIcon?: ReactNode;
   onStartIconClick?: () => void;
   onEndIconClick?: () => void;
+  /**
+   * Render the icon wrapper even while both slots are empty.
+   *
+   * Set this when the icons are CONDITIONAL and the field can start with none —
+   * a "type N more characters" hint, a clear-X that appears once there is text,
+   * a validation mark. Without it the first icon to appear changes the DOM
+   * shape, which remounts the <input>: focus is lost, and on iOS the keyboard
+   * folds away and reverts from numeric to letters mid-word.
+   *
+   * Unnecessary when a permanent icon is present (e.g. a search magnifier) —
+   * the wrapper is already there and never goes away.
+   */
+  reserveIconSlots?: boolean;
 };
 
 const sizeClass = (size?: "sm" | "md" | "lg") => {
@@ -18,19 +31,26 @@ const sizeClass = (size?: "sm" | "md" | "lg") => {
 };
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, error, size, startIcon, endIcon, onStartIconClick, onEndIconClick, ...rest }, ref) => {
+  ({ className, error, size, startIcon, endIcon, onStartIconClick, onEndIconClick, reserveIconSlots, ...rest }, ref) => {
     // The two branches below render structurally different trees, so switching
     // between them remounts the <input> and it loses focus — on iOS that folds
-    // the keyboard away mid-typing. Callers legitimately toggle an icon on and
-    // off (a "type 3+ characters" hint, a conditional auto-fill affordance), so
-    // once this instance has shown an icon it keeps the wrapper for good, even
-    // while both slots are empty. Inputs that never pass an icon still get the
-    // bare element and its simpler box model.
+    // the keyboard away mid-typing.
+    //
+    // `everHadIcons` keeps the wrapper once an icon has been shown, which covers
+    // a field that starts WITH an icon and later drops it. It cannot help a
+    // field that starts with none: the first icon to appear is still a shape
+    // change, and that is the transition users actually hit (typing character 1
+    // into a search box whose only icon is a min-length hint). `reserveIconSlots`
+    // is the fix for that case — the caller declares up front that its icons are
+    // conditional, and the wrapper is present from the very first render.
+    //
+    // Inputs that never pass an icon and don't opt in still get the bare
+    // element and its simpler box model.
     const hasIcons = Boolean(startIcon || endIcon);
     const everHadIcons = useRef(hasIcons);
     if (hasIcons) everHadIcons.current = true;
 
-    if (!everHadIcons.current) {
+    if (!reserveIconSlots && !everHadIcons.current) {
       return (
         <input
           ref={ref}
