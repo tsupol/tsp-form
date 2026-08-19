@@ -16,7 +16,8 @@ Responsive panel navigation. Desktop: panels side-by-side (consumer layout). Mob
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `panels` | `string[]` | required | Panel IDs. First is root. |
-| `defaultPanel` | `string` | `panels[0]` | Initial active panel. Auto-populates nav stack from root so `isRoot` is correct. |
+| `defaultPanel` | `string` | `panels[0]` | Initial active panel (uncontrolled mode). Auto-populates nav stack from root so `isRoot` is correct. |
+| `activePanel` | `string` | — | **Controlled mode.** The consumer owns the active panel (typically derived from the URL). The stack is derived from it every render; `goTo`/`goBack`/`goToRoot` become warn-and-no-op — navigate with your router instead. |
 | `mobileBreakpoint` | `number` | `768` | px width threshold for mobile mode |
 | `mobileMaxHeight` | `number` | — | Opt-in: also go mobile at this viewport height or less, whatever the width. See below. |
 | `className` | `string` | — | Class on outer wrapper |
@@ -94,9 +95,24 @@ import { MobileHeader } from 'tsp-form';
 
 Root page: bordered header with centered title and balancing spacer. Child page: just the back button, no title, no border.
 
-## Routed Usage (search params)
+## Routed Usage
 
-Selection lives in URL search params. Survives refresh. See `src/example/pages/PageNavPage.tsx`.
+**Preferred: controlled.** Derive the panel from the URL and pass it as `activePanel` —
+then the browser's back gesture and the visible panel can never disagree, because there
+is only one navigation state:
+
+```tsx
+const { itemId } = useParams();
+<PageNav panels={['list', 'detail']} activePanel={itemId ? 'detail' : 'list'}>
+```
+
+Navigate with the router (push to open a detail screen on mobile, back/up navigates to
+the list URL). Don't call `goTo`/`goBack` — they warn and do nothing in controlled mode.
+First real consumer: prifethailand's `LearnerCourseDetailPage`.
+
+**Legacy: uncontrolled + search params.** Selection lives in URL search params but the
+panel stack is PageNav's own. Survives refresh, but the OS back gesture pops history
+while the panel stack stays put — the two drift. See `src/example/pages/PageNavPage.tsx`.
 
 Key patterns:
 1. Read selection from `useSearchParams`, not local state.

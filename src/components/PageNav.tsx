@@ -38,6 +38,14 @@ export type PageNavPanelProps = {
 export type PageNavProps = {
   panels: string[];
   defaultPanel?: string;
+  /**
+   * Controlled mode: the consumer owns which panel is active (typically derived
+   * from the URL, so browser history and the visible panel can never disagree).
+   * When set, the internal nav stack is ignored — the stack is derived from this
+   * value every render — and `goTo`/`goBack`/`goToRoot` become no-ops: navigate
+   * with your router instead.
+   */
+  activePanel?: string;
   mobileBreakpoint?: number;
   /**
    * Also collapse to the mobile stack when the viewport is this short or less,
@@ -95,22 +103,31 @@ function mobileQuery(breakpoint: number, maxHeight: number | undefined): string 
   return maxHeight === undefined ? narrow : `${narrow}, (max-height: ${maxHeight}px)`;
 }
 
+// Build path from root to target so isRoot is correct on deep-link/refresh
+function stackTo(panels: string[], target: string): string[] {
+  const rootPanel = panels[0] ?? '';
+  if (target === rootPanel) return [rootPanel];
+  const idx = panels.indexOf(target);
+  return idx > 0 ? panels.slice(0, idx + 1) : [target];
+}
+
 export function PageNav({
   panels,
   defaultPanel,
+  activePanel: controlledPanel,
   mobileBreakpoint = 768,
   mobileMaxHeight,
   className,
   children,
 }: PageNavProps) {
   const rootPanel = panels[0] ?? '';
-  const [navStack, setNavStack] = useState<string[]>(() => {
-    const target = defaultPanel ?? rootPanel;
-    if (target === rootPanel) return [rootPanel];
-    // Build path from root to target so isRoot is correct on deep-link/refresh
-    const idx = panels.indexOf(target);
-    return idx > 0 ? panels.slice(0, idx + 1) : [target];
-  });
+  const controlled = controlledPanel !== undefined;
+  const [internalStack, setInternalStack] = useState<string[]>(() =>
+    stackTo(panels, defaultPanel ?? rootPanel)
+  );
+  // Controlled: derive the stack from the prop every render, so the consumer's
+  // source of truth (usually the URL) is the only navigation state there is.
+  const navStack = controlled ? stackTo(panels, controlledPanel) : internalStack;
   const [isMobile, setIsMobile] = useState(() =>
     typeof window !== 'undefined'
       ? window.matchMedia(mobileQuery(mobileBreakpoint, mobileMaxHeight)).matches
@@ -127,13 +144,14 @@ export function PageNav({
     return () => mql.removeEventListener('change', handler);
   }, [mobileBreakpoint, mobileMaxHeight]);
 
-  // Reset nav stack when switching from mobile to desktop
+  // Reset nav stack when switching from mobile to desktop (uncontrolled only —
+  // a controlled stack is derived, there is nothing to reset)
   useEffect(() => {
-    if (wasMobileRef.current && !isMobile) {
-      setNavStack([rootPanel]);
+    if (wasMobileRef.current && !isMobile && !controlled) {
+      setInternalStack([rootPanel]);
     }
     wasMobileRef.current = isMobile;
-  }, [isMobile, rootPanel]);
+  }, [isMobile, rootPanel, controlled]);
 
   // Manage body attribute for SideMenu toggle hiding
   useEffect(() => {
@@ -147,17 +165,27 @@ export function PageNav({
   const parentPanel = navStack.length > 1 ? navStack[navStack.length - 2] : null;
   const isRoot = navStack.length <= 1;
 
+  // Unconditional (not NODE_ENV-guarded): the library build inlines NODE_ENV
+  // as "production", which would strip the warning from the published dist.
+  // Firing only on actual misuse, it is worth keeping everywhere.
+  const warnControlled = () => {
+    console.warn('PageNav: goTo/goBack/goToRoot are no-ops in controlled mode — change the activePanel prop instead.');
+  };
+
   const goTo = useCallback((id: string) => {
-    setNavStack(prev => [...prev, id]);
-  }, []);
+    if (controlled) return warnControlled();
+    setInternalStack(prev => [...prev, id]);
+  }, [controlled]);
 
   const goBack = useCallback(() => {
-    setNavStack(prev => prev.length > 1 ? prev.slice(0, -1) : prev);
-  }, []);
+    if (controlled) return warnControlled();
+    setInternalStack(prev => prev.length > 1 ? prev.slice(0, -1) : prev);
+  }, [controlled]);
 
   const goToRoot = useCallback(() => {
-    setNavStack([rootPanel]);
-  }, [rootPanel]);
+    if (controlled) return warnControlled();
+    setInternalStack([rootPanel]);
+  }, [rootPanel, controlled]);
 
   const ctx: PageNavContext = {
     activePanel,
